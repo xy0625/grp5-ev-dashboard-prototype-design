@@ -18,15 +18,97 @@ function TopBar() {
           <path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11"/>
         </svg>
       </div>
-      {/* Voice */}
-      <div style={{ position:"absolute", left:574, top:7, width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center" }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#808080" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="1.5" fill="#808080"/>
-          <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" strokeWidth="2"/>
-        </svg>
-      </div>
-      <div style={{ position:"absolute", left:621, top:18, fontFamily:"Inter", fontWeight:400, fontSize:20, color:"#808080" }}>
-        Say something...
+      {/* AI Assistant */}
+      <div
+        style={{
+          position: "absolute",
+          left: 500,
+          top: 8,
+          width: 300,
+          height: 48,
+
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+
+          padding: "0 18px",
+
+          background: "rgba(255,255,255,0.7)",
+          backdropFilter: "blur(14px)",
+
+          border: "1px solid rgba(255,255,255,0.6)",
+
+          borderRadius: 999,
+
+          boxShadow: "0px 4px 20px rgba(99,102,241,0.12)",
+        }}
+      >
+        {/* glowing mic */}
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+
+            background:
+              "linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)",
+
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+
+            boxShadow: "0px 0px 12px rgba(99,102,241,0.5)",
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="2"
+          >
+            <path d="M12 15a3 3 0 003-3V7a3 3 0 10-6 0v5a3 3 0 003 3z" />
+            <path d="M19 11a7 7 0 01-14 0" />
+            <line x1="12" y1="18" x2="12" y2="22" />
+          </svg>
+        </div>
+
+        {/* text */}
+        <div
+          style={{
+            fontFamily: "Inter",
+            fontWeight: 500,
+            fontSize: 16,
+            color: "#4B4E53",
+
+            letterSpacing: "0.2px",
+          }}
+        >
+          Ask EV Assistant...
+        </div>
+
+        {/* animated dots */}
+        <div
+          style={{
+            marginLeft: "auto",
+            display: "flex",
+            gap: 4,
+          }}
+        >
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#6366F1",
+                opacity: 0.5 + i * 0.2,
+              }}
+            />
+          ))}
+        </div>
       </div>
       {/* Profile */}
       <div style={{ position:"absolute", left:1176, top:9, width:49, height:49, background:"#F3EDFF", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -95,80 +177,338 @@ function BatteryCard({ onGoToSession }) {
   const [status, setStatus] = useState(0);
  
   const states = [
-    { label: "Not connected", sub: "Last charged 2h ago",  color: "#9CA3AF", fill: 0  },
-    { label: "Connected",     sub: "Ready to charge",       color: "#F59E0B", fill: 40 },
-    { label: "Charging",      sub: "Fast charging active",  color: "#49E83D", fill: 78 },
+    { title: "Battery", percent: 78, color: "#49E83D", subColor: "#49E83D", text: "312 km available", bottom: "Not connected · Last charged 2h ago", charging: false, completed: false },
+    { title: "Battery", percent: 100, color: "#49E83D", subColor: "#49E83D", text: "Charge Completed", bottomLeft: "Last charge\n100%", bottomRight: "3h 20m\nToday, 09:15AM", charging: false, completed: true },
+    { title: "Charging", percent: 22, color: "#FF1E1E", subColor: "#000", text: "95 km remaining", bottom: "Est. full charge in", eta: "1h 25m", charging: true, completed: false },
   ];
  
   const current = states[status];
  
-  const handleClick = () => {
-    if (status === 1) {
-      onGoToSession();
-    } else {
-      setStatus((s) => (s + 1) % 3);
-    }
+  const nextState = () => {
+    setStatus((s) => (s + 1) % states.length);
   };
- 
+
   return (
     <div
-      onClick={handleClick}
-      style={{
-        position: "absolute", width: 356, height: 210, left: 512, top: 64,
-        background: "#fff",
-        boxShadow: "0px 6px 20px rgba(0,0,0,0.1)",
-        borderRadius: 20,
-        cursor: "pointer",
-        transition: "0.2s",
-      }}
-    >
-      <div style={{ position: "absolute", left: 30, top: 22, fontFamily: "Inter", fontWeight: 600, fontSize: 24 }}>
-        Battery
-      </div>
- 
+      onClick={nextState}
+      style={{ position: "absolute", width: 356, height: 210, left: 512, top: 64, background: "#fff", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20, cursor: "pointer", transition: "0.2s" }}>
+      <div style={{ position: "absolute", left: 30, top: 22, fontFamily: "Inter", fontWeight: 600, fontSize: 24 }}>{current.title}</div>
+      
+      {/* dots */}
+      <div style={{ position: "absolute", right: 22, top: 10, fontSize: 28, color: "#222"}}>…</div>
+
       {/* Battery icon */}
       <div style={{ position: "absolute", left: 30, top: 55 }}>
         <svg width="120" height="60" viewBox="0 0 120 60">
-          <rect x="2"   y="8"  width="104"         height="44" rx="6" stroke={current.color} strokeWidth="3" fill="none" />
-          <rect x="106" y="20" width="10"           height="20" rx="3" fill={current.color} />
-          <rect x="6"   y="12" width={current.fill} height="36" rx="4" fill={current.color} />
+          
+          {/* outline */}
+          <rect
+            x="2"
+            y="8"
+            width="104"
+            height="44"
+            rx="10"
+            stroke={current.color}
+            strokeWidth="4"
+            fill="none"
+          />
+
+          {/* battery head */}
+          <rect
+            x="106"
+            y="20"
+            width="10"
+            height="20"
+            rx="3"
+            fill={current.color}
+          />
+
+          {/* battery fill */}
+          <rect
+            x="8"
+            y="14"
+            width={(current.percent / 100) * 88}
+            height="32"
+            rx="6"
+            fill={current.color}
+            style={{
+              transition: "0.4s ease",
+              filter: current.charging
+                ? "drop-shadow(0 0 8px rgba(73,232,61,0.8))"
+                : "none",
+            }}
+          />
         </svg>
       </div>
  
       {/* Percentage */}
       <div style={{ position: "absolute", left: 199, top: 65, fontFamily: "Inter", fontWeight: 700, fontSize: 36 }}>
-        {current.fill}%
+        {current.percent}%
       </div>
+
  
-      {/* Range */}
-      <div style={{ position: "absolute", left: 45, top: 120, display: "flex", alignItems: "center", gap: 6 }}>
-        <div style={{ width: 10, height: 10, borderRadius: "50%", background: current.color }} />
-        <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 20, color: current.color }}>
-          {Math.round(current.fill * 4)} km available
-        </span>
-      </div>
- 
-      {/* Divider */}
-      <div style={{ position: "absolute", left: 37, top: 150, width: 283, height: 1, background: "rgba(128,128,128,0.3)" }} />
- 
-      {/* Status row */}
-      <div style={{ position: "absolute", left: 0, top: 155, right: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px" }}>
-        <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 15, color: "#808080" }}>
-          {current.label} · {current.sub}
-        </span>
- 
-        {/* Show "Tap to charge →" hint only when Connected */}
-        {status === 1 && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#FEF3C7", borderRadius: 20, padding: "8px 14px" }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B">
-              <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+      {/* middle row */}
+      {!current.completed && (
+        <div
+          style={{
+            position: "absolute",
+            left: 32,
+            top: 122,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {current.charging ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#49E83D">
+              <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
             </svg>
-            <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 12, color: "#F59E0B" }}>
+          ) : (
+            <div
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: current.color,
+              }}
+            />
+          )}
+
+          <span
+            style={{
+              fontFamily: "Inter",
+              fontWeight: 600,
+              fontSize: 16,
+              color: current.subColor,
+            }}
+          >
+            {current.text}
+          </span>
+        </div>
+      )}
+
+      {/* completed row */}
+      {current.completed && (
+        <div
+          style={{
+            position: "absolute",
+            left: 32,
+            top: 122,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <div
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              border: "2px solid #49E83D",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 10,
+              color: "#49E83D",
+            }}
+          >
+            ✓
+          </div>
+
+          <span
+            style={{
+              fontFamily: "Inter",
+              fontWeight: 600,
+              fontSize: 15,
+              color: "#49E83D",
+            }}
+          >
+            Charge Completed
+          </span>
+        </div>
+      )}
+      
+      {/* divider */}
+      <div
+        style={{
+          position: "absolute",
+          left: 28,
+          right: 28,
+          top: 152,
+          height: 1,
+          background: "#E5E7EB",
+        }}
+      />
+
+      {/* footer */}
+      {!current.completed && !current.charging && (
+      <div
+        style={{
+          position: "absolute",
+          left: 28,
+          right: 28,
+          top: 165,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+        }}
+      >
+          <span
+            style={{
+              fontSize: 12,
+              color: "#888",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              flex: 1,
+            }}
+          >
+            {current.bottom}
+          </span>
+
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onGoToSession?.();
+            }}
+          style={{
+            background: "#FEF3C7",
+            padding: "8px 14px",
+            borderRadius: 999,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B">
+              <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
+            </svg>
+
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#F59E0B",
+              }}
+            >
               Tap to charge
             </span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* charging footer */}
+      {current.charging && (
+        <div
+          style={{
+            position: "absolute",
+            left: 32,
+            top: 166,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <div
+            style={{
+              width: 18,
+              height: 18,
+              borderRadius: "50%",
+              border: "2px solid #D1D5DB",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 10,
+              color: "#9CA3AF",
+            }}
+          >
+            ⏱
+          </div>
+
+          <span
+            style={{
+              fontSize: 14,
+              color: "#9CA3AF",
+              fontWeight: 600,
+            }}
+          >
+            {current.bottom}
+          </span>
+
+          <span
+            style={{
+              fontSize: 16,
+              color: "#243CFF",
+              fontWeight: 700,
+            }}
+          >
+            {current.eta}
+          </span>
+        </div>
+      )}
+
+      {/* completed footer */}
+      {current.completed && (
+        <div
+        style={{
+          position: "absolute",
+          left: 28,
+          right: 28,
+          top: 162,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: 12,
+                color: "#888",
+                fontWeight: 600,
+              }}
+            >
+              Last charge
+            </div>
+
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                color: "#222",
+              }}
+            >
+              100%
+            </div>
+          </div>
+
+          <div style={{ textAlign: "right" }}>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                color: "#666",
+              }}
+            >
+              3h 20m
+            </div>
+
+            <div
+              style={{
+                fontSize: 12,
+                color: "#AAA",
+                fontWeight: 600,
+              }}
+            >
+              Today, 09:15AM
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -260,7 +600,7 @@ function ClockCard() {
   const ampm = time.getHours() >= 12 ? "PM" : "AM";
   return (
     <div style={{ position:"absolute", width:332, height:164, left:897, top:64, background:"#fff", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20 }}>
-      <div style={{ position:"absolute", left:33, top:28, fontFamily:"Roboto", fontWeight:500, fontSize:14, color:"#FFA500" }}>GOOD MORNING</div>
+      <div style={{ position:"absolute", left:33, top:20, fontFamily:"Roboto", fontWeight:500, fontSize:14, color:"#FFA500" }}>GOOD MORNING</div>
       <div style={{ position:"absolute", left:33, top:50, fontFamily:"Inter", fontWeight:700, fontSize:32, color:"#000" }}>{String(hh).padStart(2,"0")}:{mm}</div>
       <div style={{ position:"absolute", left:139, top:57, fontFamily:"Roboto", fontWeight:500, fontSize:14, color:"#FFA500" }}>{ampm}</div>
       <div style={{ position:"absolute", right:20, top:20 }}>
@@ -288,8 +628,8 @@ function WeatherCard() {
   return (
     <div style={{ position:"absolute", width:332, height:138, left:896, top:254, background:"linear-gradient(135deg,#e0f2fe 0%,#f0fdf4 100%)", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20, overflow:"hidden" }}>
       <div style={{ position:"absolute", left:20, top:16, fontFamily:"Inter", fontWeight:600, fontSize:20, color:"#000" }}>Weather</div>
-      <div style={{ position:"absolute", right:20, top:8,  fontFamily:"Inter", fontWeight:600, fontSize:40, color:"#000" }}>24<span style={{ fontSize:24, fontWeight:700 }}>°C</span></div>
-      <div style={{ position:"absolute", left:20, top:52, fontSize:36 }}>🌤</div>
+      <div style={{ position:"absolute", right:20, top:18,  fontFamily:"Inter", fontWeight:600, fontSize:40, color:"#000" }}>24<span style={{ fontSize:24, fontWeight:700 }}>°C</span></div>
+      <div style={{ position:"absolute", left:20, top:60, fontSize:36 }}>🌤</div>
       <div style={{ position:"absolute", right:20, top:56, fontFamily:"Inter", fontWeight:500, fontSize:16, color:"#808080" }}>Cloudy</div>
       <div style={{ position:"absolute", right:20, top:80, fontFamily:"Inter", fontWeight:500, fontSize:12, color:"#808080" }}>20°C / 26°C</div>
     </div>
@@ -335,7 +675,7 @@ function MusicCard() {
       </div>
       <img src={currentSong.image} alt="" style={{ position: "absolute", left: 26, top: 48, width: 72, height: 72, borderRadius: 12, objectFit: "cover"}} />
       <div style={{ position: "absolute", left: 116, top: 56, fontFamily: "Inter", fontWeight: 700, fontSize: 16, color: "#fff", }} > {currentSong.title}</div>
-      <div style={{ position:"absolute", left:118, top:70, fontFamily:"Inter", fontWeight:700, fontSize:12, color:"#fff", opacity:0.6 }}>{currentSong.artist}</div>
+      <div style={{ position:"absolute", left:118, top:80, fontFamily:"Inter", fontWeight:700, fontSize:12, color:"#fff", opacity:0.6 }}>{currentSong.artist}</div>
       <div style={{ position:"absolute", left:26, top:143, width:281, height:8, background:"rgba(255,255,255,0.3)", borderRadius:4 }}>
         <div style={{ position:"absolute", left:0, top:0, width:`${pct}%`, height:"100%", background:"#fff", borderRadius:4, transition:"width 1s linear" }}/>
         <div style={{ position:"absolute", left:`calc(${pct}% - 5px)`, top:-1, width:10, height:10, background:"#fff", borderRadius:"50%" }}/>
