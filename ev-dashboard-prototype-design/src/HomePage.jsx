@@ -91,51 +91,83 @@ function MapArea() {
 }
 
 /* ── Battery Card ────────────────────────────────────────────────── */
-function BatteryCard() {
+function BatteryCard({ onGoToSession }) {
   const [status, setStatus] = useState(0);
-
+ 
   const states = [
-    { label: "Not connected", sub: "Last charged 2h ago", color: "#9CA3AF", fill: 0 },
-    { label: "Connected", sub: "Ready to charge", color: "#F59E0B", fill: 40 },
-    { label: "Charging", sub: "Fast charging active", color: "#49E83D", fill: 78 },
+    { label: "Not connected", sub: "Last charged 2h ago",  color: "#9CA3AF", fill: 0  },
+    { label: "Connected",     sub: "Ready to charge",       color: "#F59E0B", fill: 40 },
+    { label: "Charging",      sub: "Fast charging active",  color: "#49E83D", fill: 78 },
   ];
-
+ 
   const current = states[status];
-
+ 
+  const handleClick = () => {
+    if (status === 1) {
+      onGoToSession();
+    } else {
+      setStatus((s) => (s + 1) % 3);
+    }
+  };
+ 
   return (
     <div
-      onClick={() => setStatus((s) => (s + 1) % 3)}
-      style={{ position: "absolute", width: 356, height: 240, left: 512, top: 64, background: "#fff", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20, cursor: "pointer", transition: "0.2s" }} >
-      <div style={{ position: "absolute", left: 30, top: 22, fontFamily: "Inter", fontWeight: 600, fontSize: 24 }}>Battery</div>
-
-      {/* Battery */}
+      onClick={handleClick}
+      style={{
+        position: "absolute", width: 356, height: 210, left: 512, top: 64,
+        background: "#fff",
+        boxShadow: "0px 6px 20px rgba(0,0,0,0.1)",
+        borderRadius: 20,
+        cursor: "pointer",
+        transition: "0.2s",
+      }}
+    >
+      <div style={{ position: "absolute", left: 30, top: 22, fontFamily: "Inter", fontWeight: 600, fontSize: 24 }}>
+        Battery
+      </div>
+ 
+      {/* Battery icon */}
       <div style={{ position: "absolute", left: 30, top: 55 }}>
         <svg width="120" height="60" viewBox="0 0 120 60">
-          <rect x="2" y="8" width="104" height="44" rx="6" stroke={current.color} strokeWidth="3" fill="none" />
-          <rect x="106" y="20" width="10" height="20" rx="3" fill={current.color} />
-          <rect x="6" y="12" width={current.fill} height="36" rx="4" fill={current.color} />
+          <rect x="2"   y="8"  width="104"         height="44" rx="6" stroke={current.color} strokeWidth="3" fill="none" />
+          <rect x="106" y="20" width="10"           height="20" rx="3" fill={current.color} />
+          <rect x="6"   y="12" width={current.fill} height="36" rx="4" fill={current.color} />
         </svg>
       </div>
-
+ 
       {/* Percentage */}
-      <div style={{ position: "absolute", left: 199, top: 65, fontFamily: "Inter", fontWeight: 700, fontSize: 36 }}>{current.fill}%</div>
-
+      <div style={{ position: "absolute", left: 199, top: 65, fontFamily: "Inter", fontWeight: 700, fontSize: 36 }}>
+        {current.fill}%
+      </div>
+ 
       {/* Range */}
-      <div style={{ position: "absolute", left: 45, top: 145, display: "flex", alignItems: "center", gap: 6 }}>
+      <div style={{ position: "absolute", left: 45, top: 120, display: "flex", alignItems: "center", gap: 6 }}>
         <div style={{ width: 10, height: 10, borderRadius: "50%", background: current.color }} />
         <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 20, color: current.color }}>
           {Math.round(current.fill * 4)} km available
         </span>
       </div>
-
+ 
       {/* Divider */}
-      <div
-        style={{ position: "absolute", left: 37, top: 194, width: 283, height: 1, background: "rgba(128,128,128,0.3)" }} />
-
-      {/* Status text */}
-      <div
-        style={{ position: "absolute", left: 45, top: 211, fontFamily: "Inter", fontWeight: 600, fontSize: 15, color: "#808080" }} >
-        {current.label} · {current.sub}
+      <div style={{ position: "absolute", left: 37, top: 150, width: 283, height: 1, background: "rgba(128,128,128,0.3)" }} />
+ 
+      {/* Status row */}
+      <div style={{ position: "absolute", left: 0, top: 155, right: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px" }}>
+        <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 15, color: "#808080" }}>
+          {current.label} · {current.sub}
+        </span>
+ 
+        {/* Show "Tap to charge →" hint only when Connected */}
+        {status === 1 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#FEF3C7", borderRadius: 20, padding: "8px 14px" }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 12, color: "#F59E0B" }}>
+              Tap to charge
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -156,7 +188,7 @@ function ClimateCard({ temp, setTemp }) {
   const bars = [10, 14, 18];
 
   return (
-    <div style={{ position: "absolute", width: 356, height: 142, left: 512, top: 320, background: "rgba(255,255,255,0.9)", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20 }}>
+    <div style={{ position: "absolute", width: 356, height: 142, left: 512, top: 300, background: "rgba(255,255,255,0.9)", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20 }}>
       <div style={{ position: "absolute", left: 28, top: 10, fontFamily: "Inter", fontWeight: 600, fontSize: 24, color: "#000"}}>Climate</div>
       <div style={{ position: "absolute", right: 20, top: 5, fontFamily: "Inter", fontSize: 32, color: "#000" }}>›</div>
       <div style={{ position: "absolute", left: 31, top: 51, fontFamily: "Inter", fontWeight: 500, fontSize: 16, color: "#808080" }}>Auto</div>
@@ -185,7 +217,7 @@ function ClimateCard({ temp, setTemp }) {
 /* ── Trip Card ───────────────────────────────────────────────────── */
 function TripCard() {
   return (
-    <div style={{ position:"absolute", width:356, height:172, left:512, top:480, background:"rgba(255,255,255,0.95)", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20 }}>
+    <div style={{ position:"absolute", width:356, height:180, left:512, top:470, background:"rgba(255,255,255,0.95)", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20 }}>
       <div style={{ position:"absolute", width:40, height:40, left:21, top:8, background:"#F3EDFF", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round">
           <path d="M3 17l6-12 6 12"/><path d="M21 7V17"/><path d="M17 7v10"/>
@@ -266,11 +298,34 @@ function WeatherCard() {
 
 /* ── Music Card ──────────────────────────────────────────────────── */
 function MusicCard() {
+    const songs = [
+    {
+      title: "Sunset Drive",
+      artist: "Ocean Eyes",
+      duration: 225,
+      image:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400",
+    },
+    {
+      title: "Night Fall",
+      artist: "Lowlight",
+      duration: 210,
+      image:
+        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=400",
+    },
+  ];
+  
+  const [songIndex, setSongIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const [progress, setProgress] = useState(84);
-  const total = 225;
-  useEffect(() => { const id = setInterval(() => { if (playing) setProgress(p => (p+1) % total); }, 1000); return () => clearInterval(id); }, [playing]);
-  const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  const [progress, setProgress] = useState(0);
+
+  const currentSong = songs[songIndex];
+  const total = currentSong.duration;
+
+  useEffect(() => { const id = setInterval(() => { if (playing) { setProgress((p) => { if (p >= total) { nextSong(); return 0; } return p + 1; }); } }, 1000); return () => clearInterval(id); }, [playing, total]);
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  const nextSong = () => { setSongIndex((prev) => (prev + 1) % songs.length); setProgress(0);};
+  const prevSong = () => { setSongIndex((prev) => prev === 0 ? songs.length - 1 : prev - 1 ); setProgress(0);};
   const pct = (progress/total)*100;
   return (
     <div style={{ position:"absolute", width:334, height:229, left:895, top:425, background:"linear-gradient(134.6deg,#6A8DFF 1.6%,#B8A6FF 50%)", borderRadius:20, overflow:"hidden", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)" }}>
@@ -278,11 +333,9 @@ function MusicCard() {
       <div style={{ position:"absolute", right:18, top:12, display:"flex", gap:3 }}>
         {[13,18,22].map((h,i) => <div key={i} style={{ width:3, height:h, background:"rgba(255,255,255,0.8)", borderRadius:2, alignSelf:"flex-end" }}/>)}
       </div>
-      <div style={{ position:"absolute", left:26, top:47, width:70, height:70, background:"linear-gradient(135deg,#ff6b6b,#ffa500)", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
-        <span style={{ fontSize:28 }}>🎵</span>
-      </div>
-      <div style={{ position:"absolute", left:118, top:47, fontFamily:"Inter", fontWeight:700, fontSize:16, color:"#fff" }}>Sunset Drive</div>
-      <div style={{ position:"absolute", left:118, top:70, fontFamily:"Inter", fontWeight:700, fontSize:12, color:"#fff", opacity:0.6 }}>Ocean Eyes</div>
+      <img src={currentSong.image} alt="" style={{ position: "absolute", left: 26, top: 48, width: 72, height: 72, borderRadius: 12, objectFit: "cover"}} />
+      <div style={{ position: "absolute", left: 116, top: 56, fontFamily: "Inter", fontWeight: 700, fontSize: 16, color: "#fff", }} > {currentSong.title}</div>
+      <div style={{ position:"absolute", left:118, top:70, fontFamily:"Inter", fontWeight:700, fontSize:12, color:"#fff", opacity:0.6 }}>{currentSong.artist}</div>
       <div style={{ position:"absolute", left:26, top:143, width:281, height:8, background:"rgba(255,255,255,0.3)", borderRadius:4 }}>
         <div style={{ position:"absolute", left:0, top:0, width:`${pct}%`, height:"100%", background:"#fff", borderRadius:4, transition:"width 1s linear" }}/>
         <div style={{ position:"absolute", left:`calc(${pct}% - 5px)`, top:-1, width:10, height:10, background:"#fff", borderRadius:"50%" }}/>
@@ -290,16 +343,16 @@ function MusicCard() {
       <div style={{ position:"absolute", left:26,  top:157, fontFamily:"Inter", fontWeight:400, fontSize:11, color:"#fff" }}>{fmt(progress)}</div>
       <div style={{ position:"absolute", right:26, top:157, fontFamily:"Inter", fontWeight:400, fontSize:11, color:"#fff" }}>{fmt(total)}</div>
       <div style={{ position:"absolute", left:0, right:0, top:178, display:"flex", alignItems:"center", justifyContent:"center", gap:24 }}>
-        <button style={{ background:"none", border:"none", cursor:"pointer", padding:0 }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg>
+        <button onClick={prevSong} style={{ background: "none", border: "none", cursor: "pointer" }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M6 6h2v12H6zm3.5 6L18 18V6z" /></svg>
         </button>
         <button onClick={() => setPlaying(p => !p)} style={{ width:50, height:50, borderRadius:"50%", border:"2.5px solid rgba(255,255,255,0.6)", background:"transparent", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>
           {playing
             ? <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
             : <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>}
         </button>
-        <button style={{ background:"none", border:"none", cursor:"pointer", padding:0 }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        <button onClick={nextSong} style={{ background: "none", border: "none", cursor: "pointer" }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
         </button>
       </div>
     </div>
@@ -307,13 +360,13 @@ function MusicCard() {
 }
 
 /* ── Page Root ───────────────────────────────────────────────────── */
-export default function HomePage({ navActive, setNavActive }) {
+export default function HomePage({ navActive, setNavActive, onGoToSession }) {
   const [temp, setTemp] = useState(24);
   return (
     <div style={{ position:"relative", width:1280, height:800, background:"#F8F9FB", overflow:"hidden", fontFamily:"Inter, sans-serif" }}>
       <TopBar />
       <MapArea />
-      <BatteryCard />
+      <BatteryCard onGoToSession={onGoToSession} />
       <ClimateCard temp={temp} setTemp={setTemp} />
       <TripCard />
       <ClockCard />

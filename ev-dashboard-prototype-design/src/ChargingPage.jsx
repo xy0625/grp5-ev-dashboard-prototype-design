@@ -168,32 +168,101 @@ function PreCondCard() {
   );
 }
 
-/* ── Station Card ────────────────────────────────────────────────── */
-function StationCard({ name, distance, available, total, availColor, power, navColor, navigateActive }) {
+/* ── Station Card — pixel-accurate to Figma image 1 ─────────────── */
+function StationCard({ name, distance, available, total, availColor, power, navColor, navigateActive, onNavigate }) {
   const [liked, setLiked] = useState(false);
+ 
   return (
-    <div style={{ width:350, background:"#fff", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20, padding:"16px 20px", position:"relative", flexShrink:0 }}>
-      <button onClick={() => setLiked(v => !v)} style={{ position:"absolute", top:14, right:16, background:"none", border:"none", cursor:"pointer", padding:0 }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill={liked?"#ef4444":"none"} stroke={liked?"#ef4444":"#808080"} strokeWidth="2">
+    <div style={{
+      width: "100%",
+      background: "#fff",
+      boxShadow: "0px 6px 20px rgba(0,0,0,0.1)",
+      borderRadius: 20,
+      padding: "14px 16px",
+      boxSizing: "border-box",
+      position: "relative",
+    }}>
+      {/* Heart button — top right */}
+      <button
+        onClick={() => setLiked(v => !v)}
+        style={{ position:"absolute", top:14, right:14, background:"none", border:"none", cursor:"pointer", padding:0 }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill={liked ? "#ef4444" : "none"}
+          stroke={liked ? "#ef4444" : "#9ca3af"}
+          strokeWidth="2">
           <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
         </svg>
       </button>
-      <div style={{ fontFamily:"Inter", fontWeight:700, fontSize:20, color:"#000", marginBottom:4 }}>{name}</div>
-      <div style={{ display:"flex", alignItems:"center", background:"#E8F9EF", borderRadius:35, padding:"2px 10px", marginBottom:6 }}>
-        <span style={{ fontFamily:"Inter", fontWeight:500, fontSize:12, color:"#16A34A" }}>Fast</span>
+ 
+      {/* Station name */}
+      <div style={{ fontFamily:"Inter", fontWeight:700, fontSize:18, color:"#000", marginBottom:6, paddingRight:28 }}>
+        {name}
       </div>
-      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8 }}>
-        <span style={{ fontFamily:"Inter", fontWeight:600, fontSize:14, color:"#000" }}>{distance}</span>
-        <span style={{ width:6, height:6, borderRadius:"50%", background:"#000", display:"inline-block" }}/>
-        <span style={{ background:availColor, borderRadius:10, padding:"2px 8px", fontFamily:"Inter", fontWeight:600, fontSize:14, color:"#000" }}>{available}/{total} available</span>
-      </div>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#16A34A"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <span style={{ fontFamily:"Inter", fontWeight:600, fontSize:12, color:"#808080" }}>Up to {power}</span>
+ 
+      {/* Main row: left info + right nav button */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
+ 
+        {/* Left: Fast badge, distance·avail, power */}
+        <div style={{ display:"flex", flexDirection:"column", gap:5, minWidth:0 }}>
+          {/* Fast badge */}
+          <div style={{ alignSelf:"flex-start", background:"#E8F9EF", borderRadius:35, padding:"2px 10px" }}>
+            <span style={{ fontFamily:"Inter", fontWeight:500, fontSize:12, color:"#16A34A" }}>Fast</span>
+          </div>
+ 
+          {/* Distance · availability */}
+          <div style={{ display:"flex", alignItems:"center", gap:5, flexWrap:"nowrap" }}>
+            <span style={{ fontFamily:"Inter", fontWeight:600, fontSize:13, color:"#000", whiteSpace:"nowrap" }}>
+              {distance}
+            </span>
+            <span style={{ width:5, height:5, borderRadius:"50%", background:"#374151", flexShrink:0, display:"inline-block" }}/>
+            <span style={{
+              background: availColor,
+              borderRadius: 8,
+              padding: "2px 8px",
+              fontFamily: "Inter",
+              fontWeight: 600,
+              fontSize: 13,
+              color: "#000",
+              whiteSpace: "nowrap",
+            }}>
+              {available}/{total} available
+            </span>
+          </div>
+ 
+          {/* Power */}
+          <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#16A34A">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <span style={{ fontFamily:"Inter", fontWeight:600, fontSize:12, color:"#808080" }}>
+              Up to {power}
+            </span>
+          </div>
         </div>
-        <div style={{ width:180, height:56, background:navColor, borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", boxShadow: navigateActive?"0px 4px 4px rgba(0,0,0,0.25)":"none" }}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={navigateActive?"#fff":"#9ca3af"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+ 
+        {/* Right: Navigate button */}
+        <div
+          onClick={navigateActive && onNavigate ? onNavigate : undefined}
+          style={{
+            width: 130,
+            height: 72,
+            background: navColor,
+            borderRadius: 12,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: navigateActive ? "pointer" : "default",
+            boxShadow: navigateActive ? "0px 4px 8px rgba(0,0,0,0.2)" : "none",
+            flexShrink: 0,
+            transition: "opacity 0.15s",
+          }}
+          onMouseEnter={e => { if (navigateActive) e.currentTarget.style.opacity="0.88"; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity="1"; }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+            stroke={navigateActive ? "#fff" : "#c4c4c4"}
+            strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="3 11 22 2 13 21 11 13 3 11"/>
           </svg>
         </div>
@@ -203,7 +272,7 @@ function StationCard({ name, distance, available, total, availColor, power, navC
 }
 
 /* ── Nearby Stations Panel ───────────────────────────────────────── */
-function NearbyStations() {
+function NearbyStations({ onStartSession }) {
   const stations = [
     { name:"Station A", distance:"12km away",  available:2, total:4, availColor:"#AEF359", power:"120 kW", navColor:"#16A34A", navigateActive:true  },
     { name:"Station B", distance:"28km away",  available:1, total:2, availColor:"#AEF359", power:"60 kW",  navColor:"#D9D9D9", navigateActive:false },
@@ -211,10 +280,26 @@ function NearbyStations() {
     { name:"Station D", distance:"120km away", available:0, total:4, availColor:"#FF5300", power:"120 kW", navColor:"#D9D9D9", navigateActive:false },
   ];
   return (
-    <div style={{ position:"absolute", width:419, left:760, top:100, bottom:140 }}>
-      <div style={{ fontFamily:"Inter", fontWeight:600, fontSize:20, color:"#000", marginBottom:14, paddingLeft:2 }}>Nearby Stations</div>
-      <div style={{ height:495, overflowY:"auto", display:"flex", flexDirection:"column", gap:14, paddingRight:15, scrollbarWidth:"thin", scrollbarColor:"#E8F9EF #D9D9D9" }}>
-        {stations.map(s => <StationCard key={s.name} {...s}/>)}
+    <div style={{ position:"absolute", width:430, left:756, top:90, bottom:148 }}>
+      {/* Title */}
+      <div style={{ fontFamily:"Inter", fontWeight:600, fontSize:20, color:"#000", marginBottom:10 }}>
+        Nearby Stations
+      </div>
+ 
+      {/* Scrollable list */}
+      <div style={{
+        height: 535,
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        paddingRight: 10,
+        scrollbarWidth: "thin",
+        scrollbarColor: "#c9d0e0 transparent",
+      }}>
+        {stations.map(s => (
+          <StationCard key={s.name} {...s} onNavigate={onStartSession} />
+        ))}
       </div>
     </div>
   );
