@@ -19,55 +19,11 @@ function TopBar() {
         </svg>
       </div>
       {/* AI Assistant */}
-      <div
-        style={{
-          position: "absolute",
-          left: 500,
-          top: 8,
-          width: 300,
-          height: 48,
-
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-
-          padding: "0 18px",
-
-          background: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(14px)",
-
-          border: "1px solid rgba(255,255,255,0.6)",
-
-          borderRadius: 999,
-
-          boxShadow: "0px 4px 20px rgba(99,102,241,0.12)",
-        }}
-      >
+      <div style={{ position: "absolute", left: 500, top: 8, width: 300, height: 48, display: "flex", alignItems: "center", gap: 14, padding: "0 18px", background: "rgba(255,255,255,0.7)", backdropFilter: "blur(14px)", border: "1px solid rgba(255,255,255,0.6)", borderRadius: 999, boxShadow: "0px 4px 20px rgba(99,102,241,0.12)" }}>
+        
         {/* glowing mic */}
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-
-            background:
-              "linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)",
-
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-
-            boxShadow: "0px 0px 12px rgba(99,102,241,0.5)",
-          }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="2"
-          >
+        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0px 0px 12px rgba(99,102,241,0.5)" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
             <path d="M12 15a3 3 0 003-3V7a3 3 0 10-6 0v5a3 3 0 003 3z" />
             <path d="M19 11a7 7 0 01-14 0" />
             <line x1="12" y1="18" x2="12" y2="22" />
@@ -75,41 +31,20 @@ function TopBar() {
         </div>
 
         {/* text */}
-        <div
-          style={{
-            fontFamily: "Inter",
-            fontWeight: 500,
-            fontSize: 16,
-            color: "#4B4E53",
-
-            letterSpacing: "0.2px",
-          }}
-        >
-          Ask EV Assistant...
-        </div>
+        <div style={{ fontFamily: "Inter", fontWeight: 500, fontSize: 16, color: "#4B4E53", letterSpacing: "0.2px" }}>Ask EV Assistant...</div>
 
         {/* animated dots */}
         <div
-          style={{
-            marginLeft: "auto",
-            display: "flex",
-            gap: 4,
-          }}
-        >
+          style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#6366F1",
-                opacity: 0.5 + i * 0.2,
-              }}
+              style={{ width: 6, height: 6, borderRadius: "50%", background: "#6366F1", opacity: 0.5 + i * 0.2}}
             />
           ))}
         </div>
       </div>
+
       {/* Profile */}
       <div style={{ position:"absolute", left:1176, top:9, width:49, height:49, background:"#F3EDFF", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2">
@@ -124,26 +59,10 @@ function TopBar() {
 /* ── Map Area ────────────────────────────────────────────────────── */
 function MapArea() {
   return (
-    <div style={{ position:"absolute", width:442, height:593, left:45, top:62, background:"#fff", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20, overflow:"hidden" }}>
-      <svg width="442" height="593" viewBox="0 0 442 593" style={{ display:"block" }}>
-        <rect width="442" height="593" fill="#e8ecf0"/>
-        <rect x="0"   y="80"  width="442" height="90" fill="#d4d8de" opacity="0.7"/>
-        <rect x="160" y="0"   width="90"  height="593" fill="#d4d8de" opacity="0.7"/>
-        <rect x="0"   y="240" width="442" height="60" fill="#d4d8de" opacity="0.5"/>
-        <rect x="60"  y="0"   width="60"  height="300" fill="#d4d8de" opacity="0.4"/>
-        <rect x="290" y="140" width="152" height="55"  fill="#d4d8de" opacity="0.4"/>
-        <rect x="20"  y="350" width="110" height="60"  fill="#c8ccd2" opacity="0.5"/>
-        <rect x="280" y="310" width="140" height="80"  fill="#c8ccd2" opacity="0.5"/>
-        <polyline points="205,0 205,160 340,160 340,593" stroke="#6366F1" strokeWidth="7" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"/>
-        <circle cx="205" cy="300" r="12" fill="#6366F1" opacity="0.3"/>
-        <circle cx="205" cy="300" r="8"  fill="#6366F1"/>
-        <circle cx="205" cy="300" r="4"  fill="#fff"/>
-        <text x="170" y="395" fill="#6b7280" fontSize="11" fontFamily="Inter,sans-serif">Rock Road</text>
-        <text x="290" y="200" fill="#6b7280" fontSize="10" fontFamily="Inter,sans-serif">Wisma Saberkas</text>
-        <text x="15"  y="136" fill="#6b7280" fontSize="10" fontFamily="Inter,sans-serif">Layang-Layang Rd</text>
-        <circle cx="340" cy="540" r="10" fill="#f59e0b" opacity="0.95"/>
-        <text x="300" y="565" fill="#f59e0b" fontSize="10" fontFamily="Inter,sans-serif">Vivacity Mall</text>
-      </svg>
+    <div
+      style={{ position: "absolute", width: 442, height: 593, left: 45, top: 62, background: "#fff", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20, overflow: "hidden" }}>
+      {/* Map Image */}
+      <img src="/map.jpg" alt="Map" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 
       {/* Turn instruction */}
       <div style={{ position:"absolute", width:234, top:22, left:28, background:"#F5F5F5", boxShadow:"0px 6px 20px rgba(0,0,0,0.25)", borderRadius:20, display:"flex", alignItems:"center", gap:12, padding:"14px 16px" }}>
@@ -202,35 +121,13 @@ function BatteryCard({ onGoToSession }) {
         <svg width="120" height="60" viewBox="0 0 120 60">
           
           {/* outline */}
-          <rect
-            x="2"
-            y="8"
-            width="104"
-            height="44"
-            rx="10"
-            stroke={current.color}
-            strokeWidth="4"
-            fill="none"
-          />
+          <rect x="2" y="8" width="104" height="44" rx="10" stroke={current.color} strokeWidth="4" fill="none"/>
 
           {/* battery head */}
-          <rect
-            x="106"
-            y="20"
-            width="10"
-            height="20"
-            rx="3"
-            fill={current.color}
-          />
+          <rect x="106" y="20" width="10" height="20" rx="3" fill={current.color}/>
 
           {/* battery fill */}
-          <rect
-            x="8"
-            y="14"
-            width={(current.percent / 100) * 88}
-            height="32"
-            rx="6"
-            fill={current.color}
+          <rect x="8" y="14" width={(current.percent / 100) * 88} height="32" rx="6" fill={current.color}
             style={{
               transition: "0.4s ease",
               filter: current.charging
@@ -250,121 +147,33 @@ function BatteryCard({ onGoToSession }) {
       {/* middle row */}
       {!current.completed && (
         <div
-          style={{
-            position: "absolute",
-            left: 32,
-            top: 122,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
+          style={{ position: "absolute", left: 32, top: 122, display: "flex", alignItems: "center", gap: 8 }}>
           {current.charging ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#49E83D">
               <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
             </svg>
           ) : (
-            <div
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: current.color,
-              }}
-            />
-          )}
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: current.color }}/>)}
 
-          <span
-            style={{
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 16,
-              color: current.subColor,
-            }}
-          >
-            {current.text}
-          </span>
+          <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 16, color: current.subColor,}}>{current.text}</span>
         </div>
       )}
 
       {/* completed row */}
       {current.completed && (
-        <div
-          style={{
-            position: "absolute",
-            left: 32,
-            top: 122,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
-          <div
-            style={{
-              width: 14,
-              height: 14,
-              borderRadius: "50%",
-              border: "2px solid #49E83D",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 10,
-              color: "#49E83D",
-            }}
-          >
-            ✓
-          </div>
-
+        <div style={{ position: "absolute", left: 32, top: 122, display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #49E83D", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#49E83D" }}>✓</div>
           <span
-            style={{
-              fontFamily: "Inter",
-              fontWeight: 600,
-              fontSize: 15,
-              color: "#49E83D",
-            }}
-          >
-            Charge Completed
-          </span>
-        </div>
-      )}
+            style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 15, color: "#49E83D" }}>Charge Completed</span></div>)}
       
       {/* divider */}
-      <div
-        style={{
-          position: "absolute",
-          left: 28,
-          right: 28,
-          top: 152,
-          height: 1,
-          background: "#E5E7EB",
-        }}
-      />
+      <div style={{ position: "absolute", left: 28, right: 28, top: 152, height: 1, background: "#E5E7EB" }}/>
 
       {/* footer */}
       {!current.completed && !current.charging && (
-      <div
-        style={{
-          position: "absolute",
-          left: 28,
-          right: 28,
-          top: 165,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
+      <div style={{ position: "absolute", left: 28, right: 28, top: 165, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <span
-            style={{
-              fontSize: 12,
-              color: "#888",
-              fontWeight: 500,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              flex: 1,
-            }}
-          >
+            style={{ fontSize: 12, color: "#888", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>
             {current.bottom}
           </span>
 
@@ -373,28 +182,12 @@ function BatteryCard({ onGoToSession }) {
               e.stopPropagation();
               onGoToSession?.();
             }}
-          style={{
-            background: "#FEF3C7",
-            padding: "8px 14px",
-            borderRadius: 999,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-          >
+          style={{ background: "#FEF3C7", padding: "8px 14px", borderRadius: 999, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", flexShrink: 0 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B">
               <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
             </svg>
 
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: "#F59E0B",
-              }}
-            >
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B" }}>
               Tap to charge
             </span>
           </div>
@@ -413,99 +206,23 @@ function BatteryCard({ onGoToSession }) {
             gap: 8,
           }}
         >
-          <div
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: "50%",
-              border: "2px solid #D1D5DB",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 10,
-              color: "#9CA3AF",
-            }}
-          >
-            ⏱
-          </div>
-
-          <span
-            style={{
-              fontSize: 14,
-              color: "#9CA3AF",
-              fontWeight: 600,
-            }}
-          >
-            {current.bottom}
-          </span>
-
-          <span
-            style={{
-              fontSize: 16,
-              color: "#243CFF",
-              fontWeight: 700,
-            }}
-          >
-            {current.eta}
-          </span>
+          <div style={{ width: 18, height: 18, borderRadius: "50%", border: "2px solid #D1D5DB", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#9CA3AF" }}>⏱</div>
+          <span style={{ fontSize: 14, color: "#9CA3AF", fontWeight: 600, }}>{current.bottom}</span>
+          <span style={{ fontSize: 16, color: "#243CFF", fontWeight: 700 }}>{current.eta}</span>
         </div>
       )}
 
       {/* completed footer */}
       {current.completed && (
-        <div
-        style={{
-          position: "absolute",
-          left: 28,
-          right: 28,
-          top: 162,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}
-        >
+        <div style={{ position: "absolute", left: 28, right: 28, top: 162, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div
-              style={{
-                fontSize: 12,
-                color: "#888",
-                fontWeight: 600,
-              }}
-            >
-              Last charge
-            </div>
-
-            <div
-              style={{
-                fontSize: 15,
-                fontWeight: 700,
-                color: "#222",
-              }}
-            >
-              100%
-            </div>
+            <div style={{ fontSize: 12, color: "#888", fontWeight: 600 }}>Last charge</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#222" }} >100%</div>
           </div>
 
           <div style={{ textAlign: "right" }}>
-            <div
-              style={{
-                fontSize: 15,
-                fontWeight: 700,
-                color: "#666",
-              }}
-            >
-              3h 20m
-            </div>
-
-            <div
-              style={{
-                fontSize: 12,
-                color: "#AAA",
-                fontWeight: 600,
-              }}
-            >
-              Today, 09:15AM
-            </div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#666" }}>3h 20m</div>
+            <div style={{ fontSize: 12, color: "#AAA", fontWeight: 600 }}>Today, 09:15AM</div>
           </div>
         </div>
       )}
@@ -627,9 +344,9 @@ function ClockCard() {
 function WeatherCard() {
   return (
     <div style={{ position:"absolute", width:332, height:138, left:896, top:254, background:"linear-gradient(135deg,#e0f2fe 0%,#f0fdf4 100%)", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20, overflow:"hidden" }}>
+      <img src="/weather.png" alt="Map" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 25%"}} />
       <div style={{ position:"absolute", left:20, top:16, fontFamily:"Inter", fontWeight:600, fontSize:20, color:"#000" }}>Weather</div>
       <div style={{ position:"absolute", right:20, top:18,  fontFamily:"Inter", fontWeight:600, fontSize:40, color:"#000" }}>24<span style={{ fontSize:24, fontWeight:700 }}>°C</span></div>
-      <div style={{ position:"absolute", left:20, top:60, fontSize:36 }}>🌤</div>
       <div style={{ position:"absolute", right:20, top:56, fontFamily:"Inter", fontWeight:500, fontSize:16, color:"#808080" }}>Cloudy</div>
       <div style={{ position:"absolute", right:20, top:80, fontFamily:"Inter", fontWeight:500, fontSize:12, color:"#808080" }}>20°C / 26°C</div>
     </div>
