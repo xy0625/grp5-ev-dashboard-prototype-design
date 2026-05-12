@@ -92,7 +92,7 @@ function MapArea() {
 }
 
 /* ── Battery Card ────────────────────────────────────────────────── */
-function BatteryCard({ onGoToSession }) {
+function BatteryCard({ onGoToSession, setActive }) {
   const [status, setStatus] = useState(0);
  
   const states = [
@@ -114,7 +114,7 @@ function BatteryCard({ onGoToSession }) {
       <div style={{ position: "absolute", left: 30, top: 22, fontFamily: "Inter", fontWeight: 600, fontSize: 24 }}>{current.title}</div>
       
       {/* dots */}
-      <div style={{ position: "absolute", right: 22, top: 10, fontSize: 28, color: "#222"}}>…</div>
+      <button onClick={() => setActive(1)} style={{ position: "absolute", right: 22, top: 10, background: "none", border: "none", fontSize: 28, color: "#222", cursor: "pointer" }}>…</button>
 
       {/* Battery icon */}
       <div style={{ position: "absolute", left: 30, top: 55 }}>
@@ -231,7 +231,7 @@ function BatteryCard({ onGoToSession }) {
 }
 
 /* ── Climate Card ────────────────────────────────────────────────── */
-function ClimateCard({ temp, setTemp }) {
+function ClimateCard({ temp, setTemp, setActive }) {
   const [activeBars, setActiveBars] = useState([true, false, false]);
 
   const toggleBar = (index) => {
@@ -247,7 +247,7 @@ function ClimateCard({ temp, setTemp }) {
   return (
     <div style={{ position: "absolute", width: 356, height: 142, left: 512, top: 300, background: "rgba(255,255,255,0.9)", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20 }}>
       <div style={{ position: "absolute", left: 28, top: 10, fontFamily: "Inter", fontWeight: 600, fontSize: 24, color: "#000"}}>Climate</div>
-      <div style={{ position: "absolute", right: 20, top: 5, fontFamily: "Inter", fontSize: 32, color: "#000" }}>›</div>
+      <button onClick={() => setActive(3)} style={{ position: "absolute", right: 20, top: 5, background: "none", border: "none", fontFamily: "Inter", fontSize: 32, color: "#000", cursor: "pointer" }}>›</button>
       <div style={{ position: "absolute", left: 31, top: 51, fontFamily: "Inter", fontWeight: 500, fontSize: 16, color: "#808080" }}>Auto</div>
 
       {/* Fan block */}
@@ -272,7 +272,7 @@ function ClimateCard({ temp, setTemp }) {
 }
 
 /* ── Trip Card ───────────────────────────────────────────────────── */
-function TripCard() {
+function TripCard({ setActive }) {
   return (
     <div style={{ position:"absolute", width:356, height:180, left:512, top:470, background:"rgba(255,255,255,0.95)", boxShadow:"0px 6px 20px rgba(0,0,0,0.1)", borderRadius:20 }}>
       <div style={{ position:"absolute", width:40, height:40, left:21, top:8, background:"#F3EDFF", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -289,7 +289,7 @@ function TripCard() {
       <div style={{ position:"absolute", left:74, top:19, fontFamily:"Inter", fontWeight:500, fontSize:15 }}>Trip</div>
       <div style={{ position:"absolute", left:74, top:60, fontFamily:"Inter", fontWeight:500, fontSize:14 }}>Vivacity Mall</div>
       <div style={{ position:"absolute", left:74, top:78, fontFamily:"Inter", fontWeight:500, fontSize:12, color:"rgba(128,128,128,0.8)" }}>Jalan Setia Raja</div>
-      <div style={{ position:"absolute", right:18, top:16, fontFamily:"Inter", fontSize:22 }}>›</div>
+      <button onClick={() => setActive(2)} style={{ position:"absolute", right:18, top:16, background: "none", border: "none", fontFamily:"Inter", fontSize:22, cursor: "pointer"  }}>›</button>
       {[
         { left:21,  label:"ETA",      value:"03:12", sub:"PM",  accent:true  },
         { left:131, label:"Distance", value:"3.2",   sub:"km",  accent:false },
@@ -423,9 +423,9 @@ export default function HomePage({ navActive, setNavActive, onGoToSession }) {
     <div style={{ position:"relative", width:1280, height:800, background:"#F8F9FB", overflow:"hidden", fontFamily:"Inter, sans-serif" }}>
       <TopBar />
       <MapArea />
-      <BatteryCard onGoToSession={onGoToSession} />
-      <ClimateCard temp={temp} setTemp={setTemp} />
-      <TripCard />
+      <BatteryCard onGoToSession={onGoToSession} setActive={setNavActive}/>
+      <ClimateCard temp={temp} setTemp={setTemp} setActive={setNavActive} />
+      <TripCard setActive={setNavActive}/>
       <ClockCard />
       <WeatherCard />
       <MusicCard />

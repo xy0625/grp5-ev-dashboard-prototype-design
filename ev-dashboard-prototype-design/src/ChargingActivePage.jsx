@@ -1,16 +1,77 @@
 import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
 
-/* ─── Animated circular battery gauge ──────────────────────────── */
+const FONT = "'DM Sans', 'Inter', sans-serif";
+const GREEN = "#1DB954";
+const GREEN_DARK = "#15803d";
+const AMBER = "#F59E0B";
+const RED = "#EF4444";
+const INDIGO = "#6366F1";
+const GRAY = "#6B7280";
+const CARD_SHADOW = "0 2px 12px rgba(0,0,0,0.07)";
+
+/* ── Top Bar ─────────────────────────────────────────────────────── */
+function TopBar({ battery, range }) {
+  const battColor = battery < 20 ? RED : battery < 40 ? AMBER : GREEN;
+  const filled = Math.max(2, Math.round(32 * battery / 100));
+
+  return (
+    <div style={{
+      position: "absolute", left: 0, top: 0, width: 1280, height: 58,
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "0 24px", boxSizing: "border-box",
+      background: "rgba(255,255,255,0.75)", backdropFilter: "blur(10px)",
+      borderBottom: "1px solid rgba(0,0,0,0.06)", zIndex: 5,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <svg width="28" height="22" viewBox="0 0 34 28" fill="none">
+          <path d="M17 22a2 2 0 110 4 2 2 0 010-4z" fill="#111" />
+          <path d="M10 16.5a9.9 9.9 0 0114 0" stroke="#111" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M4 10.5a17.5 17.5 0 0126 0" stroke="#111" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+        <svg width="20" height="28" viewBox="0 0 24 36" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M6 9l12 9-6 5V3l6 5-12 9" />
+        </svg>
+      </div>
+
+      <div style={{
+        display: "flex", alignItems: "center", gap: 10,
+        background: "#fff", borderRadius: 30, padding: "6px 20px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        border: `1.5px solid ${battColor}33`,
+      }}>
+        <svg width="38" height="20" viewBox="0 0 42 24">
+          <rect x="1" y="3" width="36" height="18" rx="3" stroke={battColor} strokeWidth="2" fill="none" />
+          <rect x="37" y="8" width="4" height="8" rx="2" fill={battColor} />
+          <rect x="3" y="5" width={filled} height="14" rx="1" fill={battColor} />
+        </svg>
+        <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 17, color: battColor }}>{battery}%</span>
+        <span style={{ fontFamily: FONT, fontSize: 16, color: "#CBD5E1" }}>·</span>
+        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 17, color: "#111" }}>{range} km left</span>
+      </div>
+
+      <div style={{
+        width: 44, height: 44, background: "#F3EDFF", borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={INDIGO} strokeWidth="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/* ── Animated Battery Gauge ──────────────────────────────────────── */
 function BatteryGauge({ percent = 65 }) {
   const [displayed, setDisplayed] = useState(0);
   const animRef = useRef(null);
 
-  // Animate count-up on mount
   useEffect(() => {
     let start = null;
     const duration = 1200;
-    const step = (ts) => {
+    const step = ts => {
       if (!start) start = ts;
       const progress = Math.min((ts - start) / duration, 1);
       setDisplayed(Math.round(progress * percent));
@@ -20,35 +81,20 @@ function BatteryGauge({ percent = 65 }) {
     return () => cancelAnimationFrame(animRef.current);
   }, [percent]);
 
-  // SVG arc helpers
-  const size = 350;
-  const cx = 175, cy = 175, r = 155;
-  const strokeW = 18;
-  const circumference = 2 * Math.PI * r;
-
-  // Arc goes from 135° to 405° (270° sweep) — bottom-left to bottom-right
-  const startAngle = 135;
-  const sweepAngle = 270;
-  const endAngle = startAngle + sweepAngle;
+  const cx = 175, cy = 175, r = 152, sw = 18;
+  const startAngle = 135, sweepAngle = 270;
 
   const polarToXY = (angle, radius) => {
     const rad = ((angle - 90) * Math.PI) / 180;
     return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
   };
-
   const arcPath = (start, sweep, radius) => {
-    const s = polarToXY(start, radius);
-    const e = polarToXY(start + sweep, radius);
-    const large = sweep > 180 ? 1 : 0;
-    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${large} 1 ${e.x} ${e.y}`;
+    const s = polarToXY(start, radius), e = polarToXY(start + sweep, radius);
+    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${sweep > 180 ? 1 : 0} 1 ${e.x} ${e.y}`;
   };
 
   const filledSweep = (displayed / 100) * sweepAngle;
-
-  // Gradient color: green for >50%, amber for 20-50%, red for <20%
-  const fillColor = displayed >= 50 ? "#27AE60" : displayed >= 20 ? "#F59E0B" : "#EF4444";
-
-  // Glow intensity on tip
+  const fillColor = displayed >= 50 ? GREEN : displayed >= 20 ? AMBER : RED;
   const tipPos = polarToXY(startAngle + filledSweep, r);
 
   return (
@@ -56,266 +102,67 @@ function BatteryGauge({ percent = 65 }) {
       <svg width="350" height="350" viewBox="0 0 350 350">
         <defs>
           <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#27AE60" />
-            <stop offset="100%" stopColor="#6EE7B7" />
+            <stop offset="0%" stopColor={fillColor} />
+            <stop offset="100%" stopColor={displayed >= 50 ? "#6EE7B7" : displayed >= 20 ? "#FCD34D" : "#FCA5A5"} />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="outerGlow">
-            <feGaussianBlur stdDeviation="12" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
         </defs>
 
         {/* Track */}
-        <path
-          d={arcPath(startAngle, sweepAngle, r)}
-          fill="none"
-          stroke="#E5E7EB"
-          strokeWidth={strokeW}
-          strokeLinecap="round"
-        />
-
-        {/* Teal accent track (background decoration) */}
-        <path
-          d={arcPath(startAngle, sweepAngle * 0.15, r)}
-          fill="none"
-          stroke="#0ED2F7"
-          strokeWidth={strokeW * 0.6}
-          strokeLinecap="round"
-          opacity="0.35"
-          style={{ transform: `rotate(0deg)` }}
-        />
+        <path d={arcPath(startAngle, sweepAngle, r)} fill="none" stroke="#E5E7EB" strokeWidth={sw} strokeLinecap="round" />
 
         {/* Filled arc */}
         {filledSweep > 0 && (
           <path
             d={arcPath(startAngle, filledSweep, r)}
-            fill="none"
-            stroke="url(#gaugeGrad)"
-            strokeWidth={strokeW}
-            strokeLinecap="round"
-            filter="url(#outerGlow)"
+            fill="none" stroke="url(#gaugeGrad)"
+            strokeWidth={sw} strokeLinecap="round"
             style={{ transition: "all 0.05s linear" }}
           />
         )}
 
-        {/* Glowing tip dot */}
+        {/* Glowing tip */}
         {filledSweep > 2 && (
-          <circle
-            cx={tipPos.x}
-            cy={tipPos.y}
-            r={strokeW / 2 + 2}
-            fill={fillColor}
-            filter="url(#glow)"
-            opacity="0.9"
-          />
+          <circle cx={tipPos.x} cy={tipPos.y} r={sw / 2 + 3} fill={fillColor} opacity="0.85" />
         )}
 
-        {/* Outer ring shadow ring */}
-        <circle cx={cx} cy={cy} r={r + strokeW / 2 + 4} fill="none" stroke="rgba(39,174,96,0.08)" strokeWidth="8" />
+        {/* Outer decorative ring */}
+        <circle cx={cx} cy={cy} r={r + sw / 2 + 5} fill="none" stroke={fillColor} strokeWidth="1" opacity="0.12" />
       </svg>
 
-      {/* Center content */}
-      <div style={{ position: "absolute", top: 0, left: 0, width: 350, height: 350, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0 }}>
-        <div style={{ display: "flex", alignItems: "flex-start", lineHeight: 1 }}>
-          <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 128, color: "#000", lineHeight: "155px" }}>{displayed}</span>
-          <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: 40, color: "#000", marginTop: 28 }}>%</span>
+      {/* Center text */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, width: 350, height: 350,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{ display: "flex", alignItems: "flex-start" }}>
+          <span style={{ fontFamily: FONT, fontWeight: 800, fontSize: 108, color: "#0D0D0D", lineHeight: "130px" }}>{displayed}</span>
+          <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 36, color: "#0D0D0D", marginTop: 24 }}>%</span>
         </div>
-        <div style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 32, color: "#808080", marginTop: -10 }}>Battery</div>
+        <span style={{ fontFamily: FONT, fontWeight: 400, fontSize: 28, color: GRAY, marginTop: -12 }}>Battery</span>
+
+        {/* Low battery urgency alert */}
+        {displayed < 20 && (
+          <div style={{
+            marginTop: 10, background: RED, color: "#fff",
+            borderRadius: 10, padding: "4px 14px", fontSize: 12, fontWeight: 700,
+          }}>⚠ Low — charge soon</div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ─── EV Car Illustration (SVG placeholder) ─────────────────────── */
-function CarIllustration() {
-  return (
-    <div style={{ position: "absolute", left: 320, top: 100, width: 560, height: 380, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-      {/* Glow under car */}
-      <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", width: 420, height: 40, background: "radial-gradient(ellipse, rgba(39,174,96,0.35) 0%, transparent 70%)", borderRadius: "50%", filter: "blur(8px)" }} />
-
-      {/* Car SVG — clean EV sedan silhouette */}
-      <svg width="480" height="220" viewBox="0 0 480 220" fill="none" style={{ filter: "drop-shadow(0px 20px 40px rgba(39,174,96,0.25))" }}>
-        {/* Body shadow */}
-        <ellipse cx="240" cy="208" rx="210" ry="14" fill="rgba(0,0,0,0.12)" />
-
-        {/* Main body */}
-        <path d="M40 155 Q38 130 60 125 L100 80 Q130 55 175 50 L305 50 Q345 50 375 75 L420 125 Q445 130 442 155 L442 175 Q442 185 432 185 L380 185 Q370 170 350 165 Q310 155 270 165 L210 165 Q170 155 130 165 Q110 170 100 185 L48 185 Q38 185 38 175 Z" fill="#F8F8F8" />
-
-        {/* Roof */}
-        <path d="M105 80 Q132 52 178 47 L302 47 Q342 47 370 72 L415 120 L65 120 Z" fill="#EFEFEF" />
-
-        {/* Windshield */}
-        <path d="M130 118 L155 70 Q168 55 185 52 L240 52 L240 118 Z" fill="rgba(180,220,255,0.5)" stroke="#DDD" strokeWidth="1" />
-
-        {/* Rear window */}
-        <path d="M240 52 L295 52 Q312 55 325 70 L350 118 L240 118 Z" fill="rgba(180,220,255,0.5)" stroke="#DDD" strokeWidth="1" />
-
-        {/* Side windows */}
-        <rect x="158" y="60" width="4" height="58" rx="2" fill="#CCC" />
-        <rect x="318" y="60" width="4" height="58" rx="2" fill="#CCC" />
-
-        {/* Door lines */}
-        <line x1="240" y1="122" x2="240" y2="183" stroke="#DDD" strokeWidth="1.5" />
-        <line x1="158" y1="122" x2="158" y2="183" stroke="#DDD" strokeWidth="1.5" />
-        <line x1="322" y1="122" x2="322" y2="183" stroke="#DDD" strokeWidth="1.5" />
-
-        {/* Front wheel */}
-        <circle cx="120" cy="185" r="30" fill="#2D2D2D" />
-        <circle cx="120" cy="185" r="20" fill="#444" />
-        <circle cx="120" cy="185" r="8"  fill="#666" />
-        {[0,60,120,180,240,300].map(a => {
-          const rad = a * Math.PI / 180;
-          return <line key={a} x1={120 + 10*Math.cos(rad)} y1={185 + 10*Math.sin(rad)} x2={120 + 19*Math.cos(rad)} y2={185 + 19*Math.sin(rad)} stroke="#555" strokeWidth="2.5" />;
-        })}
-
-        {/* Rear wheel */}
-        <circle cx="360" cy="185" r="30" fill="#2D2D2D" />
-        <circle cx="360" cy="185" r="20" fill="#444" />
-        <circle cx="360" cy="185" r="8"  fill="#666" />
-        {[0,60,120,180,240,300].map(a => {
-          const rad = a * Math.PI / 180;
-          return <line key={a} x1={360 + 10*Math.cos(rad)} y1={185 + 10*Math.sin(rad)} x2={360 + 19*Math.cos(rad)} y2={185 + 19*Math.sin(rad)} stroke="#555" strokeWidth="2.5" />;
-        })}
-
-        {/* Headlight */}
-        <path d="M62 140 Q58 138 60 133 L75 130 Q80 132 78 137 Z" fill="#FFFDE7" opacity="0.9" />
-        <path d="M58 140 Q40 145 35 160" stroke="rgba(255,253,200,0.4)" strokeWidth="8" strokeLinecap="round" />
-
-        {/* Taillight */}
-        <rect x="430" y="135" width="10" height="25" rx="3" fill="#FF4444" opacity="0.8" />
-
-        {/* Charging cable glow */}
-        <path d="M442 158 Q490 158 490 158" stroke="#27AE60" strokeWidth="4" strokeLinecap="round" strokeDasharray="6 3" opacity="0.7">
-          <animate attributeName="stroke-dashoffset" values="0;-18" dur="0.6s" repeatCount="indefinite" />
-        </path>
-      </svg>
-
-      {/* Charging station */}
-      <svg width="80" height="200" viewBox="0 0 80 200" style={{ position: "absolute", right: 20, bottom: 20 }}>
-        {/* Station body */}
-        <rect x="15" y="20" width="50" height="140" rx="10" fill="#2D3748" />
-        <rect x="20" y="30" width="40" height="50" rx="6" fill="#1A202C" />
-        {/* Screen glow */}
-        <rect x="22" y="32" width="36" height="46" rx="4" fill="#0ED2F7" opacity="0.15" />
-        <rect x="24" y="38" width="32" height="8" rx="2" fill="#27AE60" opacity="0.8" />
-        <rect x="24" y="50" width="22" height="4" rx="2" fill="#6EE7B7" opacity="0.6" />
-        <rect x="24" y="58" width="28" height="4" rx="2" fill="#6EE7B7" opacity="0.4" />
-        {/* Lightning bolt */}
-        <path d="M35 95 L45 95 L40 110 L50 110 L38 130 L42 115 L33 115 Z" fill="#27AE60" opacity="0.9" />
-        {/* Base */}
-        <rect x="10" y="160" width="60" height="12" rx="4" fill="#1A202C" />
-        <rect x="5"  y="170" width="70" height="8"  rx="4" fill="#2D3748" />
-
-        {/* Cable */}
-        <path d="M65 100 Q80 100 80 100" stroke="#27AE60" strokeWidth="3" strokeLinecap="round">
-          <animate attributeName="opacity" values="1;0.4;1" dur="1s" repeatCount="indefinite" />
-        </path>
-
-        {/* Ambient glow */}
-        <circle cx="40" cy="100" r="35" fill="rgba(39,174,96,0.08)" />
-      </svg>
-    </div>
-  );
-}
-
-/* ─── Status Info Card ──────────────────────────────────────────── */
-function InfoCard({ style, iconBg, iconColor, icon, label, value, sub }) {
-  return (
-    <div style={{ position: "absolute", width: 335, height: 126, background: "#fff", boxShadow: "0px 6px 20px rgba(0,0,0,0.1)", borderRadius: 20, display: "flex", alignItems: "center", gap: 0, ...style }}>
-      {/* Icon box */}
-      <div style={{ width: 65, height: 65, background: iconBg, borderRadius: 15, display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 31, flexShrink: 0 }}>
-        {icon}
-      </div>
-      {/* Text */}
-      <div style={{ marginLeft: 20 }}>
-        <div style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 16, color: "rgba(0,0,0,0.8)", lineHeight: "19px" }}>{label}</div>
-        <div style={{ fontFamily: "Inter", fontWeight: 500, fontSize: 36, color: "#000", lineHeight: "44px" }}>{value}</div>
-        {sub && <div style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 16, color: "rgba(128,128,128,0.8)", lineHeight: "19px" }}>{sub}</div>}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Lightning icon ────────────────────────────────────────────── */
-function LightningIcon({ color = "#27AE60" }) {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill={color}>
-      <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-    </svg>
-  );
-}
-
-/* ─── Clock icon ─────────────────────────────────────────────────── */
-function ClockIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <circle cx="16" cy="16" r="13" stroke="#0088FF" strokeWidth="3" />
-      <circle cx="16" cy="16" r="2" fill="#0088FF" />
-      <line x1="16" y1="16" x2="16" y2="7"  stroke="#0088FF" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="16" y1="16" x2="22" y2="16" stroke="#0088FF" strokeWidth="2.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/* ─── Calendar icon ─────────────────────────────────────────────── */
-function CalendarIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-      <rect x="2" y="5" width="26" height="23" rx="4" stroke="#CB30E0" strokeWidth="2" />
-      <line x1="2" y1="12" x2="28" y2="12" stroke="#CB30E0" strokeWidth="2" />
-      <line x1="9"  y1="2" x2="9"  y2="8"  stroke="#CB30E0" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="21" y1="2" x2="21" y2="8"  stroke="#CB30E0" strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="7"  y="17" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.5" />
-      <rect x="13" y="17" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.5" />
-      <rect x="7"  y="23" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.3" />
-    </svg>
-  );
-}
-
-/* ─── Top Bar ────────────────────────────────────────────────────── */
-function TopBar() {
-  return (
-    <div style={{ position: "absolute", left: 0, top: 0, width: 1280, height: 62 }}>
-      {/* WiFi */}
-      <div style={{ position: "absolute", left: 65, top: 9, width: 50, height: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg width="34" height="28" viewBox="0 0 34 28" fill="none">
-          <path d="M17 22a2 2 0 110 4 2 2 0 010-4z" fill="#000" />
-          <path d="M10 16.5a9.9 9.9 0 0114 0"     stroke="#000" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M4 10.5a17.5 17.5 0 0126 0"    stroke="#000" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-        </svg>
-      </div>
-      {/* Bluetooth */}
-      <div style={{ position: "absolute", left: 138, top: 9, width: 50, height: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg width="28" height="36" viewBox="0 0 24 36" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M6 9l12 9-6 5V3l6 5-12 9" />
-        </svg>
-      </div>
-      {/* Profile */}
-      <div style={{ position: "absolute", left: 1176, top: 9, width: 49, height: 49, background: "#F3EDFF", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2">
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Animated charging sparks ──────────────────────────────────── */
+/* ── Charging Sparks ─────────────────────────────────────────────── */
 function ChargingSparks() {
   return (
     <div style={{ position: "absolute", left: 48, top: 65, width: 350, height: 350, pointerEvents: "none" }}>
       <svg width="350" height="350" viewBox="0 0 350 350">
-        {[0,1,2,3].map(i => {
+        {[0, 1, 2, 3].map(i => {
           const angle = (i * 90 + 22.5) * Math.PI / 180;
           const x = 175 + 175 * Math.cos(angle - Math.PI / 2);
           const y = 175 + 175 * Math.sin(angle - Math.PI / 2);
           return (
-            <circle key={i} cx={x} cy={y} r="4" fill="#27AE60" opacity="0">
+            <circle key={i} cx={x} cy={y} r="4" fill={GREEN} opacity="0">
               <animate attributeName="opacity" values="0;0.8;0" dur={`${1.2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
               <animate attributeName="r" values="4;8;4" dur={`${1.2 + i * 0.3}s`} repeatCount="indefinite" begin={`${i * 0.3}s`} />
             </circle>
@@ -326,121 +173,173 @@ function ChargingSparks() {
   );
 }
 
-/* ─── Stop Charging Button ──────────────────────────────────────── */
-function StopButton({ onStop }) {
-  const [hovered, setHovered] = useState(false);
+/* ── Status Info Card ────────────────────────────────────────────── */
+function InfoCard({ label, value, sub, icon, bg, style }) {
   return (
-    <div
-      onClick={onStop}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "absolute",
-        width: 330,
-        height: 48,
-        left: 903,
-        top: 595,
-        background: hovered ? "#CC0000" : "#FF0000",
-        borderRadius: 10,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        transition: "background 0.2s, transform 0.15s",
-        transform: hovered ? "scale(1.02)" : "scale(1)",
-        boxShadow: hovered ? "0 6px 20px rgba(255,0,0,0.4)" : "0 4px 12px rgba(255,0,0,0.25)",
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" style={{ marginRight: 10 }}>
-        <rect x="6" y="6" width="12" height="12" rx="2" />
-      </svg>
-      <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 24, color: "#fff", lineHeight: "29px" }}>Stop Charging</span>
+    <div style={{
+      background: "#fff", borderRadius: 20, padding: "16px 22px",
+      boxShadow: CARD_SHADOW, border: "1.5px solid #E5E7EB",
+      display: "flex", alignItems: "center", gap: 18, ...style,
+    }}>
+      <div style={{
+        width: 60, height: 60, background: bg, borderRadius: 14,
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+      }}>
+        {icon}
+      </div>
+      <div>
+        <div style={{ fontFamily: FONT, fontWeight: 400, fontSize: 14, color: GRAY }}>{label}</div>
+        <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 30, color: "#0D0D0D", lineHeight: "36px" }}>{value}</div>
+        {sub && <div style={{ fontFamily: FONT, fontWeight: 400, fontSize: 13, color: "#B0B5BF" }}>{sub}</div>}
+      </div>
     </div>
   );
 }
 
-/* ─── Live clock for "Estimated Full" ───────────────────────────── */
-function useLiveClock() {
+/* ── Live Estimated Full Clock ───────────────────────────────────── */
+function useLiveClock(addMinutes = 65) {
   const [t, setT] = useState(new Date());
-  useEffect(() => { const id = setInterval(() => setT(new Date()), 1000); return () => clearInterval(id); }, []);
-  // Add ~2h to current time for estimated full
-  const est = new Date(t.getTime() + 2 * 60 * 60 * 1000 - 55 * 60 * 1000); // +1h05m
-  const hh  = est.getHours() % 12 || 12;
-  const mm  = String(est.getMinutes()).padStart(2, "0");
-  const ap  = est.getHours() >= 12 ? "PM" : "AM";
-  return `${String(hh).padStart(2,"0")}:${mm} ${ap}`;
+  useEffect(() => {
+    const id = setInterval(() => setT(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const est = new Date(t.getTime() + addMinutes * 60 * 1000);
+  const hh = est.getHours() % 12 || 12;
+  const mm = String(est.getMinutes()).padStart(2, "0");
+  const ap = est.getHours() >= 12 ? "PM" : "AM";
+  return [`${String(hh).padStart(2, "0")}:${mm}`, ap];
 }
 
-/* ─── Page Root ──────────────────────────────────────────────────── */
-export default function ChargingActivePage({ navActive, setNavActive }) {
+/* ── Stop Button ─────────────────────────────────────────────────── */
+function StopButton({ onStop }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onStop}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "100%", height: 72, background: hovered ? "#CC0000" : "#EF4444",
+        border: "none", borderRadius: 16,
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+        cursor: "pointer",
+        boxShadow: hovered ? "0 8px 24px rgba(239,68,68,0.5)" : "0 4px 14px rgba(239,68,68,0.3)",
+        transform: hovered ? "scale(1.02)" : "scale(1)",
+        transition: "all 0.18s",
+      }}
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+        <rect x="6" y="6" width="12" height="12" rx="2" />
+      </svg>
+      <span style={{ fontFamily: FONT, fontWeight: 800, fontSize: 22, color: "#fff" }}>Stop Charging</span>
+    </button>
+  );
+}
+
+/* ── Page Root ───────────────────────────────────────────────────── */
+export default function ChargingActivePage({ battery = 65, navActive, setNavActive }) {
   const [stopped, setStopped] = useState(false);
-  const estFull = useLiveClock();
+  const [estTime, estAP] = useLiveClock(65);
+  const range = Math.round(battery * 4.3);
 
   return (
     <div style={{
-      position: "relative",
-      width: 1280 ,
-      height: 800,
-      background: "linear-gradient(180deg, rgba(245,245,245,0.2) 0%, rgba(245,245,245,0.2) 100%), linear-gradient(135deg, #e8f5e9 0%, #f0f9ff 50%, #faf5ff 100%)",
-      overflow: "hidden",
-      fontFamily: "Inter, sans-serif",
+      position: "relative", width: 1280, height: 800,
+      background: "linear-gradient(135deg,#e8f5e9 0%,#f0f9ff 50%,#faf5ff 100%)",
+      overflow: "hidden", fontFamily: FONT,    backgroundImage: "url('/car.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+
+    overflow: "hidden"
     }}>
+      {/* Ambient blobs */}
+      <div style={{ position: "absolute", width: 500, height: 500, left: -60, top: 80, borderRadius: "50%", background: "radial-gradient(circle,rgba(29,185,84,0.1) 0%,transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: 400, height: 400, right: 40, top: -50, borderRadius: "50%", background: "radial-gradient(circle,rgba(14,210,247,0.07) 0%,transparent 70%)", pointerEvents: "none" }} />
 
-      {/* Soft ambient background blobs */}
-      <div style={{ position:"absolute", width:500, height:500, left:-60, top:100, borderRadius:"50%", background:"radial-gradient(circle,rgba(39,174,96,0.12) 0%,transparent 70%)", pointerEvents:"none" }} />
-      <div style={{ position:"absolute", width:400, height:400, right:50, top:-50, borderRadius:"50%", background:"radial-gradient(circle,rgba(14,210,247,0.08) 0%,transparent 70%)", pointerEvents:"none" }} />
-
-      <TopBar />
-
-      {/* ── Left: Battery gauge + car ── */}
-      <BatteryGauge percent={65} />
+      <TopBar battery={battery} range={range} />
+      <BatteryGauge percent={battery} />
       <ChargingSparks />
-      <CarIllustration />
 
-      {/* ── Right: Charging Status ── */}
-      <div style={{ position:"absolute", left:916, top:90, fontFamily:"Inter", fontWeight:600, fontSize:24, color:"#000" }}>
-        Charging Status
-      </div>
+      {/* Right panel */}
+      <div style={{ position: "absolute", left: 900, top: 70, width: 356 }}>
+        <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 22, color: "#111", marginBottom: 16 }}>
+          Charging Status
+        </div>
 
-      {/* Charging Rate card */}
-      <InfoCard
-        style={{ left:903, top:136 }}
-        iconBg="#EBFFEE"
-        icon={<LightningIcon color="#27AE60" />}
-        label="Charging Rate"
-        value={<>75 <span style={{ fontSize:24, fontWeight:400 }}>kW</span></>}
-        sub="Fast Charging"
-      />
+        {/* Charging Rate */}
+        <InfoCard
+          label="Charging Rate" bg="#EBFFEE"
+          value={<>75 <span style={{ fontSize: 20, fontWeight: 400 }}>kW</span></>}
+          sub="Fast Charging"
+          icon={<svg width="30" height="30" viewBox="0 0 24 24" fill={GREEN}><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+          style={{ marginBottom: 12 }}
+        />
 
-      {/* Duration card */}
-      <InfoCard
-        style={{ left:903, top:289 }}
-        iconBg="#E7F6FF"
-        icon={<ClockIcon />}
-        label="Duration"
-        value={<>1 <span style={{ fontSize:24, fontWeight:400 }}>h</span> 05<span style={{ fontSize:24, fontWeight:400 }}>m</span></>}
-        sub={null}
-      />
+        {/* Duration */}
+        <InfoCard
+          label="Duration" bg="#E7F3FF"
+          value={<>1<span style={{ fontSize: 20, fontWeight: 400 }}> h </span>05<span style={{ fontSize: 20, fontWeight: 400 }}>m</span></>}
+          icon={
+            <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="12" stroke="#0088FF" strokeWidth="3" />
+              <circle cx="16" cy="16" r="2" fill="#0088FF" />
+              <line x1="16" y1="16" x2="16" y2="8" stroke="#0088FF" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="16" y1="16" x2="22" y2="16" stroke="#0088FF" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+          }
+          style={{ marginBottom: 12 }}
+        />
 
-      {/* Estimated Full card */}
-      <InfoCard
-        style={{ left:903, top:442 }}
-        iconBg="#E8D6F2"
-        icon={<CalendarIcon />}
-        label="Estimated Full"
-        value={estFull.split(" ")[0]}
-        sub={estFull.split(" ")[1] + " · Today"}
-      />
+        {/* Estimated Full */}
+        <InfoCard
+          label="Estimated Full" bg="#EDE9FE"
+          value={estTime}
+          sub={`${estAP} · Today`}
+          icon={
+            <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
+              <rect x="2" y="5" width="26" height="23" rx="4" stroke="#CB30E0" strokeWidth="2" />
+              <line x1="2" y1="12" x2="28" y2="12" stroke="#CB30E0" strokeWidth="2" />
+              <line x1="9" y1="2" x2="9" y2="8" stroke="#CB30E0" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="21" y1="2" x2="21" y2="8" stroke="#CB30E0" strokeWidth="2.5" strokeLinecap="round" />
+              <rect x="7" y="17" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.5" />
+              <rect x="13" y="17" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.5" />
+              <rect x="7" y="23" width="5" height="4" rx="1" fill="#CB30E0" opacity="0.3" />
+            </svg>
+          }
+          style={{ marginBottom: 20 }}
+        />
 
-      {/* Stop button */}
-      {!stopped
-        ? <StopButton onStop={() => setStopped(true)} />
-        : (
-          <div style={{ position:"absolute", left:903, top:595, width:330, height:48, background:"#E5E7EB", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <span style={{ fontFamily:"Inter", fontWeight:700, fontSize:20, color:"#9CA3AF" }}>Charging Stopped</span>
+        {/* Stop / Stopped */}
+        {!stopped
+          ? <StopButton onStop={() => setStopped(true)} />
+          : (
+            <div style={{
+              width: "100%", height: 72, background: "#F3F4F6", borderRadius: 16,
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 18, color: "#9CA3AF" }}>Charging Stopped</span>
+            </div>
+          )
+        }
+
+        {!stopped && (
+          <div style={{
+            marginTop: 12, background: "rgba(29,185,84,0.07)", borderRadius: 12,
+            padding: "10px 14px", display: "flex", alignItems: "center", gap: 8,
+          }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill={GREEN}>
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span style={{ fontFamily: FONT, fontSize: 13, color: GREEN_DARK, fontWeight: 500 }}>
+              +{Math.round(battery * 0.15)}% per 10 min · Full in ~65 min
+            </span>
           </div>
-        )
-      }
+        )}
+      </div>
 
       <BottomNav active={navActive} setActive={setNavActive} />
     </div>
