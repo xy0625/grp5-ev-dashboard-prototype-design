@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import BottomNav from "./BottomNav";
 
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 
-/* ═══════════════════════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════════════════════ */
 const FAV_STATIONS = [
   {
     id: 1,
@@ -55,853 +51,631 @@ const FAV_STATIONS = [
   },
 ];
 
-/* ═══════════════════════════════════════════════════════════════
-   SVG ICONS
-═══════════════════════════════════════════════════════════════ */
-const NavDashboard = ({ active }) => (
-  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+const IcoDash = ({ a }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <rect
-      x="3"
+      x="2"
+      y="2"
+      width="8"
+      height="8"
+      rx="1.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+    <rect
+      x="14"
+      y="2"
+      width="8"
+      height="8"
+      rx="1.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+    <rect
+      x="2"
+      y="14"
+      width="8"
+      height="8"
+      rx="1.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+    <rect
+      x="14"
+      y="14"
+      width="8"
+      height="8"
+      rx="1.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+  </svg>
+);
+const IcoCharge = ({ a }) => (
+  <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+    <rect
+      x="2"
       y="3"
-      width="12"
-      height="12"
+      width="13"
+      height="17"
       rx="2"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <rect
-      x="19"
-      y="3"
-      width="12"
-      height="12"
-      rx="2"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <rect
-      x="3"
-      y="19"
-      width="12"
-      height="12"
-      rx="2"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <rect
-      x="19"
-      y="19"
-      width="12"
-      height="12"
-      rx="2"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-  </svg>
-);
-const NavFuel = ({ active }) => (
-  <svg width="32" height="36" viewBox="0 0 32 36" fill="none">
-    <rect
-      x="3"
-      y="4"
-      width="18"
-      height="24"
-      rx="2"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
     />
     <path
-      d="M21 10h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-4"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <line
-      x1="8"
-      y1="28"
-      x2="16"
-      y2="28"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <line
-      x1="8"
-      y1="28"
-      x2="8"
-      y2="32"
-      stroke={active ? "#fff" : "#4B4E53"}
+      d="M15 8h2a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+      stroke={a ? "#fff" : "#6B7280"}
       strokeWidth="2"
       strokeLinecap="round"
     />
     <line
-      x1="16"
-      y1="28"
-      x2="16"
-      y2="32"
-      stroke={active ? "#fff" : "#4B4E53"}
+      x1="5"
+      y1="20"
+      x2="12"
+      y2="20"
+      stroke={a ? "#fff" : "#6B7280"}
       strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-const NavLocation = ({ active }) => (
-  <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-    <path
-      d="M14 2C8.5 2 3 7 3 13.5c0 9 11 20.5 11 20.5s11-11.5 11-20.5C25 7 19.5 2 14 2z"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      fill={active ? "rgba(255,255,255,0.2)" : "none"}
-    />
-    <circle
-      cx="14"
-      cy="13.5"
-      r="4"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-  </svg>
-);
-const NavWeather = ({ active }) => (
-  <svg width="38" height="34" viewBox="0 0 38 34" fill="none">
-    <circle
-      cx="19"
-      cy="11"
-      r="6"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <path
-      d="M9 22a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <rect
-      x="4"
-      y="22"
-      width="30"
-      height="9"
-      rx="4.5"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-  </svg>
-);
-const NavEmergency = ({ active }) => (
-  <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <circle
-      cx="18"
-      cy="14"
-      r="6"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <path
-      d="M4 34c0-7.7 6.3-14 14-14s14 6.3 14 14"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <path
-      d="M24 8c2 1.2 3 3 3 5s-1 3.8-3 5"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M27 4c3.5 2 5.5 5 5.5 9s-2 7-5.5 9"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-const NavSettings = ({ active }) => (
-  <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <circle
-      cx="18"
-      cy="18"
-      r="6"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-    />
-    <path
-      d="M18 3v4M18 29v4M3 18h4M29 18h4M7.1 7.1l2.8 2.8M26.1 26.1l2.8 2.8M7.1 28.9l2.8-2.8M26.1 9.9l2.8-2.8"
-      stroke={active ? "#fff" : "#4B4E53"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const MicIcon = ({ listening }) => (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-    <rect
-      x="11"
-      y="3"
-      width="10"
-      height="15"
-      rx="5"
-      fill={listening ? "#2B8FFF" : "none"}
-      stroke={listening ? "#2B8FFF" : "#555"}
-      strokeWidth="2.2"
-    />
-    <path
-      d="M5 15a11 11 0 0 0 22 0"
-      stroke={listening ? "#2B8FFF" : "#555"}
-      strokeWidth="2.2"
       strokeLinecap="round"
     />
     <line
-      x1="16"
-      y1="26"
-      x2="16"
-      y2="30"
-      stroke={listening ? "#2B8FFF" : "#555"}
-      strokeWidth="2.2"
+      x1="5"
+      y1="20"
+      x2="5"
+      y2="24"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="1.5"
       strokeLinecap="round"
     />
     <line
-      x1="10"
-      y1="30"
-      x2="22"
-      y2="30"
-      stroke={listening ? "#2B8FFF" : "#555"}
-      strokeWidth="2.2"
+      x1="12"
+      y1="20"
+      x2="12"
+      y2="24"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="1.5"
       strokeLinecap="round"
     />
   </svg>
 );
-
-const HeartIcon = ({ filled }) => (
+const IcoNavTab = ({ a }) => (
+  <svg width="20" height="26" viewBox="0 0 20 26" fill="none">
+    <path
+      d="M10 2C6 2 2 5.7 2 10.5c0 6.8 8 15.5 8 15.5s8-8.7 8-15.5C18 5.7 14 2 10 2z"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+      fill={a ? "rgba(255,255,255,.2)" : "none"}
+    />
+    <circle
+      cx="10"
+      cy="10.5"
+      r="3"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+  </svg>
+);
+const IcoWeather = ({ a }) => (
   <svg width="26" height="24" viewBox="0 0 26 24" fill="none">
-    <path
-      d="M13 21S2 14 2 7a5.5 5.5 0 0 1 11-1 5.5 5.5 0 0 1 11 1c0 7-11 14-11 14z"
-      fill={filled ? "#FF0000" : "none"}
-      stroke="#FF0000"
-      strokeWidth="2.2"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const SpeakerIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-    <path d="M4 9H9L15 4V22L9 17H4V9Z" fill="#555" />
-    <path
-      d="M19 8c1.5 1.5 2.5 3.1 2.5 5S20.5 16.5 19 18"
-      stroke="#555"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M22 5c2.5 2.5 4 5 4 8s-1.5 5.5-4 8"
-      stroke="#555"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-/* Speaker ON — blue waves */
-const SpeakerOnIcon = () => (
-  <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
-    <path d="M4 9H9L15 4V24L9 19H4V9Z" fill="#2B8FFF" />
-    <path
-      d="M19 9c1.5 1.5 2.5 3.1 2.5 5S20.5 17.5 19 19"
-      stroke="#2B8FFF"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M22 6c2.5 2.5 4 5 4 8s-1.5 5.5-4 8"
-      stroke="#2B8FFF"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-/* Speaker OFF — grey + X */
-const SpeakerOffIcon = () => (
-  <svg width="30" height="30" viewBox="0 0 28 28" fill="none">
-    <path d="M4 9H9L15 4V24L9 19H4V9Z" fill="#bbb" />
-    <line
-      x1="19"
-      y1="8"
-      x2="27"
-      y2="20"
-      stroke="#bbb"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-    />
-    <line
-      x1="27"
-      y1="8"
-      x2="19"
-      y2="20"
-      stroke="#bbb"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-/* Bigger turn arrow */
-const TurnRightArrow = () => (
-  <svg width="64" height="64" viewBox="0 0 44 44" fill="none">
-    <path
-      d="M9 33V17C9 13 13 9 21 9H33M33 9L25 3M33 9L25 15"
-      stroke="#1E1E1E"
-      strokeWidth="3.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const LocateIcon = ({ active }) => (
-  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
     <circle
-      cx="17"
-      cy="17"
-      r="9"
-      stroke={active ? "#2B8FFF" : "#333"}
-      strokeWidth="2.5"
+      cx="13"
+      cy="8"
+      r="4.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
     />
-    <circle cx="17" cy="17" r="3" fill={active ? "#2B8FFF" : "#333"} />
-    <line
-      x1="17"
-      y1="2"
-      x2="17"
-      y2="7"
-      stroke={active ? "#2B8FFF" : "#333"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <line
-      x1="17"
-      y1="27"
-      x2="17"
-      y2="32"
-      stroke={active ? "#2B8FFF" : "#333"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <line
-      x1="2"
-      y1="17"
-      x2="7"
-      y2="17"
-      stroke={active ? "#2B8FFF" : "#333"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-    <line
-      x1="27"
-      y1="17"
-      x2="32"
-      y2="17"
-      stroke={active ? "#2B8FFF" : "#333"}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const ChargingBolt = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z" fill="#2B8FFF" />
-  </svg>
-);
-
-const PaperPlaneIcon = () => (
-  <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
-    <path d="M40 6L6 19l14 6 6 15L40 6z" fill="#fff" />
     <path
-      d="M20 25L40 6"
-      stroke="rgba(43,143,255,0.5)"
+      d="M6 16a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <rect
+      x="2"
+      y="16"
+      width="22"
+      height="6"
+      rx="3"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+  </svg>
+);
+const IcoEmg = ({ a }) => (
+  <svg width="24" height="26" viewBox="0 0 24 26" fill="none">
+    <circle
+      cx="12"
+      cy="9"
+      r="4.5"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+    <path
+      d="M2 25c0-5.5 4.5-10 10-10s10 4.5 10 10"
+      stroke={a ? "#fff" : "#6B7280"}
       strokeWidth="2"
       strokeLinecap="round"
     />
   </svg>
 );
+const IcoSettings = ({ a }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <circle
+      cx="12"
+      cy="12"
+      r="4"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+    />
+    <path
+      d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"
+      stroke={a ? "#fff" : "#6B7280"}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoMic = ({ on }) => (
+  <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+    <rect
+      x="5"
+      y="1"
+      width="8"
+      height="11"
+      rx="4"
+      fill={on ? "#3B82F6" : "none"}
+      stroke={on ? "#3B82F6" : "#9CA3AF"}
+      strokeWidth="1.8"
+    />
+    <path
+      d="M2 9a7 7 0 0 0 14 0"
+      stroke={on ? "#3B82F6" : "#9CA3AF"}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <line
+      x1="9"
+      y1="16"
+      x2="9"
+      y2="19"
+      stroke={on ? "#3B82F6" : "#9CA3AF"}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <line
+      x1="5"
+      y1="19"
+      x2="13"
+      y2="19"
+      stroke={on ? "#3B82F6" : "#9CA3AF"}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoHeart = ({ f }) => (
+  <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+    <path
+      d="M10 16S1 10.5 1 5.5a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1C19 10.5 10 16 10 16z"
+      fill={f ? "#EF4444" : "none"}
+      stroke="#EF4444"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+const IcoSpeakOn = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M2 6H6L10 2V16L6 12H2V6Z" fill="#3B82F6" />
+    <path
+      d="M12 5c1 1 1.7 2.4 1.7 4S13 12 12 13"
+      stroke="#3B82F6"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <path
+      d="M14 3c2 1.7 3 3.8 3 6s-1 4.3-3 6"
+      stroke="#3B82F6"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoSpeakOff = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M2 6H6L10 2V16L6 12H2V6Z" fill="#9CA3AF" />
+    <line
+      x1="12"
+      y1="5"
+      x2="18"
+      y2="13"
+      stroke="#9CA3AF"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <line
+      x1="18"
+      y1="5"
+      x2="12"
+      y2="13"
+      stroke="#9CA3AF"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoBolt = () => (
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+    <path d="M7.5 1L2 7.5H6.5L5.5 12L11 5.5H6.5L7.5 1Z" fill="#3B82F6" />
+  </svg>
+);
+const IcoX = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path
+      d="M2 2l10 10M12 2L2 12"
+      stroke="#374151"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoSearch = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <circle cx="6.5" cy="6.5" r="5" stroke="#9CA3AF" strokeWidth="1.8" />
+    <path
+      d="M11 11l3 3"
+      stroke="#9CA3AF"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+const IcoArrowR = () => (
+  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+    <path
+      d="M6 26V14C6 10 10 6 17 6H26M26 6L19 1M26 6L19 11"
+      stroke="#1D4ED8"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
-/* ═══════════════════════════════════════════════════════════════
-   INFO CARD  (top-left: range + battery)
-═══════════════════════════════════════════════════════════════ */
-function InfoCard({ distanceKm, batteryPct }) {
-  const barColor =
-    batteryPct > 50 ? "#49E83D" : batteryPct > 20 ? "#FFA500" : "#FF4444";
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: "56px",
-        top: "17px",
-        width: "171px",
-        height: "129px",
-        background: "#fff",
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.25)",
-        borderRadius: "20px",
-        zIndex: 10,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "14px 18px",
-        gap: "10px",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "32px",
-          fontWeight: 700,
-          color: "#1E1E1E",
-          lineHeight: 1,
-        }}
-      >
-        {distanceKm} km
-      </div>
-      <div style={{ display: "flex" }}>
-        {/* Battery shell */}
-        <div
-          style={{
-            position: "relative",
-            left: 10,
-            display: "flex",
-            alignItems: "center",
-            gap: 0,
-          }}
-        >
-          <div
-            style={{
-              width: "48px",
-              height: "22px",
-              border: "2px solid #999",
-              borderRadius: "4px",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: `${batteryPct}%`,
-                height: "100%",
-                background: barColor,
-                transition: "width 0.5s",
-              }}
-            />
-          </div>
-          <div
-            style={{
-              width: "4px",
-              height: "10px",
-              background: "#999",
-              borderRadius: "0 2px 2px 0",
-              marginLeft: "1px",
-            }}
-          />
-        </div>
-        <span
-          style={{
-            fontSize: "20px",
-            fontWeight: 500,
-            color: "#000",
-            position: "relative",
-            left: 20,
-            display: "flex",
-            alignItems: "center",
-            gap: 0,
-          }}
-        >
-          {batteryPct}%
-        </span>
-      </div>
-    </div>
-  );
-}
+function LiveMap({ searchTarget, mapRef: extRef, isNavigating }) {
+  const containerRef = useRef(null);
+  const internalMapRef = useRef(null);
+  const markerRef = useRef(null);
+  const routeLayerRef = useRef(null);
+  const [ready, setReady] = useState(false);
 
-/* ═══════════════════════════════════════════════════════════════
-   SPEEDOMETER  (circular, orange/red border)
-═══════════════════════════════════════════════════════════════ */
-function Speedometer({ speed }) {
-  const isOver = speed > 80;
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: "245px",
-        top: "17px",
-        width: "100px",
-        height: "100px",
-        background: "#fff",
-        boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
-        borderRadius: "50%",
-        border: `3.5px solid ${isOver ? "#FF4444" : "#FFA500"}`,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 10,
-        transition: "border-color 0.3s",
-      }}
-    >
-      <span
-        style={{
-          fontSize: "34px",
-          fontWeight: 700,
-          color: isOver ? "#FF4444" : "#000",
-          lineHeight: 1,
-          marginTop: "20px",
-          transition: "color 0.3s",
-        }}
-      >
-        {speed}
-      </span>
-      <span
-        style={{
-          fontSize: "11px",
-          color: "#666",
-          fontWeight: 500,
-        }}
-      >
-        km/h
-      </span>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TURN CARD  (top-right, navigation mode)
-═══════════════════════════════════════════════════════════════ */
-function TurnCard({ instruction, voiceOn, onToggleVoice }) {
-  if (!instruction) return null;
-  return (
-    <div
-      style={{
-        position: "absolute",
-        right: "20px",
-        top: "17px",
-        width: "430px",
-        height: "100px",
-        background: "#fff",
-        boxShadow: "0px 4px 20px rgba(0,0,0,0.2)",
-        borderRadius: "16px",
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        padding: "0 20px",
-        gap: "16px",
-        animation: "fadeIn 0.3s ease",
-      }}
-    >
-      {/* Bigger direction icon */}
-      <div style={{ flexShrink: 0 }}>
-        <TurnRightArrow />
-      </div>
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            fontSize: "26px",
-            fontWeight: 700,
-            color: "#1E1E1E",
-            lineHeight: 1,
-          }}
-        >
-          {instruction.dist}
-        </div>
-        <div style={{ fontSize: "14px", color: "#666", marginTop: "4px" }}>
-          {instruction.text}
-        </div>
-      </div>
-      {/* Speaker toggle button */}
-      <button
-        onClick={onToggleVoice}
-        title={voiceOn ? "Mute navigation voice" : "Unmute navigation voice"}
-        style={{
-          background: voiceOn ? "rgba(43,143,255,0.08)" : "rgba(0,0,0,0.04)",
-          border: voiceOn ? "1.5px solid #2B8FFF" : "1.5px solid #ddd",
-          borderRadius: "50%",
-          cursor: "pointer",
-          width: "48px",
-          height: "48px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          outline: "none",
-          flexShrink: 0,
-          transition: "all 0.2s",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.75")}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-      >
-        {voiceOn ? <SpeakerOnIcon /> : <SpeakerOffIcon />}
-      </button>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SEARCH BAR  (with live voice + suggestions)
-═══════════════════════════════════════════════════════════════ */
-function SearchBar({ onSearch, hidden }) {
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [micError, setMicError] = useState("");
-  const debounceRef = useRef(null);
-  const recognitionRef = useRef(null);
-
-  const fetchSuggestions = useCallback(async (q) => {
-    if (q.trim().length < 2) {
-      setSuggestions([]);
+  useEffect(() => {
+    if (!document.getElementById("lf-css")) {
+      const l = document.createElement("link");
+      l.id = "lf-css";
+      l.rel = "stylesheet";
+      l.href = LEAFLET_CSS;
+      document.head.appendChild(l);
+    }
+    if (window.L) {
+      setReady(true);
       return;
     }
-    setLoading(true);
+    const s = document.createElement("script");
+    s.src = LEAFLET_JS;
+    s.onload = () => setReady(true);
+    document.head.appendChild(s);
+  }, []);
+
+  useEffect(() => {
+    if (!ready || !containerRef.current || internalMapRef.current) return;
+    const L = window.L;
+    const map = L.map(containerRef.current, {
+      center: [1.5533, 110.3592],
+      zoom: 15,
+      zoomControl: false,
+      attributionControl: true,
+    });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap",
+      maxZoom: 19,
+    }).addTo(map);
+    L.control.zoom({ position: "bottomright" }).addTo(map);
+    const icon = L.divIcon({
+      html: `<div style="width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:30px solid #2563EB;filter:drop-shadow(0 0 5px #93C5FD)"></div>`,
+      iconSize: [22, 30],
+      iconAnchor: [11, 15],
+      className: "",
+    });
+    markerRef.current = L.marker([1.5533, 110.3592], { icon }).addTo(map);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude: lat, longitude: lng } }) => {
+          map.setView([lat, lng], 16);
+          markerRef.current.setLatLng([lat, lng]);
+        },
+        () => {},
+      );
+    }
+    internalMapRef.current = map;
+    if (extRef) extRef.current = map;
+  }, [ready]);
+
+  useEffect(() => {
+    if (!internalMapRef.current || !searchTarget) return;
+    const L = window.L;
+    const { lat, lng, name } = searchTarget;
+    if (routeLayerRef.current) {
+      internalMapRef.current.removeLayer(routeLayerRef.current);
+      routeLayerRef.current = null;
+    }
+    if (isNavigating) {
+      const s = markerRef.current?.getLatLng() || {
+        lat: 1.5533,
+        lng: 110.3592,
+      };
+      const route = L.polyline(
+        [
+          [s.lat, s.lng],
+          [(s.lat * 2 + lat) / 3 + 0.004, (s.lng * 2 + lng) / 3 - 0.003],
+          [(s.lat + lat * 2) / 3 - 0.002, (s.lng + lng * 2) / 3 + 0.002],
+          [lat, lng],
+        ],
+        {
+          color: "#3B82F6",
+          weight: 7,
+          opacity: 0.9,
+          lineJoin: "round",
+          lineCap: "round",
+        },
+      ).addTo(internalMapRef.current);
+      routeLayerRef.current = route;
+      internalMapRef.current.fitBounds(route.getBounds(), {
+        padding: [90, 90],
+        animate: true,
+      });
+    } else {
+      internalMapRef.current.setView([lat, lng], 15, { animate: true });
+      markerRef.current?.setLatLng([lat, lng]);
+      L.popup()
+        .setLatLng([lat, lng])
+        .setContent(
+          `<b style="font-size:13px;font-family:sans-serif">${name.split(",").slice(0, 2).join(",")}</b>`,
+        )
+        .openOn(internalMapRef.current);
+    }
+  }, [searchTarget, isNavigating]);
+
+  useEffect(() => {
+    if (!isNavigating && routeLayerRef.current && internalMapRef.current) {
+      internalMapRef.current.removeLayer(routeLayerRef.current);
+      routeLayerRef.current = null;
+    }
+  }, [isNavigating]);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ position: "absolute", inset: 0, zIndex: 0 }}
+    />
+  );
+}
+
+function SearchBar({ onSearch }) {
+  const [query, setSugg0] = useState("");
+  const [suggestions, setSug] = useState([]);
+  const [loading, setLoad] = useState(false);
+  const [listening, setLis] = useState(false);
+  const [micErr, setMicErr] = useState("");
+  const debRef = useRef(null);
+  const recRef = useRef(null);
+
+  const fetchSug = useCallback(async (q) => {
+    if (q.trim().length < 2) {
+      setSug([]);
+      return;
+    }
+    setLoad(true);
     try {
-      const res = await fetch(
+      const r = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`,
         { headers: { "Accept-Language": "en" } },
       );
-      setSuggestions(await res.json());
+      setSug(await r.json());
     } catch {
-      setSuggestions([]);
+      setSug([]);
     }
-    setLoading(false);
+    setLoad(false);
   }, []);
 
   const handleChange = (e) => {
     const v = e.target.value;
-    setQuery(v);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => fetchSuggestions(v), 350);
+    setSugg0(v);
+    clearTimeout(debRef.current);
+    debRef.current = setTimeout(() => fetchSug(v), 350);
   };
-  const handleSelect = (item) => {
-    setQuery(item.display_name.split(",")[0]);
-    setSuggestions([]);
+  const pick = (item) => {
+    setSugg0(item.display_name.split(",")[0]);
+    setSug([]);
     onSearch({
       lat: parseFloat(item.lat),
       lng: parseFloat(item.lon),
       name: item.display_name,
     });
   };
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && suggestions.length > 0)
-      handleSelect(suggestions[0]);
-    if (e.key === "Escape") setSuggestions([]);
+  const handleKey = (e) => {
+    if (e.key === "Enter" && suggestions.length > 0) pick(suggestions[0]);
+    if (e.key === "Escape") setSug([]);
   };
-
-  const handleMicClick = () => {
-    setMicError("");
+  const handleMic = () => {
+    setMicErr("");
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      setMicError("Voice search not supported in this browser.");
-      setTimeout(() => setMicError(""), 4000);
+      setMicErr("Voice not supported");
+      setTimeout(() => setMicErr(""), 3000);
       return;
     }
-    if (listening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setListening(false);
+    if (listening && recRef.current) {
+      recRef.current.stop();
+      setLis(false);
       return;
     }
     const r = new SR();
     r.lang = "en-MY";
     r.interimResults = true;
-    r.maxAlternatives = 1;
-    r.continuous = false;
-    recognitionRef.current = r;
-    r.onstart = () => setListening(true);
+    recRef.current = r;
+    r.onstart = () => setLis(true);
     r.onresult = (ev) => {
       const t = Array.from(ev.results)
         .map((x) => x[0].transcript)
         .join("");
-      setQuery(t);
+      setSugg0(t);
       if (ev.results[ev.results.length - 1].isFinal) {
-        clearTimeout(debounceRef.current);
-        fetchSuggestions(t);
+        clearTimeout(debRef.current);
+        fetchSug(t);
       }
     };
     r.onerror = (ev) => {
-      setListening(false);
-      setMicError(
-        ev.error === "not-allowed"
-          ? "Microphone access denied. Enable it in browser settings."
-          : `Voice error: ${ev.error}`,
-      );
-      setTimeout(() => setMicError(""), 5000);
+      setLis(false);
+      setMicErr(ev.error === "not-allowed" ? "Mic denied" : ev.error);
+      setTimeout(() => setMicErr(""), 4000);
     };
-    r.onend = () => setListening(false);
+    r.onend = () => setLis(false);
     r.start();
   };
 
-  if (hidden) return null;
-
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "590px",
-        zIndex: 15,
-        flexShrink: 0,
-      }}
-    >
-      {/* Bar */}
+    <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
       <div
         style={{
-          width: "590px",
-          height: "86px",
-          background: "#fff",
-          boxShadow: listening
-            ? "0 4px 20px rgba(43,143,255,0.45)"
-            : "0px 4px 20px rgba(0,0,0,0.25)",
-          borderRadius: "20px",
           display: "flex",
           alignItems: "center",
-          padding: "0 16px",
-          gap: "8px",
-          boxSizing: "border-box",
-          border: listening ? "2px solid #2B8FFF" : "2px solid transparent",
-          transition: "box-shadow 0.3s, border-color 0.3s",
+          gap: 8,
+          background: "rgba(255,255,255,.97)",
+          borderRadius: 14,
+          padding: "0 14px",
+          height: 52,
+          boxShadow: listening
+            ? "0 0 0 2px #3B82F6,0 4px 20px rgba(59,130,246,.18)"
+            : "0 2px 14px rgba(0,0,0,.13)",
+          border: `1.5px solid ${listening ? "#3B82F6" : "rgba(0,0,0,.06)"}`,
+          transition: "all .25s",
         }}
       >
+        <IcoSearch />
         <input
           value={query}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder={listening ? "Listening…" : "Search"}
+          onKeyDown={handleKey}
+          placeholder={listening ? "Listening…" : "Search destination"}
           style={{
             flex: 1,
             border: "none",
             outline: "none",
-            fontSize: "32px",
-            fontWeight: 400,
-            color: listening ? "#2B8FFF" : "#727272",
             background: "transparent",
-            fontFamily: "'Inter',sans-serif",
+            fontSize: 15,
+            color: listening ? "#3B82F6" : "#374151",
+            fontFamily: "system-ui,sans-serif",
           }}
         />
         {loading && (
           <div
             style={{
-              width: "24px",
-              height: "24px",
-              border: "3px solid #eee",
-              borderTop: "3px solid #2B8FFF",
+              width: 15,
+              height: 15,
+              border: "2px solid #E5E7EB",
+              borderTop: "2px solid #3B82F6",
               borderRadius: "50%",
-              animation: "spin 0.7s linear infinite",
+              animation: "spin .7s linear infinite",
               flexShrink: 0,
             }}
           />
         )}
-        {/* Mic button */}
         <button
-          onClick={handleMicClick}
-          title={listening ? "Stop" : "Voice search"}
+          onClick={handleMic}
           style={{
-            background: listening ? "rgba(43,143,255,0.10)" : "none",
-            border: listening ? "2px solid #2B8FFF" : "2px solid transparent",
+            background: listening ? "rgba(59,130,246,.1)" : "transparent",
+            border: `1.5px solid ${listening ? "#3B82F6" : "transparent"}`,
             borderRadius: "50%",
             cursor: "pointer",
-            padding: "8px",
+            padding: 7,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            transition: "all 0.2s",
-            flexShrink: 0,
             outline: "none",
+            flexShrink: 0,
           }}
         >
-          <MicIcon listening={listening} />
+          <IcoMic on={listening} />
         </button>
       </div>
-
-      {/* Listening pulse ring */}
-      {listening && (
+      {micErr && (
         <div
           style={{
             position: "absolute",
-            right: "14px",
-            top: "14px",
-            width: "58px",
-            height: "58px",
-            borderRadius: "50%",
-            border: "3px solid #2B8FFF",
-            opacity: 0.4,
-            animation: "pulseRing 1.2s ease-out infinite",
-            pointerEvents: "none",
-          }}
-        />
-      )}
-
-      {micError && (
-        <div
-          style={{
-            position: "absolute",
-            top: "92px",
+            top: 58,
             left: 0,
-            background: "#fff3f3",
-            border: "1px solid #ffaaaa",
-            borderRadius: "10px",
-            padding: "10px 16px",
-            fontSize: "14px",
-            color: "#cc0000",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.1)",
             zIndex: 25,
+            background: "#FEF2F2",
+            border: "1px solid #FCA5A5",
+            borderRadius: 10,
+            padding: "8px 14px",
+            fontSize: 13,
+            color: "#B91C1C",
+            whiteSpace: "nowrap",
           }}
         >
-          {micError}
+          {micErr}
         </div>
       )}
-
       {suggestions.length > 0 && (
         <div
           style={{
             position: "absolute",
-            top: "92px",
+            top: 58,
             left: 0,
-            width: "590px",
-            background: "#fff",
-            borderRadius: "14px",
-            boxShadow: "0 8px 28px rgba(0,0,0,0.16)",
-            overflow: "hidden",
+            right: 0,
             zIndex: 20,
+            background: "rgba(255,255,255,.98)",
+            borderRadius: 12,
+            boxShadow: "0 8px 24px rgba(0,0,0,.14)",
+            overflow: "hidden",
           }}
         >
           {suggestions.map((s, i) => (
             <div
               key={s.place_id}
-              onClick={() => handleSelect(s)}
+              onClick={() => pick(s)}
               style={{
-                padding: "14px 20px",
-                fontSize: "16px",
-                color: "#222",
+                padding: "11px 14px",
+                fontSize: 13,
+                color: "#111827",
                 cursor: "pointer",
                 borderBottom:
-                  i < suggestions.length - 1 ? "1px solid #f0f0f0" : "none",
+                  i < suggestions.length - 1 ? "1px solid #F3F4F6" : "none",
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
-                transition: "background 0.15s",
+                gap: 10,
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#f5f8ff")
+                (e.currentTarget.style.background = "#EFF6FF")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
               }
             >
-              <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+              <svg
+                width="10"
+                height="14"
+                viewBox="0 0 10 14"
+                fill="none"
+                style={{ flexShrink: 0 }}
+              >
                 <path
-                  d="M8 1C4.7 1 2 3.7 2 7c0 5 6 12 6 12s6-7 6-12c0-3.3-2.7-6-6-6z"
-                  fill="#2B8FFF"
-                  opacity="0.75"
+                  d="M5 1C2.8 1 1 3 1 5.5c0 3.7 4 8.5 4 8.5s4-4.8 4-8.5C9 3 7.2 1 5 1z"
+                  fill="#3B82F6"
+                  opacity=".7"
                 />
-                <circle cx="8" cy="7" r="2" fill="#fff" />
+                <circle cx="5" cy="5.5" r="1.2" fill="#fff" />
               </svg>
               <span
                 style={{
@@ -920,465 +694,661 @@ function SearchBar({ onSearch, hidden }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   FAVOURITES PANEL
-═══════════════════════════════════════════════════════════════ */
-function FavouritesPanel({ onNavigate, onClose }) {
+function SpeedGauge({ speed }) {
+  const pct = Math.min(speed / 140, 1);
+  const R = 38,
+    cx = 52,
+    cy = 55;
+  const toRad = (a) => (a * Math.PI) / 180;
+  const pt = (a) => ({
+    x: cx + R * Math.cos(toRad(a)),
+    y: cy + R * Math.sin(toRad(a)),
+  });
+  const arc = (start, sweep) => {
+    const e = start + sweep,
+      large = Math.abs(sweep) > 180 ? 1 : 0,
+      s = pt(start),
+      en = pt(e);
+    return `M${s.x.toFixed(2)} ${s.y.toFixed(2)} A${R} ${R} 0 ${large} 1 ${en.x.toFixed(2)} ${en.y.toFixed(2)}`;
+  };
+  const startA = -215,
+    sweepA = 250;
+  const color = speed > 100 ? "#EF4444" : speed > 80 ? "#F97316" : "#3B82F6";
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,.97)",
+        borderRadius: 18,
+        padding: "14px 10px 10px",
+        boxShadow: "0 2px 14px rgba(0,0,0,.12)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: 106,
+        flexShrink: 0,
+      }}
+    >
+      <svg width="104" height="76" viewBox="0 0 104 76">
+        <path
+          d={arc(startA, sweepA)}
+          fill="none"
+          stroke="#F3F4F6"
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        {pct > 0 && (
+          <path
+            d={arc(startA, sweepA * pct)}
+            fill="none"
+            stroke={color}
+            strokeWidth="7"
+            strokeLinecap="round"
+            style={{ transition: "all .4s ease" }}
+          />
+        )}
+        <text
+          x="52"
+          y="58"
+          textAnchor="middle"
+          fontSize="28"
+          fontWeight="700"
+          fill={color}
+          style={{ transition: "fill .3s", fontFamily: "system-ui" }}
+        >
+          {speed}
+        </text>
+        <text
+          x="52"
+          y="70"
+          textAnchor="middle"
+          fontSize="9"
+          fill="#9CA3AF"
+          style={{ fontFamily: "system-ui" }}
+        >
+          km/h
+        </text>
+      </svg>
+      <div
+        style={{
+          fontSize: 10,
+          color: "#9CA3AF",
+          fontWeight: 600,
+          letterSpacing: 1,
+          marginTop: 2,
+        }}
+      >
+        SPEED
+      </div>
+    </div>
+  );
+}
+
+function BatteryCard({ rangeKm, pct }) {
+  const color = pct > 50 ? "#22C55E" : pct > 20 ? "#F97316" : "#EF4444";
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,.97)",
+        borderRadius: 18,
+        padding: "14px 16px",
+        boxShadow: "0 2px 14px rgba(0,0,0,.12)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 10,
+        width: 148,
+        flexShrink: 0,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+        <span
+          style={{
+            fontSize: 30,
+            fontWeight: 700,
+            color: "#111827",
+            lineHeight: 1,
+          }}
+        >
+          {rangeKm}
+        </span>
+        <span style={{ fontSize: 13, color: "#9CA3AF", fontWeight: 500 }}>
+          km
+        </span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div
+          style={{
+            flex: 1,
+            height: 7,
+            background: "#F3F4F6",
+            borderRadius: 4,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: `${pct}%`,
+              height: "100%",
+              background: color,
+              borderRadius: 4,
+              transition: "width .5s",
+            }}
+          />
+        </div>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color,
+            minWidth: 34,
+            textAlign: "right",
+          }}
+        >
+          {pct}%
+        </span>
+      </div>
+      <div
+        style={{
+          fontSize: 10,
+          color: "#9CA3AF",
+          fontWeight: 600,
+          letterSpacing: 1,
+        }}
+      >
+        RANGE · BATTERY
+      </div>
+    </div>
+  );
+}
+
+function Compass({ bearing, locked, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: 52,
+        height: 52,
+        borderRadius: "50%",
+        background: "rgba(255,255,255,.97)",
+        border: locked ? "2px solid #3B82F6" : "1.5px solid rgba(0,0,0,.08)",
+        boxShadow: locked
+          ? "0 0 0 3px rgba(59,130,246,.2),0 2px 12px rgba(0,0,0,.12)"
+          : "0 2px 12px rgba(0,0,0,.12)",
+        cursor: "pointer",
+        outline: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "all .25s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      title={locked ? "Unlock" : "Lock north"}
+    >
+      <svg width="30" height="30" viewBox="0 0 30 30">
+        <g
+          transform={`rotate(${bearing},15,15)`}
+          style={{ transition: "transform .4s ease" }}
+        >
+          <polygon points="15,3 18.5,15 15,13 11.5,15" fill="#EF4444" />
+          <polygon points="15,27 18.5,15 15,17 11.5,15" fill="#D1D5DB" />
+        </g>
+        <circle cx="15" cy="15" r="2" fill="#374151" />
+      </svg>
+    </button>
+  );
+}
+
+function LocateBtn({ loading, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: 52,
+        height: 52,
+        borderRadius: "50%",
+        background: "rgba(255,255,255,.97)",
+        border: "1.5px solid rgba(0,0,0,.08)",
+        boxShadow: "0 2px 12px rgba(0,0,0,.12)",
+        cursor: "pointer",
+        outline: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "all .25s",
+        animation: loading ? "locPulse 1s ease infinite" : "none",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      title="Locate me"
+    >
+      {loading ? (
+        <div
+          style={{
+            width: 18,
+            height: 18,
+            border: "2.5px solid #E5E7EB",
+            borderTop: "2.5px solid #3B82F6",
+            borderRadius: "50%",
+            animation: "spin .7s linear infinite",
+          }}
+        />
+      ) : (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="5.5" stroke="#3B82F6" strokeWidth="2" />
+          <circle cx="11" cy="11" r="1.8" fill="#3B82F6" />
+          <line
+            x1="11"
+            y1="1"
+            x2="11"
+            y2="5"
+            stroke="#3B82F6"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <line
+            x1="11"
+            y1="17"
+            x2="11"
+            y2="21"
+            stroke="#3B82F6"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <line
+            x1="1"
+            y1="11"
+            x2="5"
+            y2="11"
+            stroke="#3B82F6"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <line
+            x1="17"
+            y1="11"
+            x2="21"
+            y2="11"
+            stroke="#3B82F6"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+function TurnBanner({ inst, voiceOn, onToggleVoice }) {
+  if (!inst) return null;
   return (
     <div
       style={{
         position: "absolute",
-        right: "20px",
-        top: "130px",
-        width: "590px",
-        background: "#fff",
-        borderRadius: "20px",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
-        zIndex: 20,
-        overflow: "hidden",
-        animation: "fadeIn 0.2s ease",
+        top: 14,
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "rgba(255,255,255,.97)",
+        borderRadius: 16,
+        padding: "12px 16px 12px 12px",
+        boxShadow: "0 4px 24px rgba(0,0,0,.14)",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        zIndex: 12,
+        minWidth: 300,
+        animation: "slideDown .3s ease",
       }}
     >
       <div
         style={{
-          padding: "16px 20px 12px",
-          borderBottom: "1px solid #f0f0f0",
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          background: "#EFF6FF",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
         }}
       >
-        <span style={{ fontSize: "18px", fontWeight: 700, color: "#1E1E1E" }}>
-          ⚡ Favourite Charging Stations
-        </span>
-        <button
-          onClick={onClose}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "20px",
-            color: "#999",
-            outline: "none",
-          }}
-        >
-          ✕
-        </button>
+        <IcoArrowR />
       </div>
-      {FAV_STATIONS.map((s) => (
+      <div style={{ flex: 1 }}>
         <div
-          key={s.id}
-          onClick={() => {
-            onNavigate(s);
-          }}
           style={{
-            padding: "14px 20px",
-            borderBottom: "1px solid #f5f5f5",
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            cursor: "pointer",
-            transition: "background 0.15s",
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#1D4ED8",
+            lineHeight: 1,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#f8faff")}
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "transparent")
-          }
         >
-          <div
+          {inst.dist}
+        </div>
+        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3 }}>
+          {inst.text}
+        </div>
+      </div>
+      <button
+        onClick={onToggleVoice}
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          border: `1.5px solid ${voiceOn ? "#3B82F6" : "#E5E7EB"}`,
+          background: voiceOn ? "rgba(59,130,246,.08)" : "transparent",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          outline: "none",
+          flexShrink: 0,
+          transition: "all .2s",
+        }}
+      >
+        {voiceOn ? <IcoSpeakOn /> : <IcoSpeakOff />}
+      </button>
+    </div>
+  );
+}
+
+function NavBar({ dest, eta, dist, onCancel }) {
+  const arr = new Date(Date.now() + parseInt(eta) * 60000).toLocaleTimeString(
+    [],
+    { hour: "2-digit", minute: "2-digit" },
+  );
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: 150,
+        left: 12,
+        right: 12,
+        zIndex: 12,
+        background: "rgba(255,255,255,.97)",
+        borderRadius: 18,
+        boxShadow: "0 -2px 20px rgba(0,0,0,.1)",
+        padding: "14px 18px",
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        animation: "slideUp .35s ease",
+      }}
+    >
+      <button
+        onClick={onCancel}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: "50%",
+          border: "1.5px solid #E5E7EB",
+          background: "#fff",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          outline: "none",
+          transition: "all .2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#FEE2E2";
+          e.currentTarget.style.borderColor = "#FECACA";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "#fff";
+          e.currentTarget.style.borderColor = "#E5E7EB";
+        }}
+      >
+        <IcoX />
+      </button>
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            fontSize: 22,
+            fontWeight: 700,
+            color: "#2563EB",
+            lineHeight: 1,
+          }}
+        >
+          {eta}
+        </div>
+        <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 3 }}>
+          {dist} · Arrives {arr}
+        </div>
+      </div>
+      <div style={{ textAlign: "right", maxWidth: 220 }}>
+        <div
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            color: "#111827",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {dest}
+        </div>
+        <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
+          Navigating
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FavModal({ onNavigate, onClose }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 30,
+        background: "rgba(0,0,0,.35)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        animation: "fadeIn .2s ease",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff",
+          borderRadius: 22,
+          width: "min(460px, 90%)",
+          boxShadow: "0 20px 60px rgba(0,0,0,.22)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 18px 12px",
+            borderBottom: "1px solid #F3F4F6",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 9,
+                background: "#EFF6FF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IcoBolt />
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 600, color: "#111827" }}>
+              Favourite Stations
+            </span>
+          </div>
+          <button
+            onClick={onClose}
             style={{
-              width: "40px",
-              height: "40px",
+              background: "#F9FAFB",
+              border: "none",
+              cursor: "pointer",
               borderRadius: "50%",
-              background: "#EEF5FF",
+              width: 30,
+              height: 30,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              flexShrink: 0,
+              outline: "none",
             }}
           >
-            <ChargingBolt />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{ fontSize: "16px", fontWeight: 600, color: "#1E1E1E" }}
-            >
-              {s.name}
-            </div>
-            <div style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
-              {s.address}
-            </div>
-          </div>
-          <div style={{ textAlign: "right", flexShrink: 0 }}>
-            <div
-              style={{ fontSize: "15px", fontWeight: 600, color: "#2B8FFF" }}
-            >
-              {s.dist}
-            </div>
-            <div style={{ fontSize: "12px", color: "#aaa" }}>{s.time}</div>
-          </div>
+            <IcoX />
+          </button>
         </div>
+        {FAV_STATIONS.map((s, i) => (
+          <div
+            key={s.id}
+            onClick={() => onNavigate(s)}
+            style={{
+              padding: "13px 18px",
+              borderBottom:
+                i < FAV_STATIONS.length - 1 ? "1px solid #F9FAFB" : "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              cursor: "pointer",
+              transition: "background .15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#F0F9FF")}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "transparent")
+            }
+          >
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: "50%",
+                background: "#EFF6FF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <IcoBolt />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
+                {s.name}
+              </div>
+              <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
+                {s.address}
+              </div>
+            </div>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#3B82F6" }}>
+                {s.dist}
+              </div>
+              <div style={{ fontSize: 11, color: "#9CA3AF" }}>{s.time}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const TABS = [
+  { Icon: IcoDash, label: "Dashboard" },
+  { Icon: IcoCharge, label: "Charge" },
+  { Icon: IcoNavTab, label: "Navigate" },
+  { Icon: IcoWeather, label: "Weather" },
+  { Icon: IcoEmg, label: "Emergency" },
+  { Icon: IcoSettings, label: "Settings" },
+];
+
+function BottomTabBar({ active, setActive }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        width: 1148,
+        height: 108,
+        left: "calc(50% - 574px)",
+        top: 662,
+        background: "rgba(255,255,255,0.92)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(0,0,0,0.06)",
+        borderRadius: 35,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-around",
+        padding: "0 20px",
+        boxShadow: "0 2px 16px rgba(0,0,0,0.07)",
+        zIndex: 10,
+      }}
+    >
+      {TABS.map(({ Icon, label }, i) => (
+        <button
+          key={i}
+          onClick={() => setActive(i)}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+            padding: "8px 12px",
+            borderRadius: 12,
+            border: "none",
+            cursor: "pointer",
+            background: active === i ? "#2563EB" : "transparent",
+            transition: "all .2s",
+            outline: "none",
+            minWidth: 62,
+          }}
+          onMouseEnter={(e) => {
+            if (active !== i) e.currentTarget.style.background = "#F3F4F6";
+          }}
+          onMouseLeave={(e) => {
+            if (active !== i) e.currentTarget.style.background = "transparent";
+          }}
+        >
+          <Icon a={active === i} />
+          <span
+            style={{
+              fontSize: 9,
+              fontWeight: 600,
+              letterSpacing: 0.4,
+              color: active === i ? "#fff" : "#9CA3AF",
+            }}
+          >
+            {label.toUpperCase()}
+          </span>
+        </button>
       ))}
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   COMPASS BUTTON
-═══════════════════════════════════════════════════════════════ */
-function CompassButton({ bearing, northLocked, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      title={
-        northLocked
-          ? "Compass active (click to unlock)"
-          : "Click to orient north"
-      }
-      style={{
-        width: "104px",
-        height: "104px",
-        background: "#fff",
-        borderRadius: "50%",
-        boxShadow: northLocked
-          ? "0 0 0 3px #2B8FFF, 0 0 16px rgba(43,143,255,0.3)"
-          : "0px 0px 10px rgba(0,0,0,0.25)",
-        border: "none",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        outline: "none",
-        transition: "box-shadow 0.25s, transform 0.15s",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.06)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-    >
-      {/* Rotating needle assembly */}
-      <div
-        style={{
-          position: "absolute",
-          width: "26px",
-          height: "76px",
-          top: "14px",
-          left: "calc(50% - 13px)",
-          transform: `rotate(${bearing}deg)`,
-          transformOrigin: "13px 38px",
-          transition: "transform 0.4s ease",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Red north tip */}
-        <div
-          style={{
-            width: "0",
-            height: "0",
-            borderLeft: "13px solid transparent",
-            borderRight: "13px solid transparent",
-            borderBottom: "38px solid #FF0000",
-            filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.2))",
-          }}
-        />
-        {/* White south tip */}
-        <div
-          style={{
-            width: "0",
-            height: "0",
-            borderLeft: "13px solid transparent",
-            borderRight: "13px solid transparent",
-            borderTop: "38px solid #ccc",
-          }}
-        />
-      </div>
-      {/* N label */}
-      <span
-        style={{
-          position: "absolute",
-          top: "12px",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#FF0000",
-          letterSpacing: "-0.5px",
-          zIndex: 2,
-        }}
-      >
-        N
-      </span>
-    </button>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   LIVE MAP  (Leaflet)
-═══════════════════════════════════════════════════════════════ */
-function LiveMap({ searchTarget, mapRef: extRef, isNavigating }) {
-  const containerRef = useRef(null);
-  const internalMapRef = useRef(null);
-  const markerRef = useRef(null);
-  const routeLayerRef = useRef(null);
-  const [ready, setReady] = useState(false);
-
-  // Load Leaflet
-  useEffect(() => {
-    if (!document.getElementById("leaflet-css")) {
-      const l = document.createElement("link");
-      l.id = "leaflet-css";
-      l.rel = "stylesheet";
-      l.href = LEAFLET_CSS;
-      document.head.appendChild(l);
-    }
-    if (window.L) {
-      setReady(true);
-      return;
-    }
-    const s = document.createElement("script");
-    s.src = LEAFLET_JS;
-    s.onload = () => setReady(true);
-    document.head.appendChild(s);
-  }, []);
-
-  // Init map
-  useEffect(() => {
-    if (!ready || !containerRef.current || internalMapRef.current) return;
-    const L = window.L;
-    const map = L.map(containerRef.current, {
-      center: [1.5533, 110.3592],
-      zoom: 15,
-      zoomControl: false,
-      attributionControl: true,
-    });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap",
-      maxZoom: 19,
-    }).addTo(map);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-
-    // Navigation arrow marker
-    const arrowIcon = L.divIcon({
-      html: `<div style="width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:36px solid #0078FF;filter:drop-shadow(0 0 8px #0078FF);"></div>`,
-      iconSize: [28, 36],
-      iconAnchor: [14, 18],
-      className: "",
-    });
-    markerRef.current = L.marker([1.5533, 110.3592], { icon: arrowIcon }).addTo(
-      map,
-    );
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords: { latitude: lat, longitude: lng } }) => {
-          map.setView([lat, lng], 16);
-          markerRef.current.setLatLng([lat, lng]);
-        },
-        () => {},
-      );
-    }
-    internalMapRef.current = map;
-    if (extRef) extRef.current = map;
-  }, [ready]);
-
-  // Draw / remove route
-  useEffect(() => {
-    if (!internalMapRef.current || !searchTarget) return;
-    const L = window.L;
-    const { lat, lng, name } = searchTarget;
-
-    if (routeLayerRef.current) {
-      internalMapRef.current.removeLayer(routeLayerRef.current);
-      routeLayerRef.current = null;
-    }
-
-    if (isNavigating) {
-      const start = markerRef.current?.getLatLng() || {
-        lat: 1.5533,
-        lng: 110.3592,
-      };
-      const mid1Lat = (start.lat * 2 + lat) / 3 + 0.004;
-      const mid1Lng = (start.lng * 2 + lng) / 3 - 0.003;
-      const mid2Lat = (start.lat + lat * 2) / 3 - 0.002;
-      const mid2Lng = (start.lng + lng * 2) / 3 + 0.002;
-      const route = L.polyline(
-        [
-          [start.lat, start.lng],
-          [mid1Lat, mid1Lng],
-          [mid2Lat, mid2Lng],
-          [lat, lng],
-        ],
-        {
-          color: "#2B8FFF",
-          weight: 9,
-          opacity: 0.88,
-          lineJoin: "round",
-          lineCap: "round",
-        },
-      ).addTo(internalMapRef.current);
-      routeLayerRef.current = route;
-      internalMapRef.current.fitBounds(route.getBounds(), {
-        padding: [90, 90],
-        animate: true,
-      });
-    } else {
-      internalMapRef.current.setView([lat, lng], 15, { animate: true });
-      markerRef.current?.setLatLng([lat, lng]);
-      L.popup()
-        .setLatLng([lat, lng])
-        .setContent(
-          `<b style="font-size:14px;font-family:sans-serif">${name.split(",").slice(0, 2).join(",")}</b>`,
-        )
-        .openOn(internalMapRef.current);
-    }
-  }, [searchTarget, isNavigating]);
-
-  // Remove route on cancel
-  useEffect(() => {
-    if (!isNavigating && routeLayerRef.current && internalMapRef.current) {
-      internalMapRef.current.removeLayer(routeLayerRef.current);
-      routeLayerRef.current = null;
-    }
-  }, [isNavigating]);
-
-  return (
-    <div
-      ref={containerRef}
-      style={{
-        position: "absolute",
-        left: "-126px",
-        top: "0",
-        width: "1531px",
-        height: "817px",
-        zIndex: 0,
-      }}
-    />
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   NAVIGATION BOTTOM BAR
-═══════════════════════════════════════════════════════════════ */
-function NavBottomBar({ destination, eta, distance, onCancel }) {
-  const arrivalTime = new Date(
-    Date.now() + parseInt(eta) * 60000,
-  ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: "0",
-        bottom: "146px",
-        width: "100%",
-        zIndex: 12,
-        animation: "slideUp 0.35s ease",
-      }}
-    >
-      <div
-        style={{
-          margin: "0 56px",
-          background: "rgba(255,255,255,0.97)",
-          borderRadius: "20px 20px 0 0",
-          boxShadow: "0 -4px 28px rgba(0,0,0,0.13)",
-          padding: "18px 28px",
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-        }}
-      >
-        {/* Cancel ⊗ */}
-        <button
-          onClick={onCancel}
-          title="Cancel navigation"
-          style={{
-            width: "52px",
-            height: "52px",
-            borderRadius: "50%",
-            border: "2.5px solid #333",
-            background: "#fff",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            outline: "none",
-            transition: "background 0.18s, transform 0.14s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#f5f5f5";
-            e.currentTarget.style.transform = "scale(1.08)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#fff";
-            e.currentTarget.style.transform = "scale(1)";
-          }}
-        >
-          <svg width="60" height="60" viewBox="0 0 22 22" fill="none">
-            <path
-              d="M7 7l8 8M15 7l-8 8"
-              stroke="#333"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
-
-        {/* ETA */}
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: "32px",
-              fontWeight: 700,
-              color: "#2B8FFF",
-              lineHeight: 1,
-            }}
-          >
-            {eta}
-          </div>
-          <div style={{ fontSize: "15px", color: "#666", marginTop: "4px" }}>
-            {distance}&nbsp;&nbsp;|&nbsp;&nbsp;{arrivalTime}
-          </div>
-        </div>
-
-        {/* Destination */}
-        <div style={{ textAlign: "right", maxWidth: "320px" }}>
-          <div
-            style={{
-              fontSize: "22px",
-              fontWeight: 600,
-              color: "#1E1E1E",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {destination}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MAIN  NavPage
-═══════════════════════════════════════════════════════════════ */
-export default function NavPage({ navActive, setNavActive }) {
-  const [speed, setSpeed] = useState(80);
+export default function App() {
+  const [activeTab, setActiveTab] = useState(2);
+  const [speed, setSpeed] = useState(62);
   const [battery] = useState(78);
-  const [activeNav, setActiveNav] = useState(2);
   const [searchTarget, setSearchTarget] = useState(null);
-  const [isNavigating, setIsNavigating] = useState(false);
+  const [isNav, setIsNav] = useState(false);
   const [locating, setLocating] = useState(false);
-  const [locateError, setLocateError] = useState("");
+  const [locErr, setLocErr] = useState("");
   const [showFavs, setShowFavs] = useState(false);
-  const [compassBearing, setCompassBearing] = useState(0);
+  const [bearing, setBearing] = useState(0);
   const [northLocked, setNorthLocked] = useState(false);
-  const [turnInstruction, setTurnInstruction] = useState(null);
+  const [turnInst, setTurnInst] = useState(null);
   const [voiceOn, setVoiceOn] = useState(true);
   const mapRef = useRef(null);
 
-  /* Speed drift */
   useEffect(() => {
     const id = setInterval(
       () =>
@@ -1390,55 +1360,46 @@ export default function NavPage({ navActive, setNavActive }) {
     return () => clearInterval(id);
   }, []);
 
-  /* Compass drift while navigating */
   useEffect(() => {
-    if (!isNavigating || northLocked) return;
-    const id = setInterval(
-      () => setCompassBearing((b) => (b + 0.4) % 360),
-      150,
-    );
+    if (!isNav || northLocked) return;
+    const id = setInterval(() => setBearing((b) => (b + 0.5) % 360), 150);
     return () => clearInterval(id);
-  }, [isNavigating, northLocked]);
+  }, [isNav, northLocked]);
 
-  /* Speak turn instruction via TTS — respects voiceOn */
-  const speakInstruction = useCallback((instruction, on = true) => {
-    if (!on || !instruction || !window.speechSynthesis) return;
+  const speak = useCallback((inst, on = true) => {
+    if (!on || !inst || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(
-      `In ${instruction.dist}, ${instruction.text}`,
-    );
-    utt.lang = "en-MY";
-    utt.rate = 0.95;
-    window.speechSynthesis.speak(utt);
+    const u = new SpeechSynthesisUtterance(`In ${inst.dist}, ${inst.text}`);
+    u.lang = "en-MY";
+    u.rate = 0.95;
+    window.speechSynthesis.speak(u);
   }, []);
 
-  /* Start navigation */
-  const startNavigation = useCallback(
+  const startNav = useCallback(
     (target) => {
       setSearchTarget(target);
-      setIsNavigating(true);
+      setIsNav(true);
       setShowFavs(false);
       const first = { dist: "750m", text: "Turn Right" };
-      setTurnInstruction(first);
-      speakInstruction(first, voiceOn);
+      setTurnInst(first);
+      speak(first, voiceOn);
       setTimeout(() => {
         const i = { dist: "1.2 km", text: "Keep Left" };
-        setTurnInstruction(i);
-        speakInstruction(i, voiceOn);
+        setTurnInst(i);
+        speak(i, voiceOn);
       }, 8000);
       setTimeout(() => {
         const i = { dist: "300m", text: "Turn Left" };
-        setTurnInstruction(i);
-        speakInstruction(i, voiceOn);
+        setTurnInst(i);
+        speak(i, voiceOn);
       }, 16000);
     },
-    [voiceOn, speakInstruction],
+    [voiceOn, speak],
   );
 
-  /* Cancel navigation */
-  const cancelNavigation = () => {
-    setIsNavigating(false);
-    setTurnInstruction(null);
+  const cancelNav = () => {
+    setIsNav(false);
+    setTurnInst(null);
     if (mapRef.current) {
       navigator.geolocation?.getCurrentPosition(
         ({ coords: { latitude: lat, longitude: lng } }) =>
@@ -1448,30 +1409,17 @@ export default function NavPage({ navActive, setNavActive }) {
     }
   };
 
-  /* Compass click: reset north / toggle lock */
-  const handleCompassClick = () => {
-    const locked = !northLocked;
-    setNorthLocked(locked);
-    setCompassBearing(0);
-    if (mapRef.current?.setBearing) mapRef.current.setBearing(0);
-  };
-
-  /* Toggle voice on/off */
   const handleToggleVoice = () => {
-    const next = !voiceOn;
-    setVoiceOn(next);
-    if (!next) {
-      window.speechSynthesis?.cancel();
-    } else if (turnInstruction) {
-      speakInstruction(turnInstruction, true);
-    }
+    const n = !voiceOn;
+    setVoiceOn(n);
+    if (!n) window.speechSynthesis?.cancel();
+    else if (turnInst) speak(turnInst, true);
   };
 
-  /* Locate me */
-  const handleLocateMe = () => {
-    setLocateError("");
+  const handleLocate = () => {
+    setLocErr("");
     if (!navigator.geolocation) {
-      setLocateError("Geolocation not supported.");
+      setLocErr("Geolocation not supported");
       return;
     }
     setLocating(true);
@@ -1488,28 +1436,14 @@ export default function NavPage({ navActive, setNavActive }) {
       },
       (err) => {
         setLocating(false);
-        setLocateError(
-          err.code === 1
-            ? "Location access denied. Enable it in browser settings."
-            : "Unable to get your location.",
+        setLocErr(
+          err.code === 1 ? "Location access denied" : "Unable to get location",
         );
-        setTimeout(() => setLocateError(""), 5000);
+        setTimeout(() => setLocErr(""), 4000);
       },
       { timeout: 10000, enableHighAccuracy: true },
     );
   };
-
-  const navItems = [
-    { Icon: NavDashboard, label: "Dashboard" },
-    { Icon: NavFuel, label: "Fuel" },
-    { Icon: NavLocation, label: "Location" },
-    { Icon: NavWeather, label: "Weather" },
-    { Icon: NavEmergency, label: "Emergency" },
-    { Icon: NavSettings, label: "Settings" },
-  ];
-
-  const navEta = "18 min";
-  const navDist = "34 km";
 
   return (
     <div
@@ -1523,234 +1457,191 @@ export default function NavPage({ navActive, setNavActive }) {
         userSelect: "none",
       }}
     >
-      {/* ── MAP ── */}
       <LiveMap
         searchTarget={searchTarget}
         mapRef={mapRef}
-        isNavigating={isNavigating}
+        isNavigating={isNav}
       />
 
-      {/* ══ TOP-LEFT: Info card + Speedometer ══ */}
-      <InfoCard distanceKm={217} batteryPct={battery} />
-      <Speedometer speed={speed} />
-
-      {/* ══ TOP-RIGHT row: ♥ Favourite  |  Search bar  |  Navigate btn ══ */}
-      {!isNavigating && (
-        <div
-          style={{
-            position: "absolute",
-            right: "20px",
-            top: "17px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: "10px",
-            zIndex: 15,
-          }}
-        >
-          {/* Favourite heart button */}
-          <button
-            onClick={() => setShowFavs((v) => !v)}
-            title="Favourite charging stations"
+      {/* TOP ROW */}
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          left: 14,
+          right: 14,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+          zIndex: 10,
+        }}
+      >
+        <BatteryCard rangeKm={217} pct={battery} />
+        <SpeedGauge speed={speed} />
+        {!isNav && <SearchBar onSearch={startNav} />}
+        {!isNav && (
+          <div
             style={{
-              width: "65px",
-              height: "65px",
-              background: "#fff",
-              border: "none",
-              borderRadius: "50%",
-              boxShadow: showFavs
-                ? "0 0 0 3px #FF0000, 0 4px 16px rgba(0,0,0,0.15)"
-                : "0px 0px 10px rgba(0,0,0,0.25)",
-              cursor: "pointer",
               display: "flex",
+              gap: 8,
               alignItems: "center",
-              justifyContent: "center",
-              transition: "box-shadow 0.2s, transform 0.15s",
-              outline: "none",
               flexShrink: 0,
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.08)")
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
-            <HeartIcon filled={showFavs} />
-          </button>
-
-          {/* Search bar inline */}
-          <SearchBar onSearch={startNavigation} hidden={false} />
-
-          {/* Navigate (paper-plane) button */}
-          <button
-            onClick={() => {
-              if (searchTarget) {
-                startNavigation(searchTarget);
-              } else {
-                alert(
-                  "Search or select a destination first, then press Navigate.",
-                );
+            <button
+              onClick={() => setShowFavs((v) => !v)}
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,.97)",
+                border: showFavs
+                  ? "2px solid #EF4444"
+                  : "1.5px solid rgba(0,0,0,.08)",
+                boxShadow: showFavs
+                  ? "0 0 0 3px rgba(239,68,68,.15),0 2px 12px rgba(0,0,0,.12)"
+                  : "0 2px 12px rgba(0,0,0,.12)",
+                cursor: "pointer",
+                outline: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all .25s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.08)")
               }
-            }}
-            title="Start navigation"
-            style={{
-              width: "100px",
-              height: "100px",
-              background: "#2B8FFF",
-              border: "none",
-              borderRadius: "50%",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0px 4px 20px rgba(43,143,255,0.55)",
-              outline: "none",
-              flexShrink: 0,
-              transition: "transform 0.15s, box-shadow 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.07)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 28px rgba(43,143,255,0.7)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow =
-                "0px 4px 20px rgba(43,143,255,0.55)";
-            }}
-          >
-            <PaperPlaneIcon />
-          </button>
-        </div>
-      )}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
+              title="Favourites"
+            >
+              <IcoHeart f={showFavs} />
+            </button>
+            <button
+              onClick={() =>
+                searchTarget
+                  ? startNav(searchTarget)
+                  : alert("Search a destination first.")
+              }
+              style={{
+                width: 58,
+                height: 58,
+                borderRadius: "50%",
+                background: "#2563EB",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 4px 18px rgba(37,99,235,.45)",
+                outline: "none",
+                flexShrink: 0,
+                transition: "transform .15s,box-shadow .15s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.08)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 24px rgba(37,99,235,.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 18px rgba(37,99,235,.45)";
+              }}
+              title="Navigate"
+            >
+              <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                <path d="M22 4L3 11l7 4 4 7 8-18z" fill="#fff" />
+                <path
+                  d="M10 15L22 4"
+                  stroke="rgba(255,255,255,.4)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
 
-      {/* ══ TURN CARD (navigation mode, top-right) ══ */}
-      {isNavigating && (
-        <TurnCard
-          instruction={turnInstruction}
+      {isNav && (
+        <TurnBanner
+          inst={turnInst}
           voiceOn={voiceOn}
           onToggleVoice={handleToggleVoice}
         />
       )}
 
-      {/* ══ FAVOURITES PANEL ══ */}
-      {showFavs && (
-        <FavouritesPanel
-          onNavigate={(s) =>
-            startNavigation({ lat: s.lat, lng: s.lng, name: s.name })
-          }
-          onClose={() => setShowFavs(false)}
-        />
-      )}
-
-      {/* ══ SIDE BUTTONS: Compass + Locate Me — fixed from bottom so NavBottomBar never pushes them ══ */}
       <div
         style={{
           position: "absolute",
-          right: "20px",
-          bottom: "420px",
+          right: 14,
+          bottom: 250,
           display: "flex",
           flexDirection: "column",
-          gap: "15px",
-          zIndex: 13,
+          gap: 10,
+          zIndex: 11,
         }}
       >
-        <CompassButton
-          bearing={compassBearing}
-          northLocked={northLocked}
-          onClick={handleCompassClick}
+        <Compass
+          bearing={bearing}
+          locked={northLocked}
+          onClick={() => {
+            setNorthLocked((l) => !l);
+            setBearing(0);
+          }}
         />
-
-        <button
-          onClick={handleLocateMe}
-          title="Locate me"
-          style={{
-            width: "104px",
-            height: "104px",
-            background: "#fff",
-            border: "none",
-            borderRadius: "50%",
-            boxShadow: "0px 0px 10px rgba(0,0,0,0.25)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            outline: "none",
-            transition: "transform 0.15s, box-shadow 0.15s",
-            animation: locating
-              ? "locatePulse 1s ease-in-out infinite"
-              : "none",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "scale(1.06)";
-            e.currentTarget.style.boxShadow = "0 4px 20px rgba(43,143,255,0.3)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
-            e.currentTarget.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.25)";
-          }}
-        >
-          {locating ? (
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
-                border: "4px solid #eee",
-                borderTop: "4px solid #2B8FFF",
-                borderRadius: "50%",
-                animation: "spin 0.7s linear infinite",
-              }}
-            />
-          ) : (
-            <LocateIcon active />
-          )}
-        </button>
+        <LocateBtn loading={locating} onClick={handleLocate} />
       </div>
 
-      {/* ══ NAVIGATION BOTTOM BAR ══ */}
-      {isNavigating && (
-        <NavBottomBar
-          destination={
-            searchTarget?.name?.split(",").slice(0, 2).join(",") ||
-            "Destination"
-          }
-          eta={navEta}
-          distance={navDist}
-          onCancel={cancelNavigation}
-        />
-      )}
-
-      {/* Locate error toast */}
-      {locateError && (
+      {locErr && (
         <div
           style={{
             position: "absolute",
-            bottom: "238px",
-            right: "32px",
-            background: "#fff3f3",
-            border: "1px solid #ffaaaa",
-            borderRadius: "12px",
-            padding: "12px 18px",
-            fontSize: "14px",
-            color: "#cc0000",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            bottom: 154,
+            right: 14,
             zIndex: 15,
-            maxWidth: "300px",
+            background: "#FEF2F2",
+            border: "1px solid #FCA5A5",
+            borderRadius: 10,
+            padding: "9px 14px",
+            fontSize: 12,
+            color: "#B91C1C",
+            maxWidth: 260,
           }}
         >
-          {locateError}
+          {locErr}
         </div>
       )}
-      <BottomNav active={navActive} setActive={setNavActive} />
+      {isNav && (
+        <NavBar
+          dest={
+            searchTarget?.name?.split(",").slice(0, 2).join(",") ||
+            "Destination"
+          }
+          eta="18 min"
+          dist="34 km"
+          onCancel={cancelNav}
+        />
+      )}
+      {showFavs && (
+        <FavModal
+          onNavigate={(s) => startNav({ lat: s.lat, lng: s.lng, name: s.name })}
+          onClose={() => setShowFavs(false)}
+        />
+      )}
+      <BottomTabBar active={activeTab} setActive={setActiveTab} />
 
       <style>{`
-        @keyframes spin        { to { transform:rotate(360deg); } }
-        @keyframes pulseRing   { 0%{transform:scale(1);opacity:.5;} 100%{transform:scale(2);opacity:0;} }
-        @keyframes slideUp     { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
-        @keyframes fadeIn      { from{opacity:0;}to{opacity:1;} }
-        @keyframes locatePulse { 0%,100%{box-shadow:0 0 0 0 rgba(43,143,255,0.35);}50%{box-shadow:0 0 0 10px rgba(43,143,255,0);} }
-        .leaflet-control-attribution { font-size:10px !important; }
-        .leaflet-control-zoom        { margin-right:140px !important; margin-bottom:200px !important; }
-        .leaflet-control-zoom a      { width:36px !important; height:36px !important; line-height:36px !important; font-size:18px !important; }
+        @keyframes spin      { to{transform:rotate(360deg);} }
+        @keyframes fadeIn    { from{opacity:0;}to{opacity:1;} }
+        @keyframes slideUp   { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
+        @keyframes slideDown { from{opacity:0;transform:translate(-50%,-8px);}to{opacity:1;transform:translate(-50%,0);} }
+        @keyframes locPulse  { 0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.3);}50%{box-shadow:0 0 0 7px rgba(59,130,246,0);} }
+        .leaflet-control-attribution{font-size:9px!important;}
+        .leaflet-control-zoom{margin-right:78px!important;margin-bottom:160px!important;}
+        .leaflet-control-zoom a{width:30px!important;height:30px!important;line-height:30px!important;font-size:15px!important;}
       `}</style>
     </div>
   );
