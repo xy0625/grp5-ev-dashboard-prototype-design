@@ -11,7 +11,7 @@ import EmergencyPage from "./EmergencyPage";
 export default function App() {
   const [navActive, setNavActive] = useState(0);
   const [page, setPage] = useState("home");
-
+  const [theme, setTheme] = useState("light");
   // When nav tab changes, map to page
   const handleNav = (index) => {
     setNavActive(index);
@@ -52,12 +52,13 @@ export default function App() {
         navActive={navActive}
         setNavActive={handleNav}
         onStartSession={() => setPage("session")}
+        theme={theme} 
       />
     );
   }
 
   if (page === "settings") {
-    return <SettingsPage navActive={navActive} setNavActive={handleNav} />;
+    return <SettingsPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
   }
 
   if (page === "apps") {
@@ -81,6 +82,7 @@ export default function App() {
       navActive={navActive}
       setNavActive={handleNav}
       onGoToSession={() => setPage("session")}
+      theme={theme} setTheme={setTheme}
     />
   );
 }

@@ -631,14 +631,13 @@ function Slider({ value, onChange }) {
 }
 
 /* ─── SettingsPage ───────────────────────────────────────────────────────── */
-export default function SettingsPage({ navActive, setNavActive }) {
+export default function SettingsPage({ navActive, setNavActive, theme, setTheme }) {
   const [wifi, setWifi] = useState(true);
   const [bt, setBt] = useState(false);
   const [gps, setGps] = useState(true);
   const [sound, setSound] = useState(30);
   const [bright, setBright] = useState(75);
   const [autoBright, setAuto] = useState(false);
-  const [theme, setTheme] = useState("light");
   const [resetModal, setResetModal] = useState(false);
 
   const rightMenuItems = [
