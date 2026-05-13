@@ -1,24 +1,49 @@
 import { useState } from "react";
 import BottomNav from "./BottomNav";
+
+/* ─── Press Effect Hook ──────────────────────────────────────────────────── */
+function usePressEffect() {
+  return {
+    onMouseDown: (e) => {
+      e.currentTarget.style.transform = "scale(0.94)";
+      e.currentTarget.style.opacity = "0.85";
+    },
+    onMouseUp: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+    onMouseLeave: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+    onTouchStart: (e) => {
+      e.currentTarget.style.transform = "scale(0.94)";
+      e.currentTarget.style.opacity = "0.85";
+    },
+    onTouchEnd: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+  };
+}
+
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
 
 function WifiIcon({ active }) {
+  const c = active ? "#fff" : "#434343";
   return (
     <svg width="54" height="54" viewBox="0 0 54 54" fill="none">
-      <path
-        d="M27 38a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"
-        fill={active ? "#fff" : "#434343"}
-      />
+      <path d="M27 38a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z" fill={c} />
       <path
         d="M14 26.5C17.8 22.6 22.6 20 27 20s9.2 2.6 13 6.5"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="3.5"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M5 17.5C10.8 11.6 18.5 8 27 8s16.2 3.6 22 9.5"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="3.5"
         strokeLinecap="round"
         fill="none"
@@ -27,44 +52,37 @@ function WifiIcon({ active }) {
   );
 }
 
+/* Fix 3: Bluetooth icon visible when active — use white stroke on blue bg */
 function BluetoothIcon({ active }) {
+  const c = active ? "#fff" : "#434343";
+
   return (
-    <svg width="44" height="72" viewBox="0 0 44 72" fill="none">
-      <path
-        d="M8 16L36 36 8 56"
-        stroke={active ? "#268BE5" : "#434343"}
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M36 16L8 36l28 20"
-        stroke={active ? "#268BE5" : "#434343"}
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg
+      width="50"
+      height="56"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    >
+      <path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11" />
     </svg>
   );
 }
 
 function GpsIcon({ active }) {
+  const c = active ? "#fff" : "#434343";
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-      <circle
-        cx="28"
-        cy="28"
-        r="18"
-        stroke={active ? "#fff" : "#434343"}
-        strokeWidth="4.5"
-      />
-      <circle cx="28" cy="28" r="5" fill={active ? "#fff" : "#434343"} />
+      <circle cx="28" cy="28" r="18" stroke={c} strokeWidth="4.5" />
+      <circle cx="28" cy="28" r="5" fill={c} />
       <line
         x1="28"
         y1="4"
         x2="28"
         y2="12"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="4"
         strokeLinecap="round"
       />
@@ -73,7 +91,7 @@ function GpsIcon({ active }) {
         y1="44"
         x2="28"
         y2="52"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="4"
         strokeLinecap="round"
       />
@@ -82,7 +100,7 @@ function GpsIcon({ active }) {
         y1="28"
         x2="12"
         y2="28"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="4"
         strokeLinecap="round"
       />
@@ -91,7 +109,7 @@ function GpsIcon({ active }) {
         y1="28"
         x2="52"
         y2="28"
-        stroke={active ? "#fff" : "#434343"}
+        stroke={c}
         strokeWidth="4"
         strokeLinecap="round"
       />
@@ -99,7 +117,33 @@ function GpsIcon({ active }) {
   );
 }
 
-function SoundIcon() {
+/* Fix 4: Sound icon changes based on muted/sound level */
+function SoundIcon({ muted }) {
+  if (muted) {
+    return (
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+        <path d="M7 14H17L28 7v28L17 28H7V14z" fill="#434343" />
+        <line
+          x1="32"
+          y1="14"
+          x2="42"
+          y2="28"
+          stroke="#434343"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <line
+          x1="42"
+          y1="14"
+          x2="32"
+          y2="28"
+          stroke="#434343"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
   return (
     <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
       <path d="M7 14H17L28 7v28L17 28H7V14z" fill="#434343" />
@@ -121,16 +165,29 @@ function SoundIcon() {
   );
 }
 
-function BrightnessIcon() {
+/* Fix 4: Auto brightness icon - clean square button with sun + A */
+function AutoBrightnessIcon({ active }) {
+  const c = active ? "#fff" : "#434343";
+
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <circle cx="18" cy="18" r="7" fill="#434343" />
+    <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+      <circle cx="14" cy="13" r="5" fill={c} />
       <path
-        d="M18 2v4M18 30v4M2 18h4M30 18h4M6.1 6.1l2.8 2.8M27.1 27.1l2.8 2.8M6.1 29.9l2.8-2.8M27.1 8.9l2.8-2.8"
-        stroke="#434343"
-        strokeWidth="2.5"
+        d="M14 2v3M14 21v3M3 13h3M22 13h3M5.9 5.9l2.1 2.1M19.9 19.9l2.1 2.1M5.9 20.1l2.1-2.1M19.9 6.1l2.1-2.1"
+        stroke={c}
+        strokeWidth="2"
         strokeLinecap="round"
       />
+      <text
+        x="20"
+        y="33"
+        fontSize="13"
+        fontWeight="900"
+        fill={c}
+        fontFamily="Inter,sans-serif"
+      >
+        A
+      </text>
     </svg>
   );
 }
@@ -156,13 +213,16 @@ function SunIcon() {
   );
 }
 
+/* Fix 2: MoonIcon — fixed missing return statement */
 function MoonIcon() {
-  <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <path
-      d="M18 4C10.3 4 4 10.3 4 18s6.3 14 14 14c7.7 0 14-6.3 14-14 0-.6 0-1.2-.1-1.8-1.5 3.2-4.8 5.4-8.6 5.4-5.2 0-9.5-4.3-9.5-9.5 0-3.8 2.2-7.1 5.4-8.6-.6-.1-1.2-.1-1.8-.1z"
-      fill="#FFCC3D"
-    />
-  </svg>;
+  return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <path
+        d="M18 4C10.3 4 4 10.3 4 18s6.3 14 14 14c7.7 0 14-6.3 14-14 0-.6 0-1.2-.1-1.8-1.5 3.2-4.8 5.4-8.6 5.4-5.2 0-9.5-4.3-9.5-9.5 0-3.8 2.2-7.1 5.4-8.6-.6-.1-1.2-.1-1.8-.1z"
+        fill="#FFCC3D"
+      />
+    </svg>
+  );
 }
 
 function ChevronRight() {
@@ -179,39 +239,34 @@ function ChevronRight() {
   );
 }
 
+/* Fix 6: No hover effects, press effect only */
 function QuickToggleCard({ label, active, toggle, Icon }) {
+  const press = usePressEffect();
   return (
     <button
       onClick={toggle}
+      {...press}
       style={{
         width: "175px",
-        height: "140px",
+        height: "160px",
         border: "1px solid rgba(255,255,255,0.8)",
-        borderRadius: "35px",
-        background: active ? "#268BE5" : "#F5F5F5",
-        boxShadow: "0px 4px 15px rgba(0,0,0,0.3)",
+        borderRadius: "28px",
+        background: active ? "#268BE5" : "#F0F0F0",
+        boxShadow: "0px 2px 8px rgba(0,0,0,0.12)",
         cursor: "pointer",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: "8px",
+        gap: "10px",
         outline: "none",
-        transition: "background 0.22s, transform 0.14s, box-shadow 0.14s",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "scale(1.05)";
-        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.25)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "scale(1)";
-        e.currentTarget.style.boxShadow = "0px 4px 15px rgba(0,0,0,0.3)";
+        transition: "transform 0.1s, opacity 0.1s, background 0.22s",
       }}
     >
       <Icon active={active} />
       <span
         style={{
-          fontSize: "13px",
+          fontSize: "14px",
           fontWeight: 600,
           color: active ? "#fff" : "#434343",
           letterSpacing: "0.3px",
@@ -223,33 +278,35 @@ function QuickToggleCard({ label, active, toggle, Icon }) {
   );
 }
 
-function MenuButton({ label, icon, hasArrow, hasBadge, onClick }) {
+/* Fix 6: MenuButton — no hover, only press */
+function MenuButton({
+  label,
+  icon,
+  hasArrow,
+  hasBadge,
+  onClick,
+  rightContent,
+}) {
+  const press = usePressEffect();
   return (
     <button
       onClick={onClick}
+      {...press}
       style={{
-        width: "336px",
-        height: "90px",
+        width: "100%",
+        height: "78px",
         background: "#fff",
-        border: "1px solid #fff",
-        boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
-        borderRadius: "35px",
+        border: "none",
+        boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
+        borderRadius: "22px",
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
-        padding: "0 18px 0 22px",
+        padding: "0 18px 0 20px",
         gap: "14px",
         position: "relative",
         outline: "none",
-        transition: "box-shadow 0.18s, transform 0.14s",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.18)";
-        e.currentTarget.style.transform = "translateY(-1px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0px 4px 4px rgba(0,0,0,0.25)";
-        e.currentTarget.style.transform = "translateY(0)";
+        transition: "transform 0.1s, opacity 0.1s",
       }}
     >
       <div
@@ -265,7 +322,7 @@ function MenuButton({ label, icon, hasArrow, hasBadge, onClick }) {
       <span
         style={{
           flex: 1,
-          fontSize: "21px",
+          fontSize: "19px",
           fontWeight: 400,
           color: "#303030",
           textAlign: "left",
@@ -275,54 +332,27 @@ function MenuButton({ label, icon, hasArrow, hasBadge, onClick }) {
       >
         {label}
       </span>
-
       {hasBadge && (
         <div
           style={{
             position: "absolute",
-            right: "64px",
-            top: "13px",
-            width: "12px",
-            height: "12px",
+            right: "12px",
+            top: "12px",
+            width: "11px",
+            height: "11px",
             background: "#FF6868",
             borderRadius: "50%",
           }}
         />
       )}
-
-      {hasArrow ? (
-        <ChevronRight />
-      ) : (
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 28 28"
-          fill="none"
-          style={{ flexShrink: 0 }}
-        >
-          <path
-            d="M14 4v15M8 13l6 6 6-6"
-            stroke="#FF7B00"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <line
-            x1="5"
-            y1="24"
-            x2="23"
-            y2="24"
-            stroke="#FF7B00"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-        </svg>
-      )}
+      {rightContent || (hasArrow ? <ChevronRight /> : null)}
     </button>
   );
 }
 
 function ResetModal({ onCancel, onReset }) {
+  const pressCancel = usePressEffect();
+  const pressReset = usePressEffect();
   return (
     <div
       style={{
@@ -380,6 +410,7 @@ function ResetModal({ onCancel, onReset }) {
         <div style={{ display: "flex", gap: "14px", justifyContent: "center" }}>
           <button
             onClick={onCancel}
+            {...pressCancel}
             style={{
               padding: "12px 28px",
               borderRadius: "16px",
@@ -389,12 +420,14 @@ function ResetModal({ onCancel, onReset }) {
               fontWeight: 600,
               cursor: "pointer",
               color: "#333",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Cancel
           </button>
           <button
             onClick={onReset}
+            {...pressReset}
             style={{
               padding: "12px 28px",
               borderRadius: "16px",
@@ -404,6 +437,7 @@ function ResetModal({ onCancel, onReset }) {
               fontWeight: 600,
               cursor: "pointer",
               color: "#FF0000",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Reset
@@ -475,30 +509,20 @@ function DateTimeIcon() {
   );
 }
 
-function EmergencyIcon() {
+function SystemIcon() {
   return (
     <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-      <circle cx="21" cy="13" r="7" stroke="#434343" strokeWidth="2.5" />
+      {/* outer circle */}
+      <circle cx="21" cy="21" r="16" stroke="#434343" strokeWidth="2.5" />
+
+      {/* dot of "i" */}
+      <circle cx="21" cy="14" r="1.8" fill="#434343" />
+
+      {/* stem of "i" */}
       <path
-        d="M7 38c0-7.7 6.3-14 14-14s14 6.3 14 14"
+        d="M21 18v12"
         stroke="#434343"
         strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <rect
-        x="5"
-        y="7"
-        width="11"
-        height="16"
-        rx="2"
-        stroke="#434343"
-        strokeWidth="2"
-        fill="none"
-      />
-      <path
-        d="M8 11h5M8 15h5M8 19h5"
-        stroke="#434343"
-        strokeWidth="1.5"
         strokeLinecap="round"
       />
     </svg>
@@ -529,15 +553,17 @@ function OfflineMapsIcon() {
 
 function ResetIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
       <path
-        d="M3.5 11a7.5 7.5 0 1 0 1.2-4.1"
+        d="M4 12a8 8 0 1 0 2.3-5.7"
         stroke="#FF0000"
         strokeWidth="1.8"
         strokeLinecap="round"
+        fill="none"
       />
+
       <path
-        d="M3.5 4.5v7H10"
+        d="M4 3v6h6"
         stroke="#FF0000"
         strokeWidth="1.8"
         strokeLinecap="round"
@@ -547,10 +573,71 @@ function ResetIcon() {
   );
 }
 
+/* Fix 5: Download icon with loading/done states */
+function DownloadStateIcon({ state }) {
+  if (state === "loading") {
+    return (
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 28 28"
+        fill="none"
+        style={{ animation: "spin 1s linear infinite" }}
+      >
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        <circle
+          cx="14"
+          cy="14"
+          r="10"
+          stroke="#268BE5"
+          strokeWidth="3"
+          strokeDasharray="40 20"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+  if (state === "done") {
+    return (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="12" fill="#22C55E" />
+        <path
+          d="M8 14l4 4 8-8"
+          stroke="#fff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+  // default download icon
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path
+        d="M14 4v15M8 13l6 6 6-6"
+        stroke="#FF7B00"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="5"
+        y1="24"
+        x2="23"
+        y2="24"
+        stroke="#FF7B00"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 /* ─── Slider ─────────────────────────────────────────────────────────────── */
 function Slider({ value, onChange }) {
-  const trackW = 264;
-  const thumbSize = 35;
+  const trackW = 300;
+  const thumbSize = 32;
   const fillW = (value / 100) * trackW;
   const thumbLeft = Math.max(
     0,
@@ -567,6 +654,7 @@ function Slider({ value, onChange }) {
         alignItems: "center",
       }}
     >
+      {/* Track bg */}
       <div
         style={{
           position: "absolute",
@@ -574,26 +662,27 @@ function Slider({ value, onChange }) {
           top: "50%",
           transform: "translateY(-50%)",
           width: `${trackW}px`,
-          height: "20px",
-          background: "rgba(255,255,255,0.65)",
-          borderRadius: "10px",
+          height: "18px",
+          background: "rgba(255,255,255,0.7)",
+          borderRadius: "9px",
           boxShadow: "inset 0 2px 4px rgba(0,0,0,0.08)",
         }}
       />
+      {/* Fill */}
       <div
         style={{
           position: "absolute",
           left: 0,
           top: "50%",
           transform: "translateY(-50%)",
-          width: `${fillW}px`,
-          height: "20px",
+          width: `${Math.max(fillW, 0)}px`,
+          height: "18px",
           background: "#80CCFF",
-          borderRadius: "10px",
-          boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
+          borderRadius: "9px",
           pointerEvents: "none",
         }}
       />
+      {/* Thumb */}
       <div
         style={{
           position: "absolute",
@@ -605,7 +694,7 @@ function Slider({ value, onChange }) {
           background: "#80CCFF",
           border: "3px solid #fff",
           borderRadius: "50%",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.22)",
+          boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
           pointerEvents: "none",
         }}
       />
@@ -644,18 +733,16 @@ export default function SettingsPage({
   const [bright, setBright] = useState(75);
   const [autoBright, setAuto] = useState(false);
   const [resetModal, setResetModal] = useState(false);
+  /* Fix 5: download state */
+  const [mapState, setMapState] = useState("idle"); // idle | loading | done
 
-  const rightMenuItems = [
-    { label: "Language", icon: <LanguageIcon />, hasArrow: true },
-    { label: "Date & Time", icon: <DateTimeIcon />, hasArrow: true },
-    { label: "Emergency\nContact", icon: <EmergencyIcon />, hasArrow: true },
-    {
-      label: "Offline Maps",
-      icon: <OfflineMapsIcon />,
-      hasArrow: false,
-      hasBadge: true,
-    },
-  ];
+  const pressReset = usePressEffect();
+
+  function handleDownloadMap() {
+    if (mapState !== "idle") return;
+    setMapState("loading");
+    setTimeout(() => setMapState("done"), 2500);
+  }
 
   const quickToggleItems = [
     {
@@ -690,7 +777,7 @@ export default function SettingsPage({
         background: "#fff",
       }}
     >
-      {/* ── Background ── */}
+      {/* ── Background (Fix 7: preserved) ── */}
       <div
         style={{
           position: "absolute",
@@ -781,31 +868,33 @@ export default function SettingsPage({
         </svg>
       </div>
 
-      {/* ── Left Panel ── */}
+      {/* ── Fix 1: Left Panel — proper layout matching Image 2 ── */}
       <div
         style={{
           position: "absolute",
-          width: "708px",
-          height: "593px",
-          left: "62px",
+          left: "36px",
           top: "68px",
-          background: "rgba(234,234,234,0.78)",
-          border: "2px solid #D9D9D9",
-          borderRadius: "40px",
+          width: "700px",
+          height: "560px",
+          background: "rgba(225,228,232,0.82)",
+          border: "1.5px solid rgba(255,255,255,0.6)",
+          borderRadius: "32px",
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
           zIndex: 1,
         }}
       >
-        {/* Quick-toggle buttons */}
+        {/* Quick-toggle buttons — centered row */}
         <div
           style={{
             position: "absolute",
-            left: "95px",
-            top: "95px",
+            left: "0",
+            right: "0",
+            top: "40px",
             display: "flex",
             flexDirection: "row",
-            gap: "40px",
+            justifyContent: "center",
+            gap: "36px",
           }}
         >
           {quickToggleItems.map((item) => (
@@ -813,16 +902,16 @@ export default function SettingsPage({
           ))}
         </div>
 
-        {/* Sliders + Theme */}
+        {/* Sliders + Theme — bottom section */}
         <div
           style={{
             position: "absolute",
-            left: "55px",
-            top: "310px",
+            left: "52px",
+            right: "52px",
+            top: "280px",
             display: "flex",
             flexDirection: "column",
-            gap: "18px",
-            width: "610px",
+            gap: "20px",
           }}
         >
           {/* Sound row */}
@@ -830,23 +919,32 @@ export default function SettingsPage({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "14px",
-              height: "60px",
+              gap: "16px",
+              height: "52px",
             }}
           >
             <span
               style={{
-                width: "105px",
+                width: "110px",
                 textAlign: "right",
-                fontSize: "22px",
+                fontSize: "20px",
                 color: "#1E1E1E",
+                fontWeight: 500,
               }}
             >
               Sound
             </span>
             <Slider value={sound} onChange={setSound} />
-            <div style={{ marginLeft: "10px" }}>
-              <SoundIcon />
+            {/* Fix 4: sound icon changes when muted */}
+            <div
+              style={{
+                marginLeft: "8px",
+                width: "42px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <SoundIcon muted={sound === 0} />
             </div>
           </div>
 
@@ -855,52 +953,43 @@ export default function SettingsPage({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "14px",
-              height: "60px",
+              gap: "16px",
+              height: "52px",
             }}
           >
             <span
               style={{
-                width: "105px",
+                width: "110px",
                 textAlign: "right",
-                fontSize: "22px",
+                fontSize: "20px",
                 color: "#1E1E1E",
+                fontWeight: 500,
               }}
             >
               Brightness
             </span>
             <Slider value={bright} onChange={setBright} />
+            {/* Fix 4: auto brightness button — cleaner look */}
             <button
               onClick={() => setAuto((v) => !v)}
+              {...usePressEffect()}
               style={{
-                marginLeft: "6px",
+                marginLeft: "8px",
                 width: "52px",
-                height: "58px",
-                border: `3px solid ${autoBright ? "#268BE5" : "#434343"}`,
-                borderRadius: "8px",
-                background: autoBright ? "#268BE5" : "transparent",
+                height: "52px",
+                border: "none",
+                borderRadius: "12px",
+                background: autoBright ? "#268BE5" : "#ffffff",
                 cursor: "pointer",
-                position: "relative",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                transition: "all 0.2s",
                 outline: "none",
+                transition: "transform 0.1s, opacity 0.1s, background 0.2s",
+                flexShrink: 0,
               }}
             >
-              <BrightnessIcon />
-              <span
-                style={{
-                  position: "absolute",
-                  bottom: "3px",
-                  right: "5px",
-                  fontSize: "13px",
-                  fontWeight: 900,
-                  color: autoBright ? "#fff" : "#1E1E1E",
-                }}
-              >
-                A
-              </span>
+              <AutoBrightnessIcon active={autoBright} />
             </button>
           </div>
 
@@ -909,16 +998,17 @@ export default function SettingsPage({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "14px",
+              gap: "16px",
               height: "80px",
             }}
           >
             <span
               style={{
-                width: "105px",
+                width: "110px",
                 textAlign: "right",
-                fontSize: "22px",
+                fontSize: "20px",
                 color: "#1E1E1E",
+                fontWeight: 500,
               }}
             >
               Theme
@@ -930,45 +1020,45 @@ export default function SettingsPage({
               style={{
                 marginLeft: "8px",
                 position: "relative",
-                width: "176px",
-                height: "74px",
+                width: "180px",
+                height: "70px",
                 borderRadius: "100px",
+                /* Fix 2: Dark mode toggle looks correct */
                 background:
                   theme === "light"
                     ? "linear-gradient(180deg,#FFD739 0%,#FFEA97 100%)"
-                    : "linear-gradient(180deg,#2a3555 0%,#111d3a 100%)",
-                boxShadow: "inset 0px 4px 4px rgba(0,0,0,0.22)",
+                    : "linear-gradient(180deg,#2E29AF 0%,#9170FF 100%)",
+                boxShadow: "inset 0px 3px 6px rgba(0,0,0,0.25)",
                 cursor: "pointer",
                 transition: "background 0.4s",
               }}
             >
-              {/* Label */}
               <span
                 style={{
                   position: "absolute",
-                  right: "16px",
+                  right: theme === "light" ? "35px" : "100px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                  fontSize: "20px",
-                  fontWeight: 900,
-                  color: theme === "light" ? "#fff" : "#8090b8",
+                  fontSize: "18px",
+                  fontWeight: 800,
+                  color: theme === "light" ? "#fff" : "#ffffff",
                   transition: "color 0.3s",
                 }}
               >
                 {theme === "light" ? "Light" : "Dark"}
               </span>
-              {/* Knob */}
+              {/* Fix 2: Knob sizing correct */}
               <div
                 style={{
                   position: "absolute",
-                  left: theme === "light" ? "4px" : "calc(100% - 82px)",
+                  left: theme === "light" ? "4px" : "calc(100% - 70px)",
                   top: "50%",
-                  transform: "translateY(-50%)",
-                  width: "78px",
-                  height: "66px",
+                  transform: "translateY(-50%) translateX(-10%)",
+                  width: "80px",
+                  height: "80px",
                   background: "#fff",
                   borderRadius: "100px",
-                  boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
+                  boxShadow: "0px 3px 6px rgba(0,0,0,0.22)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -982,17 +1072,17 @@ export default function SettingsPage({
         </div>
       </div>
 
-      {/* ── Right Panel ── */}
+      {/* ── Fix 1: Right Panel ── */}
       <div
         style={{
           position: "absolute",
-          width: "389px",
-          height: "593px",
-          left: "830px",
-          top: "71px",
-          background: "rgba(234,234,234,0.78)",
-          border: "2px solid #D9D9D9",
-          borderRadius: "40px",
+          left: "820px",
+          top: "68px",
+          width: "424px",
+          height: "560px",
+          background: "rgba(225,228,232,0.82)",
+          border: "1.5px solid rgba(255,255,255,0.6)",
+          borderRadius: "32px",
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
           zIndex: 1,
@@ -1001,56 +1091,71 @@ export default function SettingsPage({
         <div
           style={{
             position: "absolute",
-            left: "22px",
-            top: "28px",
+            left: "20px",
+            right: "20px",
+            top: "24px",
             display: "flex",
             flexDirection: "column",
-            gap: "10px",
-            width: "348px",
+            gap: "12px",
           }}
         >
-          {rightMenuItems.map(({ label, icon, hasArrow, hasBadge }) => (
-            <MenuButton
-              key={label}
-              label={label}
-              icon={icon}
-              hasArrow={hasArrow}
-              hasBadge={hasBadge}
-              onClick={() => alert(`${label.replace("\n", " ")} settings`)}
-            />
-          ))}
+          {/* Language */}
+          <MenuButton
+            label="Language"
+            icon={<LanguageIcon />}
+            hasArrow
+            onClick={() => alert("Language settings")}
+          />
+
+          {/* Date & Time */}
+          <MenuButton
+            label="Date & Time"
+            icon={<DateTimeIcon />}
+            hasArrow
+            onClick={() => alert("Date & Time settings")}
+          />
+
+          {/* Fix 5: Offline Maps with download state */}
+          <MenuButton
+            label="Offline Maps"
+            icon={<OfflineMapsIcon />}
+            hasBadge={mapState === "idle"}
+            onClick={handleDownloadMap}
+            rightContent={<DownloadStateIcon state={mapState} />}
+          />
+
+          {/* System */}
+          <MenuButton
+            label={"System"}
+            icon={<SystemIcon />}
+            hasArrow
+            onClick={() => alert("System info and updates")}
+          />
 
           {/* Factory Reset */}
           <button
             onClick={() => setResetModal(true)}
+            {...pressReset}
             style={{
               alignSelf: "center",
-              marginTop: "10px",
-              width: "228px",
-              height: "55px",
+              marginTop: "8px",
+              width: "240px",
+              height: "58px",
               background: "rgba(255,205,205,0.5)",
-              border: "2px solid #FF9999",
-              borderRadius: "20px",
+              border: "1.5px solid #FF9999",
+              borderRadius: "22px",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
               outline: "none",
-              transition: "background 0.18s, transform 0.14s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,180,180,0.65)";
-              e.currentTarget.style.transform = "scale(1.03)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255,205,205,0.5)";
-              e.currentTarget.style.transform = "scale(1)";
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             <ResetIcon />
             <span
-              style={{ fontSize: "20px", fontWeight: 400, color: "#FF0000" }}
+              style={{ fontSize: "19px", fontWeight: 500, color: "#FF0000" }}
             >
               Factory Reset
             </span>
@@ -1058,6 +1163,7 @@ export default function SettingsPage({
         </div>
       </div>
 
+      {/* Fix 7: BottomNav preserved */}
       <BottomNav active={navActive} setActive={setNavActive} />
 
       {resetModal && (

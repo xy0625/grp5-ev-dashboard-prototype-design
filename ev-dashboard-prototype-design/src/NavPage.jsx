@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import BottomNav from "./BottomNav";
 
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
@@ -1390,71 +1391,6 @@ const TABS = [
   { Icon: IcoSettings, label: "Settings" },
 ];
 
-function BottomTabBar({ active, setActive, theme }) {
-  const t = tk(theme);
-  return (
-    <div
-      style={{
-        position: "absolute",
-        width: 1148,
-        height: 108,
-        left: "calc(50% - 574px)",
-        top: 662,
-        background: t.tabBarBg,
-        backdropFilter: "blur(12px)",
-        border: `1px solid ${t.tabBarBorder}`,
-        borderRadius: 35,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
-        padding: "0 20px",
-        boxShadow: t.shadow,
-        zIndex: 10,
-        transition: "background 0.3s",
-      }}
-    >
-      {TABS.map(({ Icon, label }, i) => (
-        <button
-          key={i}
-          onClick={() => setActive(i)}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 4,
-            padding: "8px 12px",
-            borderRadius: 12,
-            border: "none",
-            cursor: "pointer",
-            background: active === i ? "#2563EB" : "transparent",
-            transition: "all .2s",
-            outline: "none",
-            minWidth: 62,
-          }}
-          onMouseEnter={(e) => {
-            if (active !== i) e.currentTarget.style.background = t.tabHover;
-          }}
-          onMouseLeave={(e) => {
-            if (active !== i) e.currentTarget.style.background = "transparent";
-          }}
-        >
-          <Icon a={active === i} t={t} />
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: 0.4,
-              color: active === i ? "#fff" : t.tabInactive,
-            }}
-          >
-            {label.toUpperCase()}
-          </span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /* ── PAGE ROOT ───────────────────────────────────────────────────── */
 export default function NavPage({ navActive, setNavActive, theme = "light" }) {
   const t = tk(theme);
@@ -1773,7 +1709,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
       )}
 
       {/* BOTTOM TAB BAR */}
-      <BottomTabBar active={activeTab} setActive={setActiveTab} theme={theme} />
+      <BottomNav active={navActive} setActive={setNavActive} />
 
       <style>{`
         @keyframes spin      { to{transform:rotate(360deg);} }
