@@ -12,92 +12,71 @@ export default function App() {
   const [navActive, setNavActive] = useState(0);
   const [page, setPage] = useState("home");
   const [theme, setTheme] = useState("light");
-  // When nav tab changes, map to page
+
   const handleNav = (index) => {
     setNavActive(index);
-    if (index === 0) {
-      setPage("home");
-    } else if (index === 1) {
-      // EV tab → go to charging page (or stay in session)
-      if (page !== "session") setPage("charging");
-    } else if (index === 2) {
-      setPage("nav");
-    } else if (index === 3) {
-      setPage("weather");
-    } else if (index === 4) {
-      setPage("emergency");
-    } else if (index === 5) {
-      setPage("settings");
-    } else {
-      setPage("home");
-    }
+    if (index === 0)      setPage("home");
+    else if (index === 1) { if (page !== "session") setPage("charging"); }
+    else if (index === 2) setPage("nav");
+    else if (index === 3) setPage("weather");
+    else if (index === 4) setPage("emergency");
+    else if (index === 5) setPage("settings");
+    else                  setPage("home");
   };
 
-  if (page === "session") {
-    return (
-      <ChargingActivePage
-        navActive={navActive}
-        setNavActive={handleNav}
-        onStop={() => {
-          setPage("charging");
-          setNavActive(1);
-        }}
-      />
-    );
-  }
-
-  if (page === "charging") {
-    return (
-      <ChargingPage
-        navActive={navActive}
-        setNavActive={handleNav}
-        onStartSession={() => setPage("session")}
-        theme={theme}
-      />
-    );
-  }
-
-  if (page === "settings") {
-    return (
-      <SettingsPage
-        navActive={navActive}
-        setNavActive={handleNav}
-        theme={theme}
-        setTheme={setTheme}
-      />
-    );
-  }
-
-  if (page === "apps") {
-    return <AppsPage navActive={navActive} setNavActive={handleNav} />;
-  }
-
-  if (page === "nav") {
-    return (
-      <NavPage
-        navActive={navActive}
-        setNavActive={handleNav}
-        theme={theme}
-        setTheme={setTheme}
-      />
-    );
-  }
-
-  if (page === "weather") {
-    return <WeatherPage navActive={navActive} setNavActive={handleNav} />;
-  }
-
-  if (page === "emergency") {
-    return <EmergencyPage navActive={navActive} setNavActive={handleNav} />;
-  }
+  const renderPage = () => {
+    if (page === "session")   return <ChargingActivePage navActive={navActive} setNavActive={handleNav} onStop={() => { setPage("charging"); setNavActive(1); }} theme={theme} />;
+    if (page === "charging")  return <ChargingPage navActive={navActive} setNavActive={handleNav} onStartSession={() => setPage("session")} theme={theme} />;
+    if (page === "settings")  return <SettingsPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
+    if (page === "apps")      return <AppsPage navActive={navActive} setNavActive={handleNav} />;
+    if (page === "nav")       return <NavPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
+    if (page === "weather")   return <WeatherPage navActive={navActive} setNavActive={handleNav} />;
+    if (page === "emergency") return <EmergencyPage navActive={navActive} setNavActive={handleNav} />;
+    return <HomePage navActive={navActive} setNavActive={handleNav} onGoToSession={() => setPage("session")} theme={theme} setTheme={setTheme} />;
+  };
 
   return (
-    <HomePage
-      navActive={navActive}
-      setNavActive={handleNav}
-      onGoToSession={() => setPage("session")}
-      theme={theme}
-      setTheme={setTheme}
-    />
+    <div style={{
+      minHeight: "100vh",
+      background: "#ffffff",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>
+      <div style={{
+        position: "relative",
+        width: 1280,
+        height: 800,
+        borderRadius: 28,
+        border: "10px solid #1a1a1a",
+        boxShadow: [
+          "0 0 0 1px #3a3a3a",          
+          "0 0 0 3px #111",               
+          "0 40px 100px rgba(0,0,0,0.8)", 
+          "0 10px 30px rgba(0,0,0,0.5)", 
+          "inset 0 1px 0 rgba(255,255,255,0.06)", 
+        ].join(", "),
+        overflow: "hidden",
+        flexShrink: 0,
+        background: "#000",
+      }}>
+
+        <div style={{
+          position: "absolute", top: 0, left: 0,
+          width: 3, height: "100%",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.03) 100%)",
+          pointerEvents: "none", zIndex: 9999,
+        }}/>
+        <div style={{
+          position: "absolute", top: 0, right: 0,
+          width: 3, height: "100%",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%)",
+          pointerEvents: "none", zIndex: 9999,
+        }}/>
+
+        {/* ── 页面内容 ── */}
+        {renderPage()}
+      </div>
+    </div>
   );
 }
