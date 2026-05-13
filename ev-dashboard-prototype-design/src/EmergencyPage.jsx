@@ -169,14 +169,12 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
       style={{
         position: "absolute",
         inset: 0,
-        zIndex: 40,
-        background: "rgba(255,255,255,0.18)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
+        zIndex: 30,
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(12px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: 0,
       }}
     >
       {/* Inner content row: icon+text LEFT, buttons RIGHT */}
@@ -223,7 +221,7 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               width: "480px",
               fontSize: "40px",
               fontWeight: 700,
-              color: "#434343",
+              color: "#ffffff",
               textAlign: "center",
               lineHeight: 1.2,
             }}
@@ -237,10 +235,36 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "30px",
+            gap: "100px",
             alignItems: "center",
           }}
         >
+          {/* Turn Off button */}
+          <button
+            onClick={onTurnOff}
+            style={{
+              width: "422px",
+              height: "130px",
+              background: "#D52011",
+              border: "none",
+              borderRadius: "50px",
+              fontSize: "40px",
+              fontWeight: 500,
+              color: "#FFFFFF",
+              cursor: "pointer",
+              transition: "transform 0.14s, box-shadow 0.14s",
+              fontFamily: "'Inter', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+          >
+            Turn Off
+          </button>
+
           {/* Keep On button */}
           <button
             onClick={onKeepOn}
@@ -249,7 +273,7 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               height: "130px",
               background: "#FFFFFF",
               border: "5px solid #14AE5C",
-              boxShadow: "0px 15px 50px rgba(0,157,86,0.5)",
+              boxShadow: "0px 15px 50px rgba(0, 255, 140, 0.5)",
               borderRadius: "50px",
               fontSize: "40px",
               fontWeight: 500,
@@ -270,37 +294,6 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
             }}
           >
             Keep On
-          </button>
-
-          {/* Turn Off button */}
-          <button
-            onClick={onTurnOff}
-            style={{
-              width: "422px",
-              height: "130px",
-              background: "#D52011",
-              border: "none",
-              borderRadius: "50px",
-              fontSize: "40px",
-              fontWeight: 500,
-              color: "#FFFFFF",
-              cursor: "pointer",
-              transition: "transform 0.14s, box-shadow 0.14s",
-              fontFamily: "'Inter', sans-serif",
-              boxShadow: "0px 8px 30px rgba(213,32,17,0.4)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-              e.currentTarget.style.boxShadow =
-                "0px 16px 48px rgba(213,32,17,0.55)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow =
-                "0px 8px 30px rgba(213,32,17,0.4)";
-            }}
-          >
-            Turn Off
           </button>
         </div>
       </div>
@@ -454,92 +447,144 @@ function SOSModal({ onClose }) {
         inset: 0,
         zIndex: 30,
         background: "rgba(0,0,0,0.5)",
-        backdropFilter: "blur(6px)",
+        backdropFilter: "blur(12px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
+      {/* Inner content row: icon+text LEFT, buttons RIGHT */}
       <div
         style={{
-          background: "#fff",
-          borderRadius: "24px",
-          padding: "40px 48px",
-          width: "420px",
-          textAlign: "center",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "80px",
+          width: "100%",
+          padding: "0 80px",
+          boxSizing: "border-box",
         }}
       >
+        {/* Left: warning icon + question */}
         <div
           style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            background: "#FDECEA",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 20px",
+            gap: "36px",
           }}
         >
-          <PhoneIcon color="#EC221F" size={36} />
-        </div>
-        <h2
-          style={{
-            fontSize: "24px",
-            fontWeight: 800,
-            color: "#1E1E1E",
-            margin: "0 0 8px",
-          }}
-        >
-          SOS Emergency
-        </h2>
-        <p
-          style={{
-            fontSize: "15px",
-            color: "#767676",
-            margin: "0 0 28px",
-            lineHeight: 1.5,
-          }}
-        >
-          This will immediately call emergency services
-          <br />
-          and share your current location.
-        </p>
-        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-          <button
-            onClick={onClose}
+          {/* Warning circle */}
+          <div
             style={{
-              padding: "12px 28px",
-              borderRadius: "14px",
-              border: "2px solid #ddd",
-              background: "#f5f5f5",
-              fontSize: "16px",
-              fontWeight: 600,
-              cursor: "pointer",
-              color: "#333",
+              width: "160px",
+              height: "160px",
+              borderRadius: "80px",
+              background: "#FDD3D0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
           >
-            Cancel
-          </button>
+            <PhoneIcon color="#EC221F" size={100} />
+          </div>
+
+          {/* Question text */}
+          <div
+            style={{
+              width: "480px",
+              fontSize: "40px",
+              fontWeight: 700,
+              color: "#ffffff",
+              textAlign: "center",
+              lineHeight: 1.2,
+            }}
+          >
+            SOS Emergency ?
+          </div>
+          <p
+            style={{
+              fontSize: "18px",
+              fontWeight: 700,
+              color: "#ffe7e7",
+              margin: "0 0 28px",
+              lineHeight: 1.5,
+            }}
+          >
+            This will immediately call emergency services
+            <br />
+            and share your current location.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "100px",
+            alignItems: "center",
+          }}
+        >
+          {/* Call Now button */}
           <button
             onClick={() => {
               onClose();
               alert("SOS call initiated — emergency services notified.");
             }}
             style={{
-              padding: "12px 28px",
-              borderRadius: "14px",
+              width: "422px",
+              height: "130px",
+              background: "#D52011",
               border: "none",
-              background: "#EC221F",
-              fontSize: "16px",
-              fontWeight: 700,
+              borderRadius: "50px",
+              fontSize: "40px",
+              fontWeight: 600,
+              color: "#FFFFFF",
               cursor: "pointer",
-              color: "#fff",
-              boxShadow: "0 4px 16px rgba(236,34,31,0.4)",
+              transition: "transform 0.14s, box-shadow 0.14s",
+              fontFamily: "'Inter', sans-serif",
+              boxShadow: "0px 15px 50px rgba(255, 21, 0, 0.4)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+              e.currentTarget.style.boxShadow =
+                "0px 16px 48px rgba(255, 21, 0, 0.55)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0px 8px 30px rgba(213,32,17,0.4)";
             }}
           >
             Call Now
+          </button>
+
+          {/* Cancel button */}
+          <button
+            onClick={onClose}
+            style={{
+              width: "422px",
+              height: "130px",
+              background: "#FFFFFF",
+              border: "5px solid #a9a9a9",
+              borderRadius: "50px",
+              fontSize: "40px",
+              fontWeight: 500,
+              color: "#949494",
+              cursor: "pointer",
+              transition: "transform 0.14s",
+              fontFamily: "'Inter', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+          >
+            Cancel
           </button>
         </div>
       </div>
@@ -716,11 +761,11 @@ function CallModal({ contact, onClose }) {
           <button
             onClick={onClose}
             style={{
-              padding: "12px 28px",
+              padding: "24px 56px",
               borderRadius: "12px",
               border: "2px solid #ddd",
               background: "#f5f5f5",
-              fontSize: "15px",
+              fontSize: "24px",
               fontWeight: 600,
               cursor: "pointer",
               color: "#333",
@@ -734,11 +779,11 @@ function CallModal({ contact, onClose }) {
               alert(`Calling ${contact.name} at ${contact.phone}…`);
             }}
             style={{
-              padding: "12px 28px",
+              padding: "24px 56px",
               borderRadius: "12px",
               border: "none",
               background: "#009951",
-              fontSize: "15px",
+              fontSize: "24px",
               fontWeight: 700,
               cursor: "pointer",
               color: "#fff",
