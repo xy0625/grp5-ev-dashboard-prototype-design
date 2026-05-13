@@ -11,6 +11,17 @@ const CHARGE_STATIONS_MAP = [
   { name: "Station D", lat: 1.5397, lng: 110.3502, available: 0, total: 4 },
 ];
 
+const ALL_STATIONS = [
+  { name: "Vivacity Megamall EV Charger",    address: "Jalan Wan Alwi, Kuching",         lat: 1.5072, lng: 110.3651 },
+  { name: "The Spring Shopping Mall EV",     address: "Jalan Pending, Kuching",           lat: 1.5188, lng: 110.3842 },
+  { name: "Kuching Waterfront EV Hub",       address: "Waterfront Promenade, Kuching",    lat: 1.5573, lng: 110.3439 },
+  { name: "AEON Mall Kuching Central EV",    address: "Jalan Simpang Tiga, Kuching",      lat: 1.5295, lng: 110.3574 },
+  { name: "Bintang Megamall EV Charger",     address: "Jalan Rubber, Kuching",            lat: 1.5397, lng: 110.3502 },
+  { name: "Hikmah Exchange EV Station",      address: "Jalan Tun Abg Hj Openg, Kuching",  lat: 1.5560, lng: 110.3490 },
+  { name: "Sarawak Plaza EV Point",          address: "Jalan Tunku Abdul Rahman, Kuching", lat: 1.5580, lng: 110.3450 },
+  { name: "Boulevard Shopping Mall EV",      address: "Jalan Wan Alwi, Kuching",          lat: 1.5100, lng: 110.3700 },
+];
+
 const FONT = "'DM Sans', 'Inter', sans-serif";
 const GREEN = "#1DB954";
 const GREEN_DARK = "#15803d";
@@ -130,8 +141,7 @@ function TopBar({ battery, range, theme }) {
   );
 }
 
-/* ── Map View (Leaflet real map) ─────────────────────────────────── */
-function MapView({ theme }) {
+function MapView({ theme, onStationSelect, onNavigate  }) {
   const t = tk(theme);
   const dark = theme === "dark";
   const containerRef = useRef(null);
@@ -139,74 +149,99 @@ function MapView({ theme }) {
   const tileRef      = useRef(null);
   const [ready, setReady] = useState(false);
 
-  // 1. Load Leaflet CSS + JS once
+  // 搜索状态
+  const [query, setQuery]           = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [focused, setFocused]       = useState(false);
+  const inputRef = useRef(null);
+
+  const filtered = query.trim().length === 0
+    ? ALL_STATIONS
+    : ALL_STATIONS.filter(s =>
+        s.name.toLowerCase().includes(query.toLowerCase()) ||
+        s.address.toLowerCase().includes(query.toLowerCase())
+      );
+
+  const [selectedStation, setSelectedStation] = useState(null);
+
+  const handleSelect = (station) => {
+    setQuery(station.name);
+    setSuggestions([]);
+    setFocused(false);
+    setSelectedStation(station);
+    inputRef.current?.blur();
+    if (mapRef.current) {
+      mapRef.current.setView([station.lat, station.lng], 16, { animate: true });
+      window.L?.popup()
+        .setLatLng([station.lat, station.lng])
+        .setContent(`<div style="font-family:Inter,sans-serif"><b>${station.name}</b><br/><span style="font-size:12px;color:#666">${station.address}</span></div>`)
+        .openOn(mapRef.current);
+    }
+    onStationSelect?.(station);
+  };
+
+  const handleFocus = () => {
+    setFocused(true);
+    setSuggestions(filtered);
+  };
+
+  const handleChange = (e) => {
+    const v = e.target.value;
+    setQuery(v);
+    setSuggestions(
+      v.trim().length === 0
+        ? ALL_STATIONS
+        : ALL_STATIONS.filter(s =>
+            s.name.toLowerCase().includes(v.toLowerCase()) ||
+            s.address.toLowerCase().includes(v.toLowerCase())
+          )
+    );
+  };
+
+  const handleClear = () => {
+    setQuery("");
+    setSuggestions(ALL_STATIONS);
+    inputRef.current?.focus();
+  };
+
   useEffect(() => {
     if (!document.getElementById("leaflet-css")) {
-      const link  = document.createElement("link");
-      link.id     = "leaflet-css";
-      link.rel    = "stylesheet";
-      link.href   = LEAFLET_CSS;
+      const link = document.createElement("link");
+      link.id = "leaflet-css"; link.rel = "stylesheet"; link.href = LEAFLET_CSS;
       document.head.appendChild(link);
     }
     if (window.L) { setReady(true); return; }
-    const script   = document.createElement("script");
-    script.src     = LEAFLET_JS;
-    script.onload  = () => setReady(true);
+    const script = document.createElement("script");
+    script.src = LEAFLET_JS;
+    script.onload = () => setReady(true);
     document.head.appendChild(script);
   }, []);
 
-  // 2. Init map once Leaflet is ready
   useEffect(() => {
     if (!ready || !containerRef.current || mapRef.current) return;
-    const L   = window.L;
+    const L = window.L;
     const map = L.map(containerRef.current, {
-      center: [1.5295, 110.3592],
-      zoom: 13,
-      zoomControl: false,
-      attributionControl: true,
+      center: [1.5295, 110.3592], zoom: 13,
+      zoomControl: false, attributionControl: true,
     });
-
-    // tile layer — dark or light
     const tileUrl = dark
       ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-    tileRef.current = L.tileLayer(tileUrl, {
-      attribution: "© OpenStreetMap",
-      maxZoom: 19,
-    }).addTo(map);
-
+    tileRef.current = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap", maxZoom: 19 }).addTo(map);
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    // charging station markers
     CHARGE_STATIONS_MAP.forEach((s) => {
-      const color   = s.available === 0 ? "#EF4444" : s.available === 1 ? "#F59E0B" : "#1DB954";
-      const icon    = L.divIcon({
-        html: `
-          <div style="
-            width:36px;height:36px;border-radius:50%;
-            background:${color};border:3px solid #fff;
-            box-shadow:0 2px 8px rgba(0,0,0,0.35);
-            display:flex;align-items:center;justify-content:center;
-          ">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-              <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z" fill="#fff"/>
-            </svg>
-          </div>`,
-        iconSize:   [36, 36],
-        iconAnchor: [18, 18],
-        className:  "",
+      const color = s.available === 0 ? "#EF4444" : s.available === 1 ? "#F59E0B" : "#1DB954";
+      const icon = L.divIcon({
+        html: `<div style="width:36px;height:36px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M12 2L4 12H10L8 18L16 8H10L12 2Z" fill="#fff"/></svg>
+        </div>`,
+        iconSize: [36, 36], iconAnchor: [18, 18], className: "",
       });
-      L.marker([s.lat, s.lng], { icon })
-        .addTo(map)
-        .bindPopup(`
-          <div style="font-family:Inter,sans-serif;min-width:140px">
-            <b style="font-size:14px">${s.name}</b><br/>
-            <span style="font-size:12px;color:#666">${s.available}/${s.total} chargers available</span>
-          </div>
-        `);
+      L.marker([s.lat, s.lng], { icon }).addTo(map)
+        .bindPopup(`<div style="font-family:Inter,sans-serif;min-width:140px"><b style="font-size:14px">${s.name}</b><br/><span style="font-size:12px;color:#666">${s.available}/${s.total} chargers available</span></div>`);
     });
 
-    // try to show user location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(({ coords: { latitude: lat, longitude: lng } }) => {
         const youIcon = L.divIcon({
@@ -217,11 +252,9 @@ function MapView({ theme }) {
         map.setView([lat, lng], 14, { animate: true });
       }, () => {});
     }
-
     mapRef.current = map;
   }, [ready]);
 
-  // 3. Swap tile layer when theme changes
   useEffect(() => {
     if (!mapRef.current || !tileRef.current) return;
     const L = window.L;
@@ -229,41 +262,196 @@ function MapView({ theme }) {
     const tileUrl = dark
       ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-    tileRef.current = L.tileLayer(tileUrl, {
-      attribution: "© OpenStreetMap",
-      maxZoom: 19,
-    }).addTo(mapRef.current);
+    tileRef.current = L.tileLayer(tileUrl, { attribution: "© OpenStreetMap", maxZoom: 19 }).addTo(mapRef.current);
   }, [dark]);
 
   return (
     <div style={{
       position: "absolute", left: 24, top: 74, width: 640, height: 390,
-      borderRadius: 20, overflow: "hidden",
-      boxShadow: t.cardShadow,
+      borderRadius: 20, overflow: "hidden", boxShadow: t.cardShadow,
     }}>
-      {/* Leaflet map container */}
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      {/* Search bar overlay */}
+      {/* ── Search bar overlay ── */}
       <div style={{
-        position: "absolute", top: 20, left: 20, width: 244, height: 42,
-        background: t.searchBg, borderRadius: 21,
-        display: "flex", alignItems: "center", gap: 8, padding: "0 14px",
-        boxShadow: t.cardShadow, zIndex: 1000,
-        border: dark ? "1px solid #2C2F3E" : "none",
-        pointerEvents: "auto",
+        position: "absolute", top: 16, left: 16, width: 280, zIndex: 1000,
       }}>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={t.searchText} strokeWidth="2.5" strokeLinecap="round">
-          <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+        {/* Input pill */}
+        <div style={{
+          height: 42, background: t.searchBg, borderRadius: focused ? "14px 14px 0 0" : 21,
+          display: "flex", alignItems: "center", gap: 8, padding: "0 12px",
+          boxShadow: focused ? "0 4px 20px rgba(0,0,0,0.18)" : t.cardShadow,
+          border: dark ? "1px solid #2C2F3E" : focused ? "1px solid #6366F1" : "1px solid #E5E7EB",
+          transition: "all 0.18s",
+        }}>
+          {/* bolt icon — 充电站专属 */}
+          <svg width="15" height="15" viewBox="0 0 20 20" fill={focused ? "#6366F1" : t.searchText}>
+            <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
+          </svg>
+
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={() => setTimeout(() => { setFocused(false); setSuggestions([]); }, 160)}
+            placeholder="Search charging stations…"
+            style={{
+              flex: 1, border: "none", outline: "none", background: "transparent",
+              fontFamily: FONT, fontSize: 13, fontWeight: 500,
+              color: dark ? "#E8EAF0" : "#111",
+            }}
+          />
+
+          {/* clear button */}
+          {query.length > 0 && (
+            <button onClick={handleClear} style={{
+              background: "none", border: "none", cursor: "pointer",
+              color: t.searchText, fontSize: 16, padding: 0, lineHeight: 1,
+              display: "flex", alignItems: "center",
+            }}>✕</button>
+          )}
+        </div>
+
+        {/* Dropdown */}
+        {focused && suggestions.length > 0 && (
+          <div style={{
+            background: dark ? "#1C1F2A" : "#fff",
+            border: dark ? "1px solid #2C2F3E" : "1px solid #E5E7EB",
+            borderTop: "none",
+            borderRadius: "0 0 14px 14px",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
+            overflow: "hidden", maxHeight: 220, overflowY: "auto",
+          }}>
+            {suggestions.map((s, i) => (
+              <div
+                key={i}
+                onMouseDown={() => handleSelect(s)}
+                style={{
+                  padding: "10px 14px",
+                  borderBottom: i < suggestions.length - 1
+                    ? `1px solid ${dark ? "#2C2F3E" : "#F3F4F6"}`
+                    : "none",
+                  cursor: "pointer", display: "flex", alignItems: "center", gap: 10,
+                  transition: "background 0.12s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = dark ? "#252836" : "#F5F8FF"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >
+                {/* coloured bolt */}
+                <div style={{
+                  width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+                  background: dark ? "rgba(99,102,241,0.15)" : "#EEF2FF",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 20 20" fill="#6366F1">
+                    <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
+                  </svg>
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    fontFamily: FONT, fontWeight: 600, fontSize: 13,
+                    color: dark ? "#E8EAF0" : "#111",
+                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                  }}>{s.name}</div>
+                  <div style={{
+                    fontFamily: FONT, fontSize: 11, color: dark ? "#6B7280" : "#9CA3AF",
+                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                  }}>{s.address}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Navigate button — 选中充电站后显示 */}
+{selectedStation && !focused && (
+  <div style={{
+    marginTop: 8,
+    background: dark ? "#1C1F2A" : "#fff",
+    border: dark ? "1.5px solid #2C2F3E" : "1.5px solid #E5E7EB",
+    borderRadius: 14,
+    padding: "10px 14px",
+    boxShadow: "0 4px 16px rgba(0,0,0,0.14)",
+    animation: "fadeInNav 0.2s ease",
+  }}>
+    {/* Station info row */}
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+      <div style={{
+        width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+        background: dark ? "rgba(99,102,241,0.15)" : "#EEF2FF",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="#6366F1">
+          <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
         </svg>
-        <span style={{ fontFamily: FONT, fontWeight: 400, fontSize: 16, color: t.searchText }}>Where to?</span>
+      </div>
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div style={{
+          fontFamily: FONT, fontWeight: 600, fontSize: 12,
+          color: dark ? "#E8EAF0" : "#111",
+          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+        }}>{selectedStation.name}</div>
+        <div style={{
+          fontFamily: FONT, fontSize: 10, color: dark ? "#6B7280" : "#9CA3AF",
+          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+        }}>{selectedStation.address}</div>
+      </div>
+      {/* Clear selection */}
+      <button
+        onClick={() => { setSelectedStation(null); setQuery(""); }}
+        style={{
+          background: "none", border: "none", cursor: "pointer",
+          color: dark ? "#6B7280" : "#9CA3AF", fontSize: 14,
+          padding: "2px 4px", flexShrink: 0,
+        }}
+      >✕</button>
+    </div>
+
+        {/* Navigate button */}
+        <button
+          onClick={() => onNavigate?.(selectedStation)}
+          style={{
+            width: "100%", height: 38,
+            background: "linear-gradient(135deg,#1DB954,#16A34A)",
+            border: "none", borderRadius: 10,
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            cursor: "pointer",
+            boxShadow: "0 4px 12px rgba(29,185,84,0.35)",
+            transition: "opacity 0.15s",
+          }}
+          onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+          onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+          </svg>
+          <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13, color: "#fff" }}>
+            Navigate to {selectedStation.name.split(" ").slice(0, 2).join(" ")}
+          </span>
+        </button>
+      </div>
+    )}
+        {/* No results */}
+        {focused && query.length > 0 && suggestions.length === 0 && (
+          <div style={{
+            background: dark ? "#1C1F2A" : "#fff",
+            border: dark ? "1px solid #2C2F3E" : "1px solid #E5E7EB",
+            borderTop: "none", borderRadius: "0 0 14px 14px",
+            padding: "14px", textAlign: "center",
+            fontFamily: FONT, fontSize: 13, color: dark ? "#6B7280" : "#9CA3AF",
+          }}>
+            No charging stations found
+          </div>
+        )}
+        
       </div>
 
-      {/* Weather badge overlay */}
+      {/* Weather badge */}
       <div style={{
-        position: "absolute", top: 20, right: 16,
+        position: "absolute", top: 20, right: 16, zIndex: 1000,
         background: t.weatherBg, backdropFilter: "blur(6px)",
-        borderRadius: 12, padding: "6px 12px", zIndex: 1000,
+        borderRadius: 12, padding: "6px 12px",
         display: "flex", alignItems: "center", gap: 6,
       }}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="#3b82f6">
@@ -295,11 +483,15 @@ function MapView({ theme }) {
       </div>
 
       <style>{`
-        .leaflet-control-zoom { margin-right: 10px !important; margin-bottom: 10px !important; }
+        .leaflet-control-zoom { margin-right:10px !important; margin-bottom:10px !important; }
         .leaflet-control-zoom a { width:30px !important; height:30px !important; line-height:30px !important; font-size:16px !important; }
-        .leaflet-control-attribution { font-size: 9px !important; }
-        .leaflet-map-pane { z-index: 1 !important; }
-        .leaflet-tile-pane { z-index: 1 !important; }
+        .leaflet-control-attribution { font-size:9px !important; }
+        .leaflet-map-pane { z-index:1 !important; }
+        .leaflet-tile-pane { z-index:1 !important; }
+        @keyframes fadeInNav {
+          from { opacity:0; transform:translateY(-6px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
       `}</style>
     </div>
   );
@@ -563,7 +755,7 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
       <div style={{ position: "absolute", width: 480, height: 480, right: -70, bottom: -70, borderRadius: "50%", background: `radial-gradient(circle,${t.ambBlob2} 0%,transparent 70%)`, pointerEvents: "none" }} />
 
       <TopBar battery={battery} range={effectiveRange} theme={theme} />
-      <MapView theme={theme} />
+      <MapView theme={theme} onStationSelect={(s) => console.log("Selected:", s.name)}   onNavigate={(station) => {setNavActive(2);}}/>
 
       {/* Quick controls row */}
       <div style={{
@@ -594,7 +786,7 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
         <PreCondCard theme={theme} />
       </div>
 
-      <NearbyStations range={effectiveRange} onStartSession={onStartSession} theme={theme} />
+      <NearbyStations range={effectiveRange} onStartSession={() => setNavActive(2)}  theme={theme} />
 
       <BottomNav active={navActive} setActive={setNavActive} />
     </div>
