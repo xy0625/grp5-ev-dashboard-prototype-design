@@ -52,13 +52,20 @@ export default function App() {
         navActive={navActive}
         setNavActive={handleNav}
         onStartSession={() => setPage("session")}
-        theme={theme} 
+        theme={theme}
       />
     );
   }
 
   if (page === "settings") {
-    return <SettingsPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
+    return (
+      <SettingsPage
+        navActive={navActive}
+        setNavActive={handleNav}
+        theme={theme}
+        setTheme={setTheme}
+      />
+    );
   }
 
   if (page === "apps") {
@@ -66,7 +73,14 @@ export default function App() {
   }
 
   if (page === "nav") {
-    return <NavPage navActive={navActive} setNavActive={handleNav} />;
+    return (
+      <NavPage
+        navActive={navActive}
+        setNavActive={handleNav}
+        theme={theme}
+        setTheme={setTheme}
+      />
+    );
   }
 
   if (page === "weather") {
@@ -82,7 +96,8 @@ export default function App() {
       navActive={navActive}
       setNavActive={handleNav}
       onGoToSession={() => setPage("session")}
-      theme={theme} setTheme={setTheme}
+      theme={theme}
+      setTheme={setTheme}
     />
   );
 }

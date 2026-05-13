@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
 
+// homePage
+
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS  = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 

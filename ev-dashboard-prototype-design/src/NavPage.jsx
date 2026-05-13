@@ -51,7 +51,54 @@ const FAV_STATIONS = [
   },
 ];
 
-const IcoDash = ({ a }) => (
+/* ── Theme tokens (same pattern as the rest of the codebase) ────── */
+function tk(theme) {
+  const dark = theme === "dark";
+  return {
+    pageBg: dark ? "#0F1117" : "#F8F9FB",
+    cardBg: dark ? "rgba(28,31,42,0.97)" : "rgba(255,255,255,0.97)",
+    cardBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(0,0,0,0.06)",
+    cardShadow: dark
+      ? "0px 4px 20px rgba(0,0,0,0.45)"
+      : "0 2px 14px rgba(0,0,0,0.12)",
+    textPrimary: dark ? "#E8EAF0" : "#111827",
+    textSecond: dark ? "#9CA3AF" : "#6B7280",
+    textMuted: dark ? "#6B7280" : "#9CA3AF",
+    iconStroke: dark ? "#9CA3AF" : "#6B7280",
+    divider: dark ? "#2C2F3E" : "#F3F4F6",
+    inputBg: dark ? "rgba(37,40,54,0.97)" : "rgba(255,255,255,0.97)",
+    inputBorder: dark ? "#3A3F52" : "rgba(0,0,0,0.06)",
+    inputText: dark ? "#E5E7EB" : "#374151",
+    shadow: dark
+      ? "0px 6px 20px rgba(0,0,0,0.5)"
+      : "0px 6px 20px rgba(0,0,0,0.1)",
+    sugBg: dark ? "rgba(24,27,38,0.99)" : "rgba(255,255,255,0.98)",
+    sugHover: dark ? "rgba(59,130,246,0.12)" : "#EFF6FF",
+    sugBorder: dark ? "#2C2F3E" : "#F3F4F6",
+    favBg: dark ? "#161922" : "#ffffff",
+    favHover: dark ? "rgba(59,130,246,0.10)" : "#F0F9FF",
+    favRowBorder: dark ? "#1E2130" : "#F9FAFB",
+    iconBg: dark ? "rgba(59,130,246,0.15)" : "#EFF6FF",
+    closeBg: dark ? "rgba(255,255,255,0.06)" : "#F9FAFB",
+    tabBarBg: dark ? "rgba(15,17,23,0.97)" : "rgba(255,255,255,0.97)",
+    tabBarBorder: dark ? "#1E2130" : "rgba(0,0,0,0.06)",
+    tabInactive: dark ? "#6B7280" : "#9CA3AF",
+    tabHover: dark ? "rgba(255,255,255,0.05)" : "#F3F4F6",
+    gaugeTrack: dark ? "#2D3346" : "#F3F4F6",
+    barTrack: dark ? "#2D3346" : "#F3F4F6",
+    overlay: dark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.35)",
+    mapFilter: dark ? "brightness(0.72) saturate(0.8)" : "none",
+    errBg: dark ? "#2D1515" : "#FEF2F2",
+    errBorder: dark ? "#7F1D1D" : "#FCA5A5",
+    errText: dark ? "#FCA5A5" : "#B91C1C",
+    xColor: dark ? "#9CA3AF" : "#374151",
+    compassSouth: dark ? "#4B5563" : "#D1D5DB",
+    compassCenter: dark ? "#E5E7EB" : "#374151",
+  };
+}
+
+/* ── ICONS ────────────────────────────────────────────────────────── */
+const IcoDash = ({ a, t }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <rect
       x="2"
@@ -59,7 +106,7 @@ const IcoDash = ({ a }) => (
       width="8"
       height="8"
       rx="1.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <rect
@@ -68,7 +115,7 @@ const IcoDash = ({ a }) => (
       width="8"
       height="8"
       rx="1.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <rect
@@ -77,7 +124,7 @@ const IcoDash = ({ a }) => (
       width="8"
       height="8"
       rx="1.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <rect
@@ -86,12 +133,12 @@ const IcoDash = ({ a }) => (
       width="8"
       height="8"
       rx="1.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
   </svg>
 );
-const IcoCharge = ({ a }) => (
+const IcoCharge = ({ a, t }) => (
   <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
     <rect
       x="2"
@@ -99,12 +146,12 @@ const IcoCharge = ({ a }) => (
       width="13"
       height="17"
       rx="2"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <path
       d="M15 8h2a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -113,7 +160,7 @@ const IcoCharge = ({ a }) => (
       y1="20"
       x2="12"
       y2="20"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -122,7 +169,7 @@ const IcoCharge = ({ a }) => (
       y1="20"
       x2="5"
       y2="24"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="1.5"
       strokeLinecap="round"
     />
@@ -131,17 +178,17 @@ const IcoCharge = ({ a }) => (
       y1="20"
       x2="12"
       y2="24"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="1.5"
       strokeLinecap="round"
     />
   </svg>
 );
-const IcoNavTab = ({ a }) => (
+const IcoNavTab = ({ a, t }) => (
   <svg width="20" height="26" viewBox="0 0 20 26" fill="none">
     <path
       d="M10 2C6 2 2 5.7 2 10.5c0 6.8 8 15.5 8 15.5s8-8.7 8-15.5C18 5.7 14 2 10 2z"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       fill={a ? "rgba(255,255,255,.2)" : "none"}
     />
@@ -149,23 +196,23 @@ const IcoNavTab = ({ a }) => (
       cx="10"
       cy="10.5"
       r="3"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
   </svg>
 );
-const IcoWeather = ({ a }) => (
+const IcoWeather = ({ a, t }) => (
   <svg width="26" height="24" viewBox="0 0 26 24" fill="none">
     <circle
       cx="13"
       cy="8"
       r="4.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <path
       d="M6 16a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -175,40 +222,40 @@ const IcoWeather = ({ a }) => (
       width="22"
       height="6"
       rx="3"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
   </svg>
 );
-const IcoEmg = ({ a }) => (
+const IcoEmg = ({ a, t }) => (
   <svg width="24" height="26" viewBox="0 0 24 26" fill="none">
     <circle
       cx="12"
       cy="9"
       r="4.5"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <path
       d="M2 25c0-5.5 4.5-10 10-10s10 4.5 10 10"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       strokeLinecap="round"
     />
   </svg>
 );
-const IcoSettings = ({ a }) => (
+const IcoSettings = ({ a, t }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <circle
       cx="12"
       cy="12"
       r="4"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
     />
     <path
       d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"
-      stroke={a ? "#fff" : "#6B7280"}
+      stroke={a ? "#fff" : t.tabInactive}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -308,16 +355,6 @@ const IcoBolt = () => (
     <path d="M7.5 1L2 7.5H6.5L5.5 12L11 5.5H6.5L7.5 1Z" fill="#3B82F6" />
   </svg>
 );
-const IcoX = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-    <path
-      d="M2 2l10 10M12 2L2 12"
-      stroke="#374151"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
 const IcoSearch = () => (
   <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
     <circle cx="6.5" cy="6.5" r="5" stroke="#9CA3AF" strokeWidth="1.8" />
@@ -333,7 +370,7 @@ const IcoArrowR = () => (
   <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
     <path
       d="M6 26V14C6 10 10 6 17 6H26M26 6L19 1M26 6L19 11"
-      stroke="#1D4ED8"
+      stroke="#3B82F6"
       strokeWidth="2.8"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -341,7 +378,10 @@ const IcoArrowR = () => (
   </svg>
 );
 
-function LiveMap({ searchTarget, mapRef: extRef, isNavigating }) {
+/* ── LIVE MAP ────────────────────────────────────────────────────── */
+function LiveMap({ searchTarget, mapRef: extRef, isNavigating, theme }) {
+  const t = tk(theme);
+  const dark = theme === "dark";
   const containerRef = useRef(null);
   const internalMapRef = useRef(null);
   const markerRef = useRef(null);
@@ -375,13 +415,17 @@ function LiveMap({ searchTarget, mapRef: extRef, isNavigating }) {
       zoomControl: false,
       attributionControl: true,
     });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const tileUrl = dark
+      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+      : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+    L.tileLayer(tileUrl, {
       attribution: "© OpenStreetMap",
       maxZoom: 19,
     }).addTo(map);
     L.control.zoom({ position: "bottomright" }).addTo(map);
     const icon = L.divIcon({
-      html: `<div style="width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:30px solid #2563EB;filter:drop-shadow(0 0 5px #93C5FD)"></div>`,
+      html: `<div style="width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:30px solid #0078FF;filter:drop-shadow(0 0 5px #93C5FD)"></div>`,
       iconSize: [22, 30],
       iconAnchor: [11, 15],
       className: "",
@@ -455,13 +499,20 @@ function LiveMap({ searchTarget, mapRef: extRef, isNavigating }) {
   return (
     <div
       ref={containerRef}
-      style={{ position: "absolute", inset: 0, zIndex: 0 }}
+      className={dark ? "dark-map" : ""}
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 0,
+      }}
     />
   );
 }
 
-function SearchBar({ onSearch }) {
-  const [query, setSugg0] = useState("");
+/* ── SEARCH BAR ──────────────────────────────────────────────────── */
+function SearchBar({ onSearch, theme }) {
+  const t = tk(theme);
+  const [query, setQuery] = useState("");
   const [suggestions, setSug] = useState([]);
   const [loading, setLoad] = useState(false);
   const [listening, setLis] = useState(false);
@@ -476,10 +527,18 @@ function SearchBar({ onSearch }) {
     }
     setLoad(true);
     try {
-      const r = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`,
-        { headers: { "Accept-Language": "en" } },
-      );
+      const baseUrl = dark
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://nominatim.openstreetmap.org/search";
+
+      const url = dark
+        ? `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`
+        : `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`;
+
+      const r = await fetch(url, {
+        headers: { "Accept-Language": "en" },
+      });
+
       setSug(await r.json());
     } catch {
       setSug([]);
@@ -489,12 +548,12 @@ function SearchBar({ onSearch }) {
 
   const handleChange = (e) => {
     const v = e.target.value;
-    setSugg0(v);
+    setQuery(v);
     clearTimeout(debRef.current);
     debRef.current = setTimeout(() => fetchSug(v), 350);
   };
   const pick = (item) => {
-    setSugg0(item.display_name.split(",")[0]);
+    setQuery(item.display_name.split(",")[0]);
     setSug([]);
     onSearch({
       lat: parseFloat(item.lat),
@@ -525,13 +584,13 @@ function SearchBar({ onSearch }) {
     recRef.current = r;
     r.onstart = () => setLis(true);
     r.onresult = (ev) => {
-      const t = Array.from(ev.results)
+      const txt = Array.from(ev.results)
         .map((x) => x[0].transcript)
         .join("");
-      setSugg0(t);
+      setQuery(txt);
       if (ev.results[ev.results.length - 1].isFinal) {
         clearTimeout(debRef.current);
-        fetchSug(t);
+        fetchSug(txt);
       }
     };
     r.onerror = (ev) => {
@@ -545,20 +604,21 @@ function SearchBar({ onSearch }) {
 
   return (
     <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+      {/* Input row */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 8,
-          background: "rgba(255,255,255,.97)",
+          background: t.inputBg,
           borderRadius: 14,
           padding: "0 14px",
           height: 52,
           boxShadow: listening
-            ? "0 0 0 2px #3B82F6,0 4px 20px rgba(59,130,246,.18)"
-            : "0 2px 14px rgba(0,0,0,.13)",
-          border: `1.5px solid ${listening ? "#3B82F6" : "rgba(0,0,0,.06)"}`,
-          transition: "all .25s",
+            ? `0 0 0 2px #3B82F6, 0 4px 20px rgba(59,130,246,.2)`
+            : t.cardShadow,
+          border: `1.5px solid ${listening ? "#3B82F6" : t.inputBorder}`,
+          transition: "all 0.25s",
         }}
       >
         <IcoSearch />
@@ -573,7 +633,7 @@ function SearchBar({ onSearch }) {
             outline: "none",
             background: "transparent",
             fontSize: 15,
-            color: listening ? "#3B82F6" : "#374151",
+            color: listening ? "#3B82F6" : t.inputText,
             fontFamily: "system-ui,sans-serif",
           }}
         />
@@ -582,7 +642,7 @@ function SearchBar({ onSearch }) {
             style={{
               width: 15,
               height: 15,
-              border: "2px solid #E5E7EB",
+              border: `2px solid ${t.gaugeTrack}`,
               borderTop: "2px solid #3B82F6",
               borderRadius: "50%",
               animation: "spin .7s linear infinite",
@@ -608,6 +668,8 @@ function SearchBar({ onSearch }) {
           <IcoMic on={listening} />
         </button>
       </div>
+
+      {/* Mic error */}
       {micErr && (
         <div
           style={{
@@ -615,18 +677,20 @@ function SearchBar({ onSearch }) {
             top: 58,
             left: 0,
             zIndex: 25,
-            background: "#FEF2F2",
-            border: "1px solid #FCA5A5",
+            background: t.errBg,
+            border: `1px solid ${t.errBorder}`,
             borderRadius: 10,
             padding: "8px 14px",
             fontSize: 13,
-            color: "#B91C1C",
+            color: t.errText,
             whiteSpace: "nowrap",
           }}
         >
           {micErr}
         </div>
       )}
+
+      {/* Suggestions dropdown */}
       {suggestions.length > 0 && (
         <div
           style={{
@@ -635,10 +699,11 @@ function SearchBar({ onSearch }) {
             left: 0,
             right: 0,
             zIndex: 20,
-            background: "rgba(255,255,255,.98)",
+            background: t.sugBg,
             borderRadius: 12,
-            boxShadow: "0 8px 24px rgba(0,0,0,.14)",
+            boxShadow: t.shadow,
             overflow: "hidden",
+            border: `1px solid ${t.sugBorder}`,
           }}
         >
           {suggestions.map((s, i) => (
@@ -648,16 +713,19 @@ function SearchBar({ onSearch }) {
               style={{
                 padding: "11px 14px",
                 fontSize: 13,
-                color: "#111827",
+                color: t.textPrimary,
                 cursor: "pointer",
                 borderBottom:
-                  i < suggestions.length - 1 ? "1px solid #F3F4F6" : "none",
+                  i < suggestions.length - 1
+                    ? `1px solid ${t.sugBorder}`
+                    : "none",
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
+                transition: "background 0.15s",
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#EFF6FF")
+                (e.currentTarget.style.background = t.sugHover)
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
@@ -694,7 +762,9 @@ function SearchBar({ onSearch }) {
   );
 }
 
-function SpeedGauge({ speed }) {
+/* ── ARC SPEEDOMETER ─────────────────────────────────────────────── */
+function SpeedGauge({ speed, theme }) {
+  const t = tk(theme);
   const pct = Math.min(speed / 140, 1);
   const R = 38,
     cx = 52,
@@ -717,22 +787,24 @@ function SpeedGauge({ speed }) {
   return (
     <div
       style={{
-        background: "rgba(255,255,255,.97)",
+        background: t.cardBg,
         borderRadius: 18,
         padding: "14px 10px 10px",
-        boxShadow: "0 2px 14px rgba(0,0,0,.12)",
+        boxShadow: t.cardShadow,
+        border: t.cardBorder,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         width: 106,
         flexShrink: 0,
+        transition: "background 0.3s",
       }}
     >
       <svg width="104" height="76" viewBox="0 0 104 76">
         <path
           d={arc(startA, sweepA)}
           fill="none"
-          stroke="#F3F4F6"
+          stroke={t.gaugeTrack}
           strokeWidth="7"
           strokeLinecap="round"
         />
@@ -762,7 +834,7 @@ function SpeedGauge({ speed }) {
           y="70"
           textAnchor="middle"
           fontSize="9"
-          fill="#9CA3AF"
+          fill={t.textMuted}
           style={{ fontFamily: "system-ui" }}
         >
           km/h
@@ -771,7 +843,7 @@ function SpeedGauge({ speed }) {
       <div
         style={{
           fontSize: 10,
-          color: "#9CA3AF",
+          color: t.textMuted,
           fontWeight: 600,
           letterSpacing: 1,
           marginTop: 2,
@@ -783,21 +855,25 @@ function SpeedGauge({ speed }) {
   );
 }
 
-function BatteryCard({ rangeKm, pct }) {
+/* ── BATTERY CARD ────────────────────────────────────────────────── */
+function BatteryCard({ rangeKm, pct, theme }) {
+  const t = tk(theme);
   const color = pct > 50 ? "#22C55E" : pct > 20 ? "#F97316" : "#EF4444";
   return (
     <div
       style={{
-        background: "rgba(255,255,255,.97)",
+        background: t.cardBg,
         borderRadius: 18,
         padding: "14px 16px",
-        boxShadow: "0 2px 14px rgba(0,0,0,.12)",
+        boxShadow: t.cardShadow,
+        border: t.cardBorder,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         gap: 10,
         width: 148,
         flexShrink: 0,
+        transition: "background 0.3s",
       }}
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
@@ -805,13 +881,14 @@ function BatteryCard({ rangeKm, pct }) {
           style={{
             fontSize: 30,
             fontWeight: 700,
-            color: "#111827",
+            color: t.textPrimary,
             lineHeight: 1,
+            transition: "color 0.3s",
           }}
         >
           {rangeKm}
         </span>
-        <span style={{ fontSize: 13, color: "#9CA3AF", fontWeight: 500 }}>
+        <span style={{ fontSize: 13, color: t.textMuted, fontWeight: 500 }}>
           km
         </span>
       </div>
@@ -820,7 +897,7 @@ function BatteryCard({ rangeKm, pct }) {
           style={{
             flex: 1,
             height: 7,
-            background: "#F3F4F6",
+            background: t.barTrack,
             borderRadius: 4,
             overflow: "hidden",
           }}
@@ -850,7 +927,7 @@ function BatteryCard({ rangeKm, pct }) {
       <div
         style={{
           fontSize: 10,
-          color: "#9CA3AF",
+          color: t.textMuted,
           fontWeight: 600,
           letterSpacing: 1,
         }}
@@ -861,7 +938,9 @@ function BatteryCard({ rangeKm, pct }) {
   );
 }
 
-function Compass({ bearing, locked, onClick }) {
+/* ── COMPASS ─────────────────────────────────────────────────────── */
+function Compass({ bearing, locked, onClick, theme }) {
+  const t = tk(theme);
   return (
     <button
       onClick={onClick}
@@ -869,17 +948,17 @@ function Compass({ bearing, locked, onClick }) {
         width: 52,
         height: 52,
         borderRadius: "50%",
-        background: "rgba(255,255,255,.97)",
-        border: locked ? "2px solid #3B82F6" : "1.5px solid rgba(0,0,0,.08)",
+        background: t.cardBg,
+        border: locked ? `2px solid #3B82F6` : t.cardBorder,
         boxShadow: locked
-          ? "0 0 0 3px rgba(59,130,246,.2),0 2px 12px rgba(0,0,0,.12)"
-          : "0 2px 12px rgba(0,0,0,.12)",
+          ? `0 0 0 3px rgba(59,130,246,.2), ${t.cardShadow}`
+          : t.cardShadow,
         cursor: "pointer",
         outline: "none",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transition: "all .25s",
+        transition: "all 0.25s",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
       onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
@@ -891,15 +970,17 @@ function Compass({ bearing, locked, onClick }) {
           style={{ transition: "transform .4s ease" }}
         >
           <polygon points="15,3 18.5,15 15,13 11.5,15" fill="#EF4444" />
-          <polygon points="15,27 18.5,15 15,17 11.5,15" fill="#D1D5DB" />
+          <polygon points="15,27 18.5,15 15,17 11.5,15" fill={t.compassSouth} />
         </g>
-        <circle cx="15" cy="15" r="2" fill="#374151" />
+        <circle cx="15" cy="15" r="2" fill={t.compassCenter} />
       </svg>
     </button>
   );
 }
 
-function LocateBtn({ loading, onClick }) {
+/* ── LOCATE ME ───────────────────────────────────────────────────── */
+function LocateBtn({ loading, onClick, theme }) {
+  const t = tk(theme);
   return (
     <button
       onClick={onClick}
@@ -907,15 +988,15 @@ function LocateBtn({ loading, onClick }) {
         width: 52,
         height: 52,
         borderRadius: "50%",
-        background: "rgba(255,255,255,.97)",
-        border: "1.5px solid rgba(0,0,0,.08)",
-        boxShadow: "0 2px 12px rgba(0,0,0,.12)",
+        background: t.cardBg,
+        border: t.cardBorder,
+        boxShadow: t.cardShadow,
         cursor: "pointer",
         outline: "none",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transition: "all .25s",
+        transition: "all 0.25s",
         animation: loading ? "locPulse 1s ease infinite" : "none",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
@@ -927,7 +1008,7 @@ function LocateBtn({ loading, onClick }) {
           style={{
             width: 18,
             height: 18,
-            border: "2.5px solid #E5E7EB",
+            border: `2.5px solid ${t.gaugeTrack}`,
             borderTop: "2.5px solid #3B82F6",
             borderRadius: "50%",
             animation: "spin .7s linear infinite",
@@ -935,14 +1016,14 @@ function LocateBtn({ loading, onClick }) {
         />
       ) : (
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <circle cx="11" cy="11" r="5.5" stroke="#3B82F6" strokeWidth="2" />
-          <circle cx="11" cy="11" r="1.8" fill="#3B82F6" />
+          <circle cx="11" cy="11" r="5.5" stroke="#0078FF" strokeWidth="2" />
+          <circle cx="11" cy="11" r="1.8" fill="#0078FF" />
           <line
             x1="11"
             y1="1"
             x2="11"
             y2="5"
-            stroke="#3B82F6"
+            stroke="#0078FF"
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -951,7 +1032,7 @@ function LocateBtn({ loading, onClick }) {
             y1="17"
             x2="11"
             y2="21"
-            stroke="#3B82F6"
+            stroke="#0078FF"
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -960,7 +1041,7 @@ function LocateBtn({ loading, onClick }) {
             y1="11"
             x2="5"
             y2="11"
-            stroke="#3B82F6"
+            stroke="#0078FF"
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -969,7 +1050,7 @@ function LocateBtn({ loading, onClick }) {
             y1="11"
             x2="21"
             y2="11"
-            stroke="#3B82F6"
+            stroke="#0078FF"
             strokeWidth="2"
             strokeLinecap="round"
           />
@@ -979,7 +1060,9 @@ function LocateBtn({ loading, onClick }) {
   );
 }
 
-function TurnBanner({ inst, voiceOn, onToggleVoice }) {
+/* ── TURN BANNER ─────────────────────────────────────────────────── */
+function TurnBanner({ inst, voiceOn, onToggleVoice, theme }) {
+  const t = tk(theme);
   if (!inst) return null;
   return (
     <div
@@ -988,16 +1071,18 @@ function TurnBanner({ inst, voiceOn, onToggleVoice }) {
         top: 14,
         left: "50%",
         transform: "translateX(-50%)",
-        background: "rgba(255,255,255,.97)",
+        background: t.cardBg,
         borderRadius: 16,
         padding: "12px 16px 12px 12px",
-        boxShadow: "0 4px 24px rgba(0,0,0,.14)",
+        boxShadow: t.cardShadow,
+        border: t.cardBorder,
         display: "flex",
         alignItems: "center",
         gap: 12,
         zIndex: 12,
         minWidth: 300,
         animation: "slideDown .3s ease",
+        transition: "background 0.3s",
       }}
     >
       <div
@@ -1005,7 +1090,7 @@ function TurnBanner({ inst, voiceOn, onToggleVoice }) {
           width: 44,
           height: 44,
           borderRadius: 12,
-          background: "#EFF6FF",
+          background: t.iconBg,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -1019,13 +1104,13 @@ function TurnBanner({ inst, voiceOn, onToggleVoice }) {
           style={{
             fontSize: 20,
             fontWeight: 700,
-            color: "#1D4ED8",
+            color: "#3B82F6",
             lineHeight: 1,
           }}
         >
           {inst.dist}
         </div>
-        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3 }}>
+        <div style={{ fontSize: 12, color: t.textSecond, marginTop: 3 }}>
           {inst.text}
         </div>
       </div>
@@ -1035,8 +1120,8 @@ function TurnBanner({ inst, voiceOn, onToggleVoice }) {
           width: 36,
           height: 36,
           borderRadius: "50%",
-          border: `1.5px solid ${voiceOn ? "#3B82F6" : "#E5E7EB"}`,
-          background: voiceOn ? "rgba(59,130,246,.08)" : "transparent",
+          border: `1.5px solid ${voiceOn ? "#3B82F6" : t.divider}`,
+          background: voiceOn ? "rgba(59,130,246,.1)" : "transparent",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -1052,7 +1137,9 @@ function TurnBanner({ inst, voiceOn, onToggleVoice }) {
   );
 }
 
-function NavBar({ dest, eta, dist, onCancel }) {
+/* ── NAV BOTTOM BAR ──────────────────────────────────────────────── */
+function NavBar({ dest, eta, dist, onCancel, theme }) {
+  const t = tk(theme);
   const arr = new Date(Date.now() + parseInt(eta) * 60000).toLocaleTimeString(
     [],
     { hour: "2-digit", minute: "2-digit" },
@@ -1065,14 +1152,16 @@ function NavBar({ dest, eta, dist, onCancel }) {
         left: 12,
         right: 12,
         zIndex: 12,
-        background: "rgba(255,255,255,.97)",
+        background: t.cardBg,
         borderRadius: 18,
-        boxShadow: "0 -2px 20px rgba(0,0,0,.1)",
+        boxShadow: t.cardShadow,
+        border: t.cardBorder,
         padding: "14px 18px",
         display: "flex",
         alignItems: "center",
         gap: 14,
         animation: "slideUp .35s ease",
+        transition: "background 0.3s",
       }}
     >
       <button
@@ -1081,8 +1170,8 @@ function NavBar({ dest, eta, dist, onCancel }) {
           width: 40,
           height: 40,
           borderRadius: "50%",
-          border: "1.5px solid #E5E7EB",
-          background: "#fff",
+          border: t.cardBorder,
+          background: t.cardBg,
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -1096,24 +1185,31 @@ function NavBar({ dest, eta, dist, onCancel }) {
           e.currentTarget.style.borderColor = "#FECACA";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "#fff";
-          e.currentTarget.style.borderColor = "#E5E7EB";
+          e.currentTarget.style.background = t.cardBg;
+          e.currentTarget.style.borderColor = "";
         }}
       >
-        <IcoX />
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path
+            d="M2 2l10 10M12 2L2 12"
+            stroke={t.xColor}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
       </button>
       <div style={{ flex: 1 }}>
         <div
           style={{
             fontSize: 22,
             fontWeight: 700,
-            color: "#2563EB",
+            color: "#3B82F6",
             lineHeight: 1,
           }}
         >
           {eta}
         </div>
-        <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 3 }}>
+        <div style={{ fontSize: 12, color: t.textMuted, marginTop: 3 }}>
           {dist} · Arrives {arr}
         </div>
       </div>
@@ -1122,7 +1218,7 @@ function NavBar({ dest, eta, dist, onCancel }) {
           style={{
             fontSize: 14,
             fontWeight: 600,
-            color: "#111827",
+            color: t.textPrimary,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -1130,7 +1226,7 @@ function NavBar({ dest, eta, dist, onCancel }) {
         >
           {dest}
         </div>
-        <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
+        <div style={{ fontSize: 11, color: t.textMuted, marginTop: 2 }}>
           Navigating
         </div>
       </div>
@@ -1138,7 +1234,9 @@ function NavBar({ dest, eta, dist, onCancel }) {
   );
 }
 
-function FavModal({ onNavigate, onClose }) {
+/* ── FAVOURITES MODAL ────────────────────────────────────────────── */
+function FavModal({ onNavigate, onClose, theme }) {
+  const t = tk(theme);
   return (
     <div
       onClick={onClose}
@@ -1146,7 +1244,7 @@ function FavModal({ onNavigate, onClose }) {
         position: "absolute",
         inset: 0,
         zIndex: 30,
-        background: "rgba(0,0,0,.35)",
+        background: t.overlay,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -1156,17 +1254,20 @@ function FavModal({ onNavigate, onClose }) {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "#fff",
+          background: t.favBg,
           borderRadius: 22,
-          width: "min(460px, 90%)",
-          boxShadow: "0 20px 60px rgba(0,0,0,.22)",
+          width: "min(460px,90%)",
+          boxShadow: t.shadow,
+          border: t.cardBorder,
           overflow: "hidden",
+          transition: "background 0.3s",
         }}
       >
+        {/* Header */}
         <div
           style={{
             padding: "16px 18px 12px",
-            borderBottom: "1px solid #F3F4F6",
+            borderBottom: `1px solid ${t.divider}`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -1178,7 +1279,7 @@ function FavModal({ onNavigate, onClose }) {
                 width: 30,
                 height: 30,
                 borderRadius: 9,
-                background: "#EFF6FF",
+                background: t.iconBg,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -1186,14 +1287,16 @@ function FavModal({ onNavigate, onClose }) {
             >
               <IcoBolt />
             </div>
-            <span style={{ fontSize: 15, fontWeight: 600, color: "#111827" }}>
+            <span
+              style={{ fontSize: 15, fontWeight: 600, color: t.textPrimary }}
+            >
               Favourite Stations
             </span>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: "#F9FAFB",
+              background: t.closeBg,
               border: "none",
               cursor: "pointer",
               borderRadius: "50%",
@@ -1205,9 +1308,18 @@ function FavModal({ onNavigate, onClose }) {
               outline: "none",
             }}
           >
-            <IcoX />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M2 2l10 10M12 2L2 12"
+                stroke={t.xColor}
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </button>
         </div>
+
+        {/* Station rows */}
         {FAV_STATIONS.map((s, i) => (
           <div
             key={s.id}
@@ -1215,14 +1327,18 @@ function FavModal({ onNavigate, onClose }) {
             style={{
               padding: "13px 18px",
               borderBottom:
-                i < FAV_STATIONS.length - 1 ? "1px solid #F9FAFB" : "none",
+                i < FAV_STATIONS.length - 1
+                  ? `1px solid ${t.favRowBorder}`
+                  : "none",
               display: "flex",
               alignItems: "center",
               gap: 12,
               cursor: "pointer",
               transition: "background .15s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#F0F9FF")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = t.favHover)
+            }
             onMouseLeave={(e) =>
               (e.currentTarget.style.background = "transparent")
             }
@@ -1232,7 +1348,7 @@ function FavModal({ onNavigate, onClose }) {
                 width: 34,
                 height: 34,
                 borderRadius: "50%",
-                background: "#EFF6FF",
+                background: t.iconBg,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -1242,10 +1358,12 @@ function FavModal({ onNavigate, onClose }) {
               <IcoBolt />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
+              <div
+                style={{ fontSize: 14, fontWeight: 600, color: t.textPrimary }}
+              >
                 {s.name}
               </div>
-              <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
+              <div style={{ fontSize: 11, color: t.textMuted, marginTop: 2 }}>
                 {s.address}
               </div>
             </div>
@@ -1253,7 +1371,7 @@ function FavModal({ onNavigate, onClose }) {
               <div style={{ fontSize: 13, fontWeight: 600, color: "#3B82F6" }}>
                 {s.dist}
               </div>
-              <div style={{ fontSize: 11, color: "#9CA3AF" }}>{s.time}</div>
+              <div style={{ fontSize: 11, color: t.textMuted }}>{s.time}</div>
             </div>
           </div>
         ))}
@@ -1262,6 +1380,7 @@ function FavModal({ onNavigate, onClose }) {
   );
 }
 
+/* ── BOTTOM TAB BAR ──────────────────────────────────────────────── */
 const TABS = [
   { Icon: IcoDash, label: "Dashboard" },
   { Icon: IcoCharge, label: "Charge" },
@@ -1271,7 +1390,8 @@ const TABS = [
   { Icon: IcoSettings, label: "Settings" },
 ];
 
-function BottomTabBar({ active, setActive }) {
+function BottomTabBar({ active, setActive, theme }) {
+  const t = tk(theme);
   return (
     <div
       style={{
@@ -1280,16 +1400,17 @@ function BottomTabBar({ active, setActive }) {
         height: 108,
         left: "calc(50% - 574px)",
         top: 662,
-        background: "rgba(255,255,255,0.92)",
+        background: t.tabBarBg,
         backdropFilter: "blur(12px)",
-        border: "1px solid rgba(0,0,0,0.06)",
+        border: `1px solid ${t.tabBarBorder}`,
         borderRadius: 35,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
         padding: "0 20px",
-        boxShadow: "0 2px 16px rgba(0,0,0,0.07)",
+        boxShadow: t.shadow,
         zIndex: 10,
+        transition: "background 0.3s",
       }}
     >
       {TABS.map(({ Icon, label }, i) => (
@@ -1311,19 +1432,19 @@ function BottomTabBar({ active, setActive }) {
             minWidth: 62,
           }}
           onMouseEnter={(e) => {
-            if (active !== i) e.currentTarget.style.background = "#F3F4F6";
+            if (active !== i) e.currentTarget.style.background = t.tabHover;
           }}
           onMouseLeave={(e) => {
             if (active !== i) e.currentTarget.style.background = "transparent";
           }}
         >
-          <Icon a={active === i} />
+          <Icon a={active === i} t={t} />
           <span
             style={{
               fontSize: 9,
               fontWeight: 600,
               letterSpacing: 0.4,
-              color: active === i ? "#fff" : "#9CA3AF",
+              color: active === i ? "#fff" : t.tabInactive,
             }}
           >
             {label.toUpperCase()}
@@ -1334,8 +1455,10 @@ function BottomTabBar({ active, setActive }) {
   );
 }
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState(2);
+/* ── PAGE ROOT ───────────────────────────────────────────────────── */
+export default function NavPage({ navActive, setNavActive, theme = "light" }) {
+  const t = tk(theme);
+  const [activeTab, setActiveTab] = useState(navActive ?? 2);
   const [speed, setSpeed] = useState(62);
   const [battery] = useState(78);
   const [searchTarget, setSearchTarget] = useState(null);
@@ -1349,6 +1472,7 @@ export default function App() {
   const [voiceOn, setVoiceOn] = useState(true);
   const mapRef = useRef(null);
 
+  /* speed drift */
   useEffect(() => {
     const id = setInterval(
       () =>
@@ -1360,6 +1484,7 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
+  /* compass drift while navigating */
   useEffect(() => {
     if (!isNav || northLocked) return;
     const id = setInterval(() => setBearing((b) => (b + 0.5) % 360), 150);
@@ -1428,7 +1553,7 @@ export default function App() {
         setLocating(false);
         if (mapRef.current) {
           mapRef.current.setView([lat, lng], 17, { animate: true });
-          window.L?.popup()
+          window.L?.popup({ closeButton: false })
             .setLatLng([lat, lng])
             .setContent("<b>📍 You are here</b>")
             .openOn(mapRef.current);
@@ -1451,16 +1576,19 @@ export default function App() {
         position: "relative",
         width: "1280px",
         height: "800px",
-        background: "#fff",
+        background: t.pageBg,
         fontFamily: "'Inter',sans-serif",
         overflow: "hidden",
         userSelect: "none",
+        transition: "background 0.3s",
       }}
     >
+      {/* MAP */}
       <LiveMap
         searchTarget={searchTarget}
         mapRef={mapRef}
         isNavigating={isNav}
+        theme={theme}
       />
 
       {/* TOP ROW */}
@@ -1476,9 +1604,9 @@ export default function App() {
           zIndex: 10,
         }}
       >
-        <BatteryCard rangeKm={217} pct={battery} />
-        <SpeedGauge speed={speed} />
-        {!isNav && <SearchBar onSearch={startNav} />}
+        <BatteryCard rangeKm={312} pct={battery} theme={theme} />
+        <SpeedGauge speed={speed} theme={theme} />
+        {!isNav && <SearchBar onSearch={startNav} theme={theme} />}
         {!isNav && (
           <div
             style={{
@@ -1488,19 +1616,18 @@ export default function App() {
               flexShrink: 0,
             }}
           >
+            {/* Heart / favourites */}
             <button
               onClick={() => setShowFavs((v) => !v)}
               style={{
                 width: 52,
                 height: 52,
                 borderRadius: "50%",
-                background: "rgba(255,255,255,.97)",
-                border: showFavs
-                  ? "2px solid #EF4444"
-                  : "1.5px solid rgba(0,0,0,.08)",
+                background: t.cardBg,
+                border: showFavs ? `2px solid #EF4444` : t.cardBorder,
                 boxShadow: showFavs
-                  ? "0 0 0 3px rgba(239,68,68,.15),0 2px 12px rgba(0,0,0,.12)"
-                  : "0 2px 12px rgba(0,0,0,.12)",
+                  ? `0 0 0 3px rgba(239,68,68,.15), ${t.cardShadow}`
+                  : t.cardShadow,
                 cursor: "pointer",
                 outline: "none",
                 display: "flex",
@@ -1518,6 +1645,8 @@ export default function App() {
             >
               <IcoHeart f={showFavs} />
             </button>
+
+            {/* Navigate button */}
             <button
               onClick={() =>
                 searchTarget
@@ -1565,14 +1694,17 @@ export default function App() {
         )}
       </div>
 
+      {/* TURN BANNER (navigation mode) */}
       {isNav && (
         <TurnBanner
           inst={turnInst}
           voiceOn={voiceOn}
           onToggleVoice={handleToggleVoice}
+          theme={theme}
         />
       )}
 
+      {/* SIDE CONTROLS: compass + locate */}
       <div
         style={{
           position: "absolute",
@@ -1591,10 +1723,12 @@ export default function App() {
             setNorthLocked((l) => !l);
             setBearing(0);
           }}
+          theme={theme}
         />
-        <LocateBtn loading={locating} onClick={handleLocate} />
+        <LocateBtn loading={locating} onClick={handleLocate} theme={theme} />
       </div>
 
+      {/* LOCATE ERROR TOAST */}
       {locErr && (
         <div
           style={{
@@ -1602,18 +1736,20 @@ export default function App() {
             bottom: 154,
             right: 14,
             zIndex: 15,
-            background: "#FEF2F2",
-            border: "1px solid #FCA5A5",
+            background: t.errBg,
+            border: `1px solid ${t.errBorder}`,
             borderRadius: 10,
             padding: "9px 14px",
             fontSize: 12,
-            color: "#B91C1C",
+            color: t.errText,
             maxWidth: 260,
           }}
         >
           {locErr}
         </div>
       )}
+
+      {/* NAV BOTTOM BAR */}
       {isNav && (
         <NavBar
           dest={
@@ -1623,15 +1759,21 @@ export default function App() {
           eta="18 min"
           dist="34 km"
           onCancel={cancelNav}
+          theme={theme}
         />
       )}
+
+      {/* FAVOURITES MODAL */}
       {showFavs && (
         <FavModal
           onNavigate={(s) => startNav({ lat: s.lat, lng: s.lng, name: s.name })}
           onClose={() => setShowFavs(false)}
+          theme={theme}
         />
       )}
-      <BottomTabBar active={activeTab} setActive={setActiveTab} />
+
+      {/* BOTTOM TAB BAR */}
+      <BottomTabBar active={activeTab} setActive={setActiveTab} theme={theme} />
 
       <style>{`
         @keyframes spin      { to{transform:rotate(360deg);} }
@@ -1642,6 +1784,7 @@ export default function App() {
         .leaflet-control-attribution{font-size:9px!important;}
         .leaflet-control-zoom{margin-right:78px!important;margin-bottom:160px!important;}
         .leaflet-control-zoom a{width:30px!important;height:30px!important;line-height:30px!important;font-size:15px!important;}
+         .dark-map .leaflet-tile-pane{filter:brightness(0.72) saturate(0.8);}
       `}</style>
     </div>
   );
