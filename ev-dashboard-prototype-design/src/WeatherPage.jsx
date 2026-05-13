@@ -37,8 +37,6 @@ export default function WeatherPage({ navActive, setNavActive }) {
       position: "relative",
       width: 1280,
       height: 800,
-      // background: "linear-gradient(135deg, #E2E6EE 0%, #F1F4F9 100%)", // Original Background
-      // Background Changed to Very Light Mint Green/Blue Gradient
       background: "linear-gradient(135deg, #E6F3F0 0%, #EBF6F5 100%)", 
       overflow: "hidden",
       fontFamily: "Inter, sans-serif",
@@ -67,7 +65,8 @@ export default function WeatherPage({ navActive, setNavActive }) {
       position: 'absolute',
       top: 25,
       right: 60,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      zIndex: 10 // 确保图标在顶层可点击
     },
     glassCard: {
       position: "absolute",
@@ -226,7 +225,8 @@ export default function WeatherPage({ navActive, setNavActive }) {
         <img src="/bluetooth.png" alt="BT" style={{ width: '25px' }} />
       </div>
 
-      <div style={s.userIcon}>
+      {/* 修改点：给用户头像加上点击事件跳转到索引 6 (AccountPage) */}
+      <div style={s.userIcon} onClick={() => setNavActive(6)}>
         <img src="/profile.png" alt="User" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
       </div>
 

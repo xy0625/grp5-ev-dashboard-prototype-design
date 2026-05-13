@@ -8,6 +8,7 @@ import AppsPage from "./AppsPage";
 import NavPage from "./NavPage";
 import WeatherPage from "./WeatherPage";
 import EmergencyPage from "./EmergencyPage";
+import AccountPage from "./AccountPage"; // 1. 引入新页面
 
 export default function App() {
   const [navActive, setNavActive] = useState(0);
@@ -22,6 +23,7 @@ export default function App() {
     else if (index === 3) setPage("weather");
     else if (index === 4) setPage("emergency");
     else if (index === 5) setPage("settings");
+    else if (index === 6) setPage("account"); // 2. 处理 Account 页面的索引
     else                  setPage("home");
   };
 
@@ -35,6 +37,9 @@ export default function App() {
       );
     }
 
+    // 3. 增加 Account 渲染逻辑
+    if (page === "account")   return <AccountPage navActive={navActive} setNavActive={handleNav} />;
+    
     if (page === "session")   return <ChargingActivePage navActive={navActive} setNavActive={handleNav} onStop={() => { setPage("charging"); setNavActive(1); }} theme={theme} />;
     if (page === "charging")  return <ChargingPage navActive={navActive} setNavActive={handleNav} onStartSession={() => setPage("session")} theme={theme} />;
     if (page === "settings")  return <SettingsPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
@@ -43,7 +48,7 @@ export default function App() {
     if (page === "weather")   return <WeatherPage navActive={navActive} setNavActive={handleNav} />;
     if (page === "emergency") return <EmergencyPage navActive={navActive} setNavActive={handleNav} />;
     
-    return <HomePage navActive={navActive} setNavActive={handleNav} onGoToSession={() => setPage("session")} theme={theme} setTheme={setTheme} />;
+    return <HomePage navActive={navActive} setNavActive={handleNav} onGoToSession={() => setPage("session")} theme={theme} setTheme={setTheme} onGoToAccount={() => {setPage("account"); setNavActive(6);}} />;
   };
 
     return (
