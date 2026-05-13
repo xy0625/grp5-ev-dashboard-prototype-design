@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LoginPage from "./LoginPage";
 import HomePage from "./HomePage";
 import ChargingPage from "./ChargingPage";
 import ChargingActivePage from "./ChargingActivePage";
@@ -10,15 +11,13 @@ import EmergencyPage from "./EmergencyPage";
 
 export default function App() {
   const [navActive, setNavActive] = useState(0);
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState("login"); 
   const [theme, setTheme] = useState("light");
-  // When nav tab changes, map to page
   const handleNav = (index) => {
     setNavActive(index);
     if (index === 0) {
       setPage("home");
     } else if (index === 1) {
-      // EV tab → go to charging page (or stay in session)
       if (page !== "session") setPage("charging");
     } else if (index === 2) {
       setPage("nav");
@@ -32,6 +31,15 @@ export default function App() {
       setPage("home");
     }
   };
+
+  if (page === "login") {
+    return (
+      <LoginPage 
+        theme={theme} 
+        onLoginSuccess={() => setPage("home")} // 登录成功就跳到首页
+      />
+    );
+  }
 
   if (page === "session") {
     return (
