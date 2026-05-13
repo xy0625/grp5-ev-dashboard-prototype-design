@@ -271,7 +271,7 @@ export default function WeatherPage({ navActive, setNavActive }) {
               <div style={s.weatherDisplay}>
                 <div>
                   <p style={{ margin: 0, fontSize: '13px', opacity: 0.7, fontWeight: 'bold' }}>Kuching</p>
-                  <p style={{ margin: 0, fontSize: '32px', fontWeight: '900' }}>32°</p>
+                  <p style={{ margin: 0, fontSize: '32px', fontWeight: '900' }}>24°</p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <img src="https://img.icons8.com/fluency/48/000000/sun.png" alt="sun" style={{ width: '40px' }} />
