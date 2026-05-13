@@ -46,26 +46,48 @@ export default function App() {
     return <HomePage navActive={navActive} setNavActive={handleNav} onGoToSession={() => setPage("session")} theme={theme} setTheme={setTheme} />;
   };
 
-  return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#ffffff",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
-      <div style={{
-        position: "relative",
-        width: 1280,
-        height: 800,
-        borderRadius: 28,
-        border: "10px solid #1a1a1a",
-        boxShadow: "0 40px 100px rgba(0,0,0,0.8)",
-        overflow: "hidden",
-        background: "#000",
-      }}>
-        {renderPage()}
-      </div>
-    </div>
-  );
-}
+    return (
+        <div style={{
+          minHeight: "100vh",
+          background:  "#ffffff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+
+          <div style={{
+            position: "relative",
+            width: 1280,
+            height: 800,
+            borderRadius: 28,
+            border: "10px solid #1a1a1a",
+            boxShadow: [
+              "0 0 0 1px #3a3a3a",          
+              "0 0 0 3px #111",              
+              "0 40px 100px rgba(0,0,0,0.8)", 
+              "0 10px 30px rgba(0,0,0,0.5)", 
+              "inset 0 1px 0 rgba(255,255,255,0.06)",
+            ].join(", "),
+            overflow: "hidden",
+            flexShrink: 0,
+            background: "#000",
+          }}>
+
+            <div style={{
+              position: "absolute", top: 0, left: 0,
+              width: 3, height: "100%",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.03) 100%)",
+              pointerEvents: "none", zIndex: 9999,
+            }}/>
+            <div style={{
+              position: "absolute", top: 0, right: 0,
+              width: 3, height: "100%",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%)",
+              pointerEvents: "none", zIndex: 9999,
+            }}/>
+
+            {renderPage()}
+          </div>
+        </div>
+      );
+    }
