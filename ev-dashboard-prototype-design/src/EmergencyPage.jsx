@@ -63,8 +63,8 @@ const PhoneIcon = ({ color = "#fff", size = 24 }) => (
   </svg>
 );
 
-const LocationPinIcon = ({ color = "#5A5A5A" }) => (
-  <svg width="28" height="32" viewBox="0 0 28 32" fill="none">
+const LocationPinIcon = ({ color = "#5A5A5A", size = 38 }) => (
+  <svg width={size} height={size} viewBox="0 0 28 32" fill="none">
     <path
       d="M14 1C8.5 1 3 6 3 12.5c0 9 11 18.5 11 18.5s11-9.5 11-18.5C25 6 19.5 1 14 1z"
       fill={color}
@@ -74,17 +74,13 @@ const LocationPinIcon = ({ color = "#5A5A5A" }) => (
 );
 
 const CarEmergencyIcon = () => (
-  <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
-    {/* Car body */}
+  <svg width="60" height="60" viewBox="0 0 72 72" fill="none">
     <path d="M12 38l5-14h38l5 14v12H12V38z" fill="#970000" />
-    {/* Windshield */}
     <path d="M20 38l3-10h26l3 10H20z" fill="#C84040" opacity="0.6" />
-    {/* Wheels */}
     <circle cx="22" cy="50" r="6" fill="#333" />
     <circle cx="50" cy="50" r="6" fill="#333" />
     <circle cx="22" cy="50" r="3" fill="#666" />
     <circle cx="50" cy="50" r="3" fill="#666" />
-    {/* Emergency lights */}
     <rect x="26" y="22" width="8" height="6" rx="2" fill="#FF4444" />
     <rect
       x="38"
@@ -95,7 +91,6 @@ const CarEmergencyIcon = () => (
       fill="#4444FF"
       opacity="0.8"
     />
-    {/* Siren lines */}
     <path
       d="M30 18l-3-5M36 17v-6M42 18l3-5"
       stroke="#FF6666"
@@ -105,22 +100,225 @@ const CarEmergencyIcon = () => (
   </svg>
 );
 
-/* ── Bottom nav icons (same as SettingsPage) ──────────────────────────────── */
-/* ─── Toggle Switch ──────────────────────────────────────────────────────── */
-function Toggle({ checked, onChange, variant = "gray" }) {
-  const bg = checked
-    ? variant === "red"
-      ? "linear-gradient(270deg, #FF0E00 11%, #EC756E 76%)"
-      : "#34C759"
-    : "#E5E5EA";
+const ContactsIcon = () => (
+  <svg width="45" height="45" viewBox="0 0 45 45" fill="none">
+    <circle
+      cx="18"
+      cy="17"
+      r="6"
+      stroke="#5A5A5A"
+      strokeWidth="2.5"
+      fill="none"
+    />
+    <path
+      d="M6 38c0-7 5.4-12 12-12s12 5 12 12"
+      stroke="#5A5A5A"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      fill="none"
+    />
+    <path
+      d="M30 20c2.5 0 4.5 2 4.5 4.5S32.5 29 30 29"
+      stroke="#5A5A5A"
+      strokeWidth="2"
+      strokeLinecap="round"
+      fill="none"
+    />
+    <path
+      d="M34 36c2-1.5 3-3.5 3-6"
+      stroke="#5A5A5A"
+      strokeWidth="2"
+      strokeLinecap="round"
+      fill="none"
+    />
+  </svg>
+);
 
+const SendIcon = ({ color = "#fff", size = 22 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M22 2L11 13"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M22 2L15 22l-4-9-9-4 20-7z"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/* ─── Warning Icon ───────────────────────────────────────────────────────── */
+const WarningIcon = () => (
+  <svg width="117" height="117" viewBox="0 0 117 117" fill="none">
+    <path d="M58.5 10L108 100H9L58.5 10z" fill="#970000" />
+    <rect x="53" y="42" width="11" height="32" rx="5" fill="#fff" />
+    <rect x="53" y="82" width="11" height="11" rx="5" fill="#fff" />
+  </svg>
+);
+
+/* ─── Turn Off Confirmation Modal ────────────────────────────────────────── */
+function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 40,
+        background: "rgba(255,255,255,0.18)",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 0,
+      }}
+    >
+      {/* Inner content row: icon+text LEFT, buttons RIGHT */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "80px",
+          width: "100%",
+          padding: "0 80px",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Left: warning icon + question */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "24px",
+          }}
+        >
+          {/* Warning circle */}
+          <div
+            style={{
+              width: "160px",
+              height: "160px",
+              borderRadius: "80px",
+              background: "#FDD3D0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <WarningIcon />
+          </div>
+
+          {/* Question text */}
+          <div
+            style={{
+              width: "480px",
+              fontSize: "40px",
+              fontWeight: 700,
+              color: "#434343",
+              textAlign: "center",
+              lineHeight: 1.2,
+            }}
+          >
+            Turn Off Auto Emergency Assistance?
+          </div>
+        </div>
+
+        {/* Right: buttons stacked */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            alignItems: "center",
+          }}
+        >
+          {/* Keep On button */}
+          <button
+            onClick={onKeepOn}
+            style={{
+              width: "422px",
+              height: "130px",
+              background: "#FFFFFF",
+              border: "5px solid #14AE5C",
+              boxShadow: "0px 15px 50px rgba(0,157,86,0.5)",
+              borderRadius: "50px",
+              fontSize: "40px",
+              fontWeight: 500,
+              color: "#009951",
+              cursor: "pointer",
+              transition: "transform 0.14s, box-shadow 0.14s",
+              fontFamily: "'Inter', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+              e.currentTarget.style.boxShadow =
+                "0px 20px 60px rgba(0,157,86,0.65)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0px 15px 50px rgba(0,157,86,0.5)";
+            }}
+          >
+            Keep On
+          </button>
+
+          {/* Turn Off button */}
+          <button
+            onClick={onTurnOff}
+            style={{
+              width: "422px",
+              height: "130px",
+              background: "#D52011",
+              border: "none",
+              borderRadius: "50px",
+              fontSize: "40px",
+              fontWeight: 500,
+              color: "#FFFFFF",
+              cursor: "pointer",
+              transition: "transform 0.14s, box-shadow 0.14s",
+              fontFamily: "'Inter', sans-serif",
+              boxShadow: "0px 8px 30px rgba(213,32,17,0.4)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+              e.currentTarget.style.boxShadow =
+                "0px 16px 48px rgba(213,32,17,0.55)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0px 8px 30px rgba(213,32,17,0.4)";
+            }}
+          >
+            Turn Off
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Small Toggle (for the Assist card) ─────────────────────────────────── */
+function SmallToggle({ checked, onChange }) {
   return (
     <div
       onClick={() => onChange(!checked)}
       style={{
-        width: "96px",
-        height: "48px",
-        background: bg,
+        width: "63px",
+        height: "33px",
+        background: checked
+          ? "linear-gradient(270deg, #FF0E00 11%, #EC756E 76%)"
+          : "#E5E5EA",
         borderRadius: "100px",
         position: "relative",
         cursor: "pointer",
@@ -132,10 +330,10 @@ function Toggle({ checked, onChange, variant = "gray" }) {
       <div
         style={{
           position: "absolute",
-          top: "3px",
-          left: checked ? "calc(100% - 45px)" : "3px",
-          width: "42px",
-          height: "42px",
+          top: "2.5px",
+          left: checked ? "calc(100% - 30px)" : "2.5px",
+          width: "28px",
+          height: "28px",
           background: "#fff",
           borderRadius: "50%",
           boxShadow: "0px 4px 6px rgba(0,0,0,0.22)",
@@ -160,7 +358,6 @@ function MapPlaceholder() {
           "linear-gradient(160deg, #a8d8ea 0%, #72bcd4 40%, #5aacca 60%, #4a9ab8 80%, #c8e6c9 85%, #a5d6a7 100%)",
       }}
     >
-      {/* Water body (South China Sea feel) */}
       <div
         style={{
           position: "absolute",
@@ -172,7 +369,6 @@ function MapPlaceholder() {
           clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
         }}
       />
-      {/* Land mass */}
       <div
         style={{
           position: "absolute",
@@ -186,7 +382,6 @@ function MapPlaceholder() {
             "polygon(0% 0%, 85% 0%, 60% 40%, 80% 70%, 50% 100%, 0% 100%)",
         }}
       />
-      {/* Roads */}
       <svg
         style={{
           position: "absolute",
@@ -194,7 +389,7 @@ function MapPlaceholder() {
           width: "100%",
           height: "100%",
         }}
-        viewBox="0 0 382 177"
+        viewBox="0 0 313 177"
       >
         <path
           d="M80 30 Q120 60 150 90 Q180 120 160 177"
@@ -217,36 +412,34 @@ function MapPlaceholder() {
           fill="none"
           opacity="0.5"
         />
-        {/* City labels */}
-        <text x="60" y="75" fontSize="10" fill="#555" fontFamily="sans-serif">
-          Riam
-        </text>
-        <text x="95" y="95" fontSize="10" fill="#555" fontFamily="sans-serif">
-          Lundu
-        </text>
-        <text x="30" y="45" fontSize="10" fill="#555" fontFamily="sans-serif">
+        <text x="20" y="55" fontSize="9" fill="#555" fontFamily="sans-serif">
           Sematan
         </text>
+        <text x="40" y="80" fontSize="9" fill="#555" fontFamily="sans-serif">
+          Riam
+        </text>
+        <text x="75" y="95" fontSize="9" fill="#555" fontFamily="sans-serif">
+          Lundu
+        </text>
         <text
-          x="145"
+          x="130"
           y="88"
-          fontSize="11"
+          fontSize="10"
           fill="#333"
           fontWeight="bold"
           fontFamily="sans-serif"
         >
           Kuching
         </text>
-        <text x="260" y="40" fontSize="10" fill="#555" fontFamily="sans-serif">
+        <text x="230" y="40" fontSize="9" fill="#555" fontFamily="sans-serif">
           Kabong
         </text>
-        <text x="295" y="88" fontSize="9" fill="#666" fontFamily="sans-serif">
+        <text x="245" y="80" fontSize="8" fill="#666" fontFamily="sans-serif">
           Sebuyau
         </text>
-        {/* Location dot */}
-        <circle cx="162" cy="83" r="6" fill="#EC221F" />
-        <circle cx="162" cy="83" r="3" fill="#fff" />
-        <circle cx="162" cy="83" r="10" fill="#EC221F" fillOpacity="0.25" />
+        <circle cx="155" cy="83" r="6" fill="#EC221F" />
+        <circle cx="155" cy="83" r="3" fill="#fff" />
+        <circle cx="155" cy="83" r="10" fill="#EC221F" fillOpacity="0.25" />
       </svg>
     </div>
   );
@@ -254,9 +447,6 @@ function MapPlaceholder() {
 
 /* ─── SOS Modal ──────────────────────────────────────────────────────────── */
 function SOSModal({ onClose }) {
-  const [countdown, setCountdown] = useState(5);
-
-  // Could use useEffect for real countdown; kept simple for demo
   return (
     <div
       style={{
@@ -302,7 +492,7 @@ function SOSModal({ onClose }) {
             margin: "0 0 8px",
           }}
         >
-          SOS Call
+          SOS Emergency
         </h2>
         <p
           style={{
@@ -357,12 +547,243 @@ function SOSModal({ onClose }) {
   );
 }
 
+/* ─── Add Contact Modal ──────────────────────────────────────────────────── */
+function AddContactModal({ onClose, onAdd }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const inputStyle = {
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: "10px",
+    border: "1.5px solid #ddd",
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box",
+    fontFamily: "inherit",
+  };
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 30,
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(6px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "24px",
+          padding: "36px 40px",
+          width: "380px",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "20px",
+            fontWeight: 800,
+            color: "#1E1E1E",
+            margin: "0 0 20px",
+          }}
+        >
+          Add Trusted Contact
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            marginBottom: "24px",
+          }}
+        >
+          <input
+            style={inputStyle}
+            placeholder="Name (e.g. Mom)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            style={inputStyle}
+            placeholder="Phone (e.g. +60 12 345 6789)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            onClick={onClose}
+            style={{
+              flex: 1,
+              padding: "12px",
+              borderRadius: "12px",
+              border: "2px solid #ddd",
+              background: "#f5f5f5",
+              fontSize: "15px",
+              fontWeight: 600,
+              cursor: "pointer",
+              color: "#333",
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              if (name.trim() && phone.trim()) {
+                onAdd({ name: name.trim(), phone: phone.trim() });
+                onClose();
+              }
+            }}
+            style={{
+              flex: 1,
+              padding: "12px",
+              borderRadius: "12px",
+              border: "none",
+              background: "#009951",
+              fontSize: "15px",
+              fontWeight: 700,
+              cursor: "pointer",
+              color: "#fff",
+            }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Call Contact Modal ─────────────────────────────────────────────────── */
+function CallModal({ contact, onClose }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 30,
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(6px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "24px",
+          padding: "40px 48px",
+          width: "380px",
+          textAlign: "center",
+          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
+        }}
+      >
+        <div
+          style={{
+            width: "72px",
+            height: "72px",
+            borderRadius: "50%",
+            background: "#CFF7D3",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 16px",
+          }}
+        >
+          <PhoneIcon color="#009951" size={32} />
+        </div>
+        <h2
+          style={{
+            fontSize: "22px",
+            fontWeight: 800,
+            color: "#1E1E1E",
+            margin: "0 0 6px",
+          }}
+        >
+          {contact.name}
+        </h2>
+        <p style={{ fontSize: "15px", color: "#767676", margin: "0 0 24px" }}>
+          {contact.phone}
+        </p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+          <button
+            onClick={onClose}
+            style={{
+              padding: "12px 28px",
+              borderRadius: "12px",
+              border: "2px solid #ddd",
+              background: "#f5f5f5",
+              fontSize: "15px",
+              fontWeight: 600,
+              cursor: "pointer",
+              color: "#333",
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              onClose();
+              alert(`Calling ${contact.name} at ${contact.phone}…`);
+            }}
+            style={{
+              padding: "12px 28px",
+              borderRadius: "12px",
+              border: "none",
+              background: "#009951",
+              fontSize: "15px",
+              fontWeight: 700,
+              cursor: "pointer",
+              color: "#fff",
+            }}
+          >
+            Call
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── EmergencyPage ──────────────────────────────────────────────────────── */
 export default function EmergencyPage({ navActive, setNavActive }) {
   const [autoEmergency, setAutoEmergency] = useState(true);
-  const [assistReminder, setAssistReminder] = useState(false);
-  const [locationSharing, setLocationSharing] = useState(true);
+  const [confirmTurnOff, setConfirmTurnOff] = useState(false);
   const [sosModal, setSosModal] = useState(false);
+  const [addContactModal, setAddContactModal] = useState(false);
+  const [callModal, setCallModal] = useState(null); // contact object
+  const [locationSent, setLocationSent] = useState(false);
+
+  // When toggle clicked: if currently ON show confirm; if OFF turn on directly
+  const handleAutoEmergencyToggle = (newVal) => {
+    if (!newVal) {
+      setConfirmTurnOff(true);
+    } else {
+      setAutoEmergency(true);
+    }
+  };
+
+  const [contacts, setContacts] = useState([
+    { name: "Mom", phone: "+60 12 345 6789" },
+    { name: "Alice", phone: "+60 12 345 6789" },
+    { name: "John (Brother)", phone: "+60 12 345 6789" },
+  ]);
+
+  const handleAddContact = (contact) => {
+    setContacts((prev) => [...prev, contact]);
+  };
+
+  const handleSendLocation = () => {
+    setLocationSent(true);
+    setTimeout(() => setLocationSent(false), 2500);
+  };
 
   return (
     <div
@@ -490,34 +911,39 @@ export default function EmergencyPage({ navActive, setNavActive }) {
       </div>
 
       {/* ══════════════════════════════════════════
-          LEFT COLUMN
+          3-COLUMN LAYOUT  (top: 130px, bottom: 645px → height ≈ 515px)
+          Col 1: left:66  width:356
+          Col 2: left:462 width:356
+          Col 3: left:858 width:356
       ══════════════════════════════════════════ */}
 
-      {/* ── Auto Emergency Assistance Card ── */}
+      {/* ════════════════ COL 1 ════════════════ */}
+
+      {/* Auto Emergency Assistance card */}
       <div
         style={{
           position: "absolute",
-          width: "630px",
-          height: "189px",
+          width: "356px",
+          height: "140px",
           left: "66px",
-          top: "130px",
+          top: "184px",
           background: "#FFFFFF",
-          border: "1px solid rgba(255,255,255,0.8)",
-          boxShadow: "0px 6px 40px rgba(0,0,0,0.10)",
-          borderRadius: "12px",
+          border: "1px solid #FDD3D0",
+          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
+          borderRadius: "20px",
           zIndex: 2,
           display: "flex",
           alignItems: "center",
-          padding: "0 28px",
-          gap: "20px",
+          padding: "0 20px",
+          gap: "14px",
           boxSizing: "border-box",
         }}
       >
-        {/* Emergency car icon with circle bg */}
+        {/* Car icon circle */}
         <div
           style={{
-            width: "95px",
-            height: "95px",
+            width: "62px",
+            height: "62px",
             flexShrink: 0,
             background: "#FDD3D0",
             borderRadius: "50%",
@@ -533,132 +959,38 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         <div style={{ flex: 1 }}>
           <div
             style={{
-              fontSize: "32px",
+              fontSize: "20px",
               fontWeight: 700,
               color: "#1E1E1E",
               lineHeight: 1.2,
-              marginBottom: "6px",
+              marginBottom: "4px",
             }}
           >
             Auto Emergency
             <br />
             Assistance
           </div>
-          <div style={{ fontSize: "16px", fontWeight: 500, color: "#767676" }}>
+          <div style={{ fontSize: "13px", fontWeight: 500, color: "#767676" }}>
             When a severe crash is detected.
           </div>
         </div>
 
         {/* Toggle */}
-        <Toggle
+        <SmallToggle
           checked={autoEmergency}
-          onChange={setAutoEmergency}
-          variant="red"
+          onChange={handleAutoEmergencyToggle}
         />
       </div>
 
-      {/* ── Emerg. Assist Reminder Card ── */}
-      <div
-        style={{
-          position: "absolute",
-          width: "630px",
-          height: "133px",
-          left: "66px",
-          top: "335px",
-          background: "#F5F5F5",
-          boxShadow: "0px 6px 40px rgba(0,0,0,0.12)",
-          borderRadius: "12px",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          padding: "0 28px",
-          gap: "18px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Phone circle icon */}
-        <div
-          style={{
-            width: "62px",
-            height: "62px",
-            flexShrink: 0,
-            background: "#CFF7D3",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <PhoneIcon color="#009951" size={28} />
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: "22px",
-              fontWeight: 700,
-              color: "#434343",
-              marginBottom: "4px",
-            }}
-          >
-            Emerg. Assist reminder
-          </div>
-          <div
-            style={{
-              fontSize: "15px",
-              fontWeight: 500,
-              color: "#767676",
-              marginBottom: "4px",
-            }}
-          >
-            Automatically notify emergency contact
-          </div>
-          <div style={{ fontSize: "19px", fontWeight: 500, color: "#018F71" }}>
-            Mom (+60 12 345 6789)
-          </div>
-        </div>
-
-        {/* Toggle (small variant) */}
-        <div
-          onClick={() => setAssistReminder((v) => !v)}
-          style={{
-            width: "63px",
-            height: "32px",
-            background: assistReminder ? "#34C759" : "#E5E5EA",
-            borderRadius: "100px",
-            position: "relative",
-            cursor: "pointer",
-            transition: "background 0.3s",
-            flexShrink: 0,
-            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.15)",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "2px",
-              left: assistReminder ? "calc(100% - 30px)" : "2px",
-              width: "28px",
-              height: "28px",
-              background: "#fff",
-              borderRadius: "50%",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-              transition: "left 0.3s cubic-bezier(.4,0,.2,1)",
-            }}
-          />
-        </div>
-      </div>
-
-      {/* ── SOS Call Button ── */}
+      {/* SOS Emergency button */}
       <button
         onClick={() => setSosModal(true)}
         style={{
           position: "absolute",
-          width: "271px",
-          height: "72px",
-          left: "245px",
-          top: "490px",
+          width: "356px",
+          height: "140px",
+          left: "66px",
+          top: "344px",
           background: "#EC221F",
           border: "none",
           borderRadius: "20px",
@@ -666,14 +998,14 @@ export default function EmergencyPage({ navActive, setNavActive }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "14px",
+          gap: "18px",
           zIndex: 2,
           boxShadow: "0 6px 24px rgba(236,34,31,0.45)",
           transition: "transform 0.14s, box-shadow 0.14s",
           outline: "none",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.03)";
+          e.currentTarget.style.transform = "scale(1.02)";
           e.currentTarget.style.boxShadow = "0 10px 32px rgba(236,34,31,0.55)";
         }}
         onMouseLeave={(e) => {
@@ -681,139 +1013,270 @@ export default function EmergencyPage({ navActive, setNavActive }) {
           e.currentTarget.style.boxShadow = "0 6px 24px rgba(236,34,31,0.45)";
         }}
       >
-        <PhoneIcon color="#fff" size={36} />
+        <PhoneIcon color="#fff" size={44} />
         <span
           style={{
             fontSize: "24px",
-            fontWeight: 900,
+            fontWeight: 700,
             color: "#fff",
-            letterSpacing: "0.5px",
+            letterSpacing: "1px",
           }}
         >
-          SOS Call
+          SOS EMERGENCY
         </span>
       </button>
 
-      {/* ══════════════════════════════════════════
-          RIGHT COLUMN
-      ══════════════════════════════════════════ */}
-
-      {/* ── Current Location Card ── */}
+      {/* ════════════════ COL 2 — Trusted Contacts ════════════════ */}
       <div
         style={{
           position: "absolute",
-          width: "443px",
-          height: "315px",
-          left: "766px",
-          top: "130px",
+          width: "356px",
+          height: "445px",
+          left: "462px",
+          top: "184px",
           background: "#FFFFFF",
+          border: "1px solid #A9FF82",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
-          borderRadius: "12px",
+          borderRadius: "20px",
           zIndex: 2,
-          padding: "20px",
           boxSizing: "border-box",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
+          overflow: "hidden",
         }}
       >
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "16px 20px 12px",
+            gap: "10px",
+          }}
+        >
+          <ContactsIcon />
+          <span
+            style={{
+              flex: 1,
+              fontSize: "20px",
+              fontWeight: 700,
+              color: "#303030",
+            }}
+          >
+            Trusted Contacts
+          </span>
+          {/* Add button */}
+          <button
+            onClick={() => setAddContactModal(true)}
+            style={{
+              width: "40px",
+              height: "35px",
+              background: "#808080",
+              border: "none",
+              borderRadius: "10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "26px",
+              fontWeight: 600,
+              color: "#fff",
+              lineHeight: 1,
+              flexShrink: 0,
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#555")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#808080")}
+            title="Add contact"
+          >
+            +
+          </button>
+        </div>
+
+        {/* Contact list */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "0 16px",
+            gap: "14px",
+            maxHeight: "340px",
+            overflowY: "auto",
+          }}
+        >
+          {contacts.map((contact, idx) => (
+            <div
+              key={idx}
+              style={{
+                width: "100%",
+                height: "72px",
+                background: "#E2FFE1",
+                borderRadius: "20px",
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: "20px",
+                paddingRight: "56px",
+                boxSizing: "border-box",
+                flexShrink: 0,
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 500,
+                    color: "#303030",
+                  }}
+                >
+                  {contact.name}
+                </div>
+                <div
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#757575",
+                  }}
+                >
+                  {contact.phone}
+                </div>
+              </div>
+
+              {/* Call button */}
+              <button
+                onClick={() => setCallModal(contact)}
+                style={{
+                  position: "absolute",
+                  right: "14px",
+                  width: "36px",
+                  height: "36px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "rgba(0,153,81,0.12)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "none")
+                }
+              >
+                <PhoneIcon color="#009951" size={24} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ════════════════ COL 3 — Vehicle Location ════════════════ */}
+      <div
+        style={{
+          position: "absolute",
+          width: "356px",
+          height: "445px",
+          left: "858px",
+          top: "184px",
+          background: "#FFFFFF",
+          border: "1px solid #80CCFF",
+          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
+          borderRadius: "20px",
+          zIndex: 2,
+          boxSizing: "border-box",
+          padding: "0 16px 16px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "16px 4px 12px",
+          }}
+        >
+          <LocationPinIcon color="#5A5A5A" size={36} />
+          <span style={{ fontSize: "20px", fontWeight: 700, color: "#303030" }}>
+            Vehicle Location
+          </span>
+        </div>
+
         {/* Map */}
         <MapPlaceholder />
 
-        {/* Location text */}
-        <div style={{ fontSize: "15px", fontWeight: 500, color: "#767676" }}>
-          Current Location
-        </div>
+        {/* Address */}
         <div
           style={{
-            fontSize: "23px",
+            margin: "10px 4px 6px",
+            fontSize: "16px",
             fontWeight: 500,
             color: "#303030",
-            lineHeight: 1.3,
           }}
         >
           Jalan Setia Raja, Kuching, Sarawak
         </div>
-      </div>
 
-      {/* ── Location Sharing Card ── */}
-      <div
-        style={{
-          position: "absolute",
-          width: "443px",
-          height: "118px",
-          left: "766px",
-          top: "460px",
-          background: "#FFFFFF",
-          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
-          borderRadius: "12px",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          padding: "0 24px",
-          gap: "16px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Pin icon */}
-        <div style={{ flexShrink: 0 }}>
-          <LocationPinIcon color="#5A5A5A" />
-        </div>
+        {/* Spacer */}
+        <div style={{ flex: 1 }} />
 
-        {/* Text */}
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: "22px",
-              fontWeight: 500,
-              color: "#303030",
-              marginBottom: "4px",
-            }}
-          >
-            Location Sharing
-          </div>
-          <div
-            style={{
-              fontSize: "14px",
-              fontWeight: 500,
-              color: "#767676",
-              lineHeight: 1.4,
-            }}
-          >
-            Automatically share your location
-            <br />
-            with emergency services
-          </div>
-        </div>
-
-        {/* ON badge / toggle */}
-        <div
-          onClick={() => setLocationSharing((v) => !v)}
+        {/* Send Location button */}
+        <button
+          onClick={handleSendLocation}
           style={{
-            padding: "6px 14px",
-            background: locationSharing ? "#CFF7D3" : "#E5E5EA",
-            borderRadius: "60px",
+            width: "100%",
+            height: "50px",
+            background: locationSent ? "#009951" : "#0078FF",
+            border: "none",
+            borderRadius: "10px",
             cursor: "pointer",
-            transition: "background 0.25s",
-            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            transition: "background 0.3s, transform 0.14s",
+            outline: "none",
+          }}
+          onMouseEnter={(e) => {
+            if (!locationSent) e.currentTarget.style.background = "#005FCC";
+          }}
+          onMouseLeave={(e) => {
+            if (!locationSent) e.currentTarget.style.background = "#0078FF";
           }}
         >
-          <span
-            style={{
-              fontSize: "16px",
-              fontWeight: 500,
-              color: locationSharing ? "#009951" : "#888",
-            }}
-          >
-            {locationSharing ? "ON" : "OFF"}
+          <SendIcon color="#fff" size={20} />
+          <span style={{ fontSize: "16px", fontWeight: 600, color: "#fff" }}>
+            {locationSent ? "Location Sent!" : "Send Location"}
           </span>
-        </div>
+        </button>
       </div>
 
+      {/* ── Bottom Nav ── */}
       <BottomNav active={navActive} setActive={setNavActive} />
 
-      {/* ── SOS Modal ── */}
+      {/* ── Modals ── */}
       {sosModal && <SOSModal onClose={() => setSosModal(false)} />}
+      {confirmTurnOff && (
+        <TurnOffConfirmModal
+          onKeepOn={() => setConfirmTurnOff(false)}
+          onTurnOff={() => {
+            setAutoEmergency(false);
+            setConfirmTurnOff(false);
+          }}
+        />
+      )}
+      {addContactModal && (
+        <AddContactModal
+          onClose={() => setAddContactModal(false)}
+          onAdd={handleAddContact}
+        />
+      )}
+      {callModal && (
+        <CallModal contact={callModal} onClose={() => setCallModal(null)} />
+      )}
     </div>
   );
 }
