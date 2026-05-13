@@ -962,114 +962,89 @@ export default function EmergencyPage({ navActive, setNavActive }) {
           Col 3: left:858 width:356
       ══════════════════════════════════════════ */}
 
-      {/* ════════════════ COL 1 ════════════════ */}
+      {/* ════════════════ COL 1 — Vehicle Location ════════════════ */}
 
-      {/* Auto Emergency Assistance card */}
       <div
         style={{
           position: "absolute",
           width: "356px",
-          height: "140px",
+          height: "445px",
           left: "66px",
           top: "184px",
           background: "#FFFFFF",
-          border: "1px solid #FDD3D0",
+          border: "1px solid #80CCFF",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
           borderRadius: "20px",
           zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          padding: "0 20px",
-          gap: "14px",
           boxSizing: "border-box",
+          padding: "0 16px 16px",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        {/* Car icon circle */}
+        {/* Header */}
         <div
           style={{
-            width: "62px",
-            height: "62px",
-            flexShrink: 0,
-            background: "#FDD3D0",
-            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "16px 4px 12px",
+          }}
+        >
+          <LocationPinIcon color="#5A5A5A" size={36} />
+          <span style={{ fontSize: "20px", fontWeight: 700, color: "#303030" }}>
+            Vehicle Location
+          </span>
+        </div>
+
+        {/* Map */}
+        <MapPlaceholder />
+
+        {/* Address */}
+        <div
+          style={{
+            margin: "10px 4px 6px",
+            fontSize: "16px",
+            fontWeight: 500,
+            color: "#303030",
+          }}
+        >
+          Jalan Setia Raja, Kuching, Sarawak
+        </div>
+
+        {/* Spacer */}
+        <div style={{ flex: 1 }} />
+
+        {/* Send Location button */}
+        <button
+          onClick={handleSendLocation}
+          style={{
+            width: "100%",
+            height: "50px",
+            background: locationSent ? "#009951" : "#0078FF",
+            border: "none",
+            borderRadius: "10px",
+            cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            gap: "10px",
+            transition: "background 0.3s, transform 0.14s",
+            outline: "none",
+          }}
+          onMouseEnter={(e) => {
+            if (!locationSent) e.currentTarget.style.background = "#005FCC";
+          }}
+          onMouseLeave={(e) => {
+            if (!locationSent) e.currentTarget.style.background = "#0078FF";
           }}
         >
-          <CarEmergencyIcon />
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: 700,
-              color: "#1E1E1E",
-              lineHeight: 1.2,
-              marginBottom: "4px",
-            }}
-          >
-            Auto Emergency
-            <br />
-            Assistance
-          </div>
-          <div style={{ fontSize: "13px", fontWeight: 500, color: "#767676" }}>
-            When a severe crash is detected.
-          </div>
-        </div>
-
-        {/* Toggle */}
-        <SmallToggle
-          checked={autoEmergency}
-          onChange={handleAutoEmergencyToggle}
-        />
+          <SendIcon color="#fff" size={20} />
+          <span style={{ fontSize: "16px", fontWeight: 600, color: "#fff" }}>
+            {locationSent ? "Location Sent!" : "Send Location"}
+          </span>
+        </button>
       </div>
-
-      {/* SOS Emergency button */}
-      <button
-        onClick={() => setSosModal(true)}
-        style={{
-          position: "absolute",
-          width: "356px",
-          height: "140px",
-          left: "66px",
-          top: "344px",
-          background: "#EC221F",
-          border: "none",
-          borderRadius: "20px",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "18px",
-          zIndex: 2,
-          boxShadow: "0 6px 24px rgba(236,34,31,0.45)",
-          transition: "transform 0.14s, box-shadow 0.14s",
-          outline: "none",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.02)";
-          e.currentTarget.style.boxShadow = "0 10px 32px rgba(236,34,31,0.55)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.boxShadow = "0 6px 24px rgba(236,34,31,0.45)";
-        }}
-      >
-        <PhoneIcon color="#fff" size={44} />
-        <span
-          style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            color: "#fff",
-            letterSpacing: "1px",
-          }}
-        >
-          SOS EMERGENCY
-        </span>
-      </button>
 
       {/* ════════════════ COL 2 — Trusted Contacts ════════════════ */}
       <div
@@ -1216,88 +1191,114 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         </div>
       </div>
 
-      {/* ════════════════ COL 3 — Vehicle Location ════════════════ */}
+      {/* ════════════════ COL 3 — Emergency call ════════════════ */}
+
+      {/* Auto Emergency Assistance card */}
       <div
         style={{
           position: "absolute",
           width: "356px",
-          height: "445px",
+          height: "140px",
           left: "858px",
           top: "184px",
           background: "#FFFFFF",
-          border: "1px solid #80CCFF",
+          border: "1px solid #FDD3D0",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
           borderRadius: "20px",
           zIndex: 2,
-          boxSizing: "border-box",
-          padding: "0 16px 16px",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "center",
+          padding: "0 20px",
+          gap: "14px",
+          boxSizing: "border-box",
         }}
       >
-        {/* Header */}
+        {/* Car icon circle */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "16px 4px 12px",
-          }}
-        >
-          <LocationPinIcon color="#5A5A5A" size={36} />
-          <span style={{ fontSize: "20px", fontWeight: 700, color: "#303030" }}>
-            Vehicle Location
-          </span>
-        </div>
-
-        {/* Map */}
-        <MapPlaceholder />
-
-        {/* Address */}
-        <div
-          style={{
-            margin: "10px 4px 6px",
-            fontSize: "16px",
-            fontWeight: 500,
-            color: "#303030",
-          }}
-        >
-          Jalan Setia Raja, Kuching, Sarawak
-        </div>
-
-        {/* Spacer */}
-        <div style={{ flex: 1 }} />
-
-        {/* Send Location button */}
-        <button
-          onClick={handleSendLocation}
-          style={{
-            width: "100%",
-            height: "50px",
-            background: locationSent ? "#009951" : "#0078FF",
-            border: "none",
-            borderRadius: "10px",
-            cursor: "pointer",
+            width: "62px",
+            height: "62px",
+            flexShrink: 0,
+            background: "#FDD3D0",
+            borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: "10px",
-            transition: "background 0.3s, transform 0.14s",
-            outline: "none",
-          }}
-          onMouseEnter={(e) => {
-            if (!locationSent) e.currentTarget.style.background = "#005FCC";
-          }}
-          onMouseLeave={(e) => {
-            if (!locationSent) e.currentTarget.style.background = "#0078FF";
           }}
         >
-          <SendIcon color="#fff" size={20} />
-          <span style={{ fontSize: "16px", fontWeight: 600, color: "#fff" }}>
-            {locationSent ? "Location Sent!" : "Send Location"}
-          </span>
-        </button>
+          <CarEmergencyIcon />
+        </div>
+
+        {/* Text */}
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              color: "#1E1E1E",
+              lineHeight: 1.2,
+              marginBottom: "4px",
+            }}
+          >
+            Auto Emergency
+            <br />
+            Assistance
+          </div>
+          <div style={{ fontSize: "13px", fontWeight: 500, color: "#767676" }}>
+            When a severe crash is detected.
+          </div>
+        </div>
+
+        {/* Toggle */}
+        <SmallToggle
+          checked={autoEmergency}
+          onChange={handleAutoEmergencyToggle}
+        />
       </div>
+
+      {/* SOS Emergency button */}
+      <button
+        onClick={() => setSosModal(true)}
+        style={{
+          position: "absolute",
+          width: "356px",
+          height: "140px",
+          left: "858px",
+          top: "344px",
+          background: "#EC221F",
+          border: "none",
+          borderRadius: "20px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "18px",
+          zIndex: 2,
+          boxShadow: "0 6px 24px rgba(236,34,31,0.45)",
+          transition: "transform 0.14s, box-shadow 0.14s",
+          outline: "none",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.02)";
+          e.currentTarget.style.boxShadow = "0 10px 32px rgba(236,34,31,0.55)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.boxShadow = "0 6px 24px rgba(236,34,31,0.45)";
+        }}
+      >
+        <PhoneIcon color="#fff" size={44} />
+        <span
+          style={{
+            fontSize: "24px",
+            fontWeight: 700,
+            color: "#fff",
+            letterSpacing: "1px",
+          }}
+        >
+          SOS EMERGENCY
+        </span>
+      </button>
 
       {/* ── Bottom Nav ── */}
       <BottomNav active={navActive} setActive={setNavActive} />

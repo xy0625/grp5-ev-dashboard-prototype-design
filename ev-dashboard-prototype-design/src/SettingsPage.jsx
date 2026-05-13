@@ -631,7 +631,12 @@ function Slider({ value, onChange }) {
 }
 
 /* ─── SettingsPage ───────────────────────────────────────────────────────── */
-export default function SettingsPage({ navActive, setNavActive, theme, setTheme }) {
+export default function SettingsPage({
+  navActive,
+  setNavActive,
+  theme,
+  setTheme,
+}) {
   const [wifi, setWifi] = useState(true);
   const [bt, setBt] = useState(false);
   const [gps, setGps] = useState(true);
