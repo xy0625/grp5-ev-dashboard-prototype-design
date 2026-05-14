@@ -1201,7 +1201,7 @@ export default function SettingsPage({
         </div>
       </div>
 
-      <BottomNav active={navActive} setActive={setNavActive} />
+      <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
 
       {resetModal && (
         <ResetModal

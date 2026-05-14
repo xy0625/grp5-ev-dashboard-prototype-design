@@ -283,7 +283,7 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light", 
         )}
       </div>
 
-      <BottomNav active={navActive} setActive={setNavActive} />
+      <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
     </div>
   );
 }

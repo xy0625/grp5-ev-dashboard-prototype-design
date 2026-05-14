@@ -1540,7 +1540,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
         </div>
       </div>
 
-      <BottomNav active={navActive} setActive={setNavActive} />
+      <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
 
       {sosModal && <SOSModal onClose={() => setSosModal(false)} />}
       {confirmTurnOff && (

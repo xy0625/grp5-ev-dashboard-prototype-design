@@ -788,7 +788,7 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
 
       <NearbyStations range={effectiveRange} onStartSession={() => setNavActive(2)}  theme={theme} />
 
-      <BottomNav active={navActive} setActive={setNavActive} />
+      <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
     </div>
   );
 }

@@ -1740,7 +1740,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         />
       )}
 
-      <BottomNav active={navActive} setActive={setNavActive} />
+      <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
 
       <style>{`
         @keyframes spin      { to{transform:rotate(360deg);} }
