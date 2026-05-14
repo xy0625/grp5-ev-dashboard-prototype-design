@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-/* ── Theme tokens (same pattern as the rest of the codebase) ────── */
+/* ── Theme tokens ────────────────────────────────────────────────── */
 function tk(theme) {
   const dark = theme === "dark";
   return {
@@ -15,38 +15,17 @@ function tk(theme) {
     textMuted: dark ? "#6B7280" : "#9CA3AF",
     iconStroke: dark ? "#9CA3AF" : "#6B7280",
     divider: dark ? "#2C2F3E" : "#F3F4F6",
-    inputBg: dark ? "rgba(37,40,54,0.97)" : "rgba(255,255,255,0.97)",
-    inputBorder: dark ? "#3A3F52" : "rgba(0,0,0,0.06)",
-    inputText: dark ? "#E5E7EB" : "#374151",
     shadow: dark
       ? "0px 6px 20px rgba(0,0,0,0.5)"
       : "0px 6px 20px rgba(0,0,0,0.1)",
-    sugBg: dark ? "rgba(24,27,38,0.99)" : "rgba(255,255,255,0.98)",
-    sugHover: dark ? "rgba(59,130,246,0.12)" : "#EFF6FF",
-    sugBorder: dark ? "#2C2F3E" : "#F3F4F6",
-    favBg: dark ? "#161922" : "#ffffff",
-    favHover: dark ? "rgba(59,130,246,0.10)" : "#F0F9FF",
-    favRowBorder: dark ? "#1E2130" : "#F9FAFB",
-    iconBg: dark ? "rgba(59,130,246,0.15)" : "#EFF6FF",
-    closeBg: dark ? "rgba(255,255,255,0.06)" : "#F9FAFB",
     tabBarBg: dark ? "rgba(15,17,23,0.97)" : "rgba(255,255,255,0.97)",
     tabBarBorder: dark ? "#1E2130" : "rgba(0,0,0,0.06)",
     tabInactive: dark ? "#6B7280" : "#9CA3AF",
     tabHover: dark ? "rgba(255,255,255,0.05)" : "#F3F4F6",
-    gaugeTrack: dark ? "#2D3346" : "#F3F4F6",
-    barTrack: dark ? "#2D3346" : "#F3F4F6",
-    overlay: dark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.35)",
-    mapFilter: dark ? "brightness(0.72) saturate(0.8)" : "none",
-    errBg: dark ? "#2D1515" : "#FEF2F2",
-    errBorder: dark ? "#7F1D1D" : "#FCA5A5",
-    errText: dark ? "#FCA5A5" : "#B91C1C",
-    xColor: dark ? "#9CA3AF" : "#374151",
-    compassSouth: dark ? "#4B5563" : "#D1D5DB",
-    compassCenter: dark ? "#E5E7EB" : "#374151",
   };
 }
 
-/* ── ICONS ────────────────────────────────────────────────────────── */
+/* ── ICONS ───────────────────────────────────────────────────────── */
 const IcoDash = ({ a, t }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <rect
@@ -211,7 +190,7 @@ const IcoSettings = ({ a, t }) => (
   </svg>
 );
 
-/* ── BOTTOM TAB BAR ──────────────────────────────────────────────── */
+/* ── Tab definitions ─────────────────────────────────────────────── */
 const TABS = [
   { Icon: IcoDash, label: "Dashboard" },
   { Icon: IcoCharge, label: "Charge" },
@@ -221,7 +200,8 @@ const TABS = [
   { Icon: IcoSettings, label: "Settings" },
 ];
 
-export default function BottomNav({ active, setActive, theme = "light" }) {
+/* ── BottomNav ───────────────────────────────────────────────────── */
+export default function BottomNav({ active, setActive, theme = "dark" }) {
   const t = tk(theme);
   const [pressed, setPressed] = useState(null);
 
@@ -236,6 +216,7 @@ export default function BottomNav({ active, setActive, theme = "light" }) {
         top: 662,
         background: t.tabBarBg,
         backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         border: `1px solid ${t.tabBarBorder}`,
         borderRadius: 35,
         display: "flex",
@@ -244,7 +225,7 @@ export default function BottomNav({ active, setActive, theme = "light" }) {
         padding: "0 20px",
         boxShadow: t.shadow,
         zIndex: 10,
-        transition: "background 0.3s",
+        transition: "background 0.3s, border-color 0.3s",
       }}
     >
       {TABS.map(({ Icon, label }, i) => {
@@ -288,6 +269,7 @@ export default function BottomNav({ active, setActive, theme = "light" }) {
                 fontWeight: 600,
                 letterSpacing: 0.4,
                 color: isActive ? "#fff" : t.tabInactive,
+                transition: "color 0.15s",
               }}
             >
               {label.toUpperCase()}

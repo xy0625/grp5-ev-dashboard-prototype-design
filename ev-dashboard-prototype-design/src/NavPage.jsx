@@ -52,7 +52,7 @@ const FAV_STATIONS = [
   },
 ];
 
-/* ── Theme tokens (same pattern as the rest of the codebase) ────── */
+/* ── Theme tokens ─────────────────────────────────────────────────── */
 function tk(theme) {
   const dark = theme === "dark";
   return {
@@ -88,13 +88,25 @@ function tk(theme) {
     gaugeTrack: dark ? "#2D3346" : "#F3F4F6",
     barTrack: dark ? "#2D3346" : "#F3F4F6",
     overlay: dark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.35)",
-    mapFilter: dark ? "brightness(0.72) saturate(0.8)" : "none",
     errBg: dark ? "#2D1515" : "#FEF2F2",
     errBorder: dark ? "#7F1D1D" : "#FCA5A5",
     errText: dark ? "#FCA5A5" : "#B91C1C",
     xColor: dark ? "#9CA3AF" : "#374151",
     compassSouth: dark ? "#4B5563" : "#D1D5DB",
     compassCenter: dark ? "#E5E7EB" : "#374151",
+    // glow values for dark mode bars
+    glowBlue: dark
+      ? "0 0 8px 2px rgba(59,130,246,0.65), 0 0 2px 1px rgba(147,197,253,0.4)"
+      : "none",
+    glowGreen: dark
+      ? "0 0 8px 2px rgba(34,197,94,0.65),  0 0 2px 1px rgba(134,239,172,0.4)"
+      : "none",
+    glowOrange: dark
+      ? "0 0 8px 2px rgba(249,115,22,0.65), 0 0 2px 1px rgba(253,186,116,0.4)"
+      : "none",
+    glowRed: dark
+      ? "0 0 8px 2px rgba(239,68,68,0.65),  0 0 2px 1px rgba(252,165,165,0.4)"
+      : "none",
   };
 }
 
@@ -379,9 +391,8 @@ const IcoArrowR = () => (
   </svg>
 );
 
-/* ── LIVE MAP ────────────────────────────────────────────────────── */
+/* ── LIVE MAP ──────────────────────────────────────────────────────── */
 function LiveMap({ searchTarget, mapRef: extRef, isNavigating, theme }) {
-  const t = tk(theme);
   const dark = theme === "dark";
   const containerRef = useRef(null);
   const internalMapRef = useRef(null);
@@ -419,11 +430,9 @@ function LiveMap({ searchTarget, mapRef: extRef, isNavigating, theme }) {
     const tileUrl = dark
       ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-
-    L.tileLayer(tileUrl, {
-      attribution: "© OpenStreetMap",
-      maxZoom: 19,
-    }).addTo(map);
+    L.tileLayer(tileUrl, { attribution: "© OpenStreetMap", maxZoom: 19 }).addTo(
+      map,
+    );
     L.control.zoom({ position: "bottomright" }).addTo(map);
     const icon = L.divIcon({
       html: `<div style="width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:30px solid #0078FF;filter:drop-shadow(0 0 5px #93C5FD)"></div>`,
@@ -501,11 +510,7 @@ function LiveMap({ searchTarget, mapRef: extRef, isNavigating, theme }) {
     <div
       ref={containerRef}
       className={dark ? "dark-map" : ""}
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex: 0,
-      }}
+      style={{ position: "absolute", inset: 0, zIndex: 0 }}
     />
   );
 }
@@ -528,18 +533,8 @@ function SearchBar({ onSearch, theme }) {
     }
     setLoad(true);
     try {
-      const baseUrl = dark
-        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        : "https://nominatim.openstreetmap.org/search";
-
-      const url = dark
-        ? `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`
-        : `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`;
-
-      const r = await fetch(url, {
-        headers: { "Accept-Language": "en" },
-      });
-
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=my`;
+      const r = await fetch(url, { headers: { "Accept-Language": "en" } });
       setSug(await r.json());
     } catch {
       setSug([]);
@@ -605,7 +600,6 @@ function SearchBar({ onSearch, theme }) {
 
   return (
     <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
-      {/* Input row */}
       <div
         style={{
           display: "flex",
@@ -616,7 +610,7 @@ function SearchBar({ onSearch, theme }) {
           padding: "0 14px",
           height: 52,
           boxShadow: listening
-            ? `0 0 0 2px #3B82F6, 0 4px 20px rgba(59,130,246,.2)`
+            ? `0 0 0 2px #3B82F6,0 4px 20px rgba(59,130,246,.2)`
             : t.cardShadow,
           border: `1.5px solid ${listening ? "#3B82F6" : t.inputBorder}`,
           transition: "all 0.25s",
@@ -669,8 +663,6 @@ function SearchBar({ onSearch, theme }) {
           <IcoMic on={listening} />
         </button>
       </div>
-
-      {/* Mic error */}
       {micErr && (
         <div
           style={{
@@ -690,8 +682,6 @@ function SearchBar({ onSearch, theme }) {
           {micErr}
         </div>
       )}
-
-      {/* Suggestions dropdown */}
       {suggestions.length > 0 && (
         <div
           style={{
@@ -766,6 +756,7 @@ function SearchBar({ onSearch, theme }) {
 /* ── ARC SPEEDOMETER ─────────────────────────────────────────────── */
 function SpeedGauge({ speed, theme }) {
   const t = tk(theme);
+  const dark = theme === "dark";
   const pct = Math.min(speed / 140, 1);
   const R = 38,
     cx = 52,
@@ -785,6 +776,14 @@ function SpeedGauge({ speed, theme }) {
   const startA = -215,
     sweepA = 250;
   const color = speed > 100 ? "#EF4444" : speed > 80 ? "#F97316" : "#3B82F6";
+  const glow = dark
+    ? speed > 100
+      ? t.glowRed
+      : speed > 80
+        ? t.glowOrange
+        : t.glowBlue
+    : "none";
+
   return (
     <div
       style={{
@@ -802,6 +801,18 @@ function SpeedGauge({ speed, theme }) {
       }}
     >
       <svg width="104" height="76" viewBox="0 0 104 76">
+        {/* glow filter definition */}
+        {dark && (
+          <defs>
+            <filter id="arcGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+        )}
         <path
           d={arc(startA, sweepA)}
           fill="none"
@@ -816,6 +827,7 @@ function SpeedGauge({ speed, theme }) {
             stroke={color}
             strokeWidth="7"
             strokeLinecap="round"
+            filter={dark ? "url(#arcGlow)" : undefined}
             style={{ transition: "all .4s ease" }}
           />
         )}
@@ -859,7 +871,16 @@ function SpeedGauge({ speed, theme }) {
 /* ── BATTERY CARD ────────────────────────────────────────────────── */
 function BatteryCard({ rangeKm, pct, theme }) {
   const t = tk(theme);
+  const dark = theme === "dark";
   const color = pct > 50 ? "#22C55E" : pct > 20 ? "#F97316" : "#EF4444";
+  const glow = dark
+    ? pct > 50
+      ? t.glowGreen
+      : pct > 20
+        ? t.glowOrange
+        : t.glowRed
+    : "none";
+
   return (
     <div
       style={{
@@ -889,7 +910,7 @@ function BatteryCard({ rangeKm, pct, theme }) {
         >
           {rangeKm}
         </span>
-        <span style={{ fontSize: 13, color: t.textMuted, fontWeight: 500 }}>
+        <span style={{ fontSize: 18, color: t.textMuted, fontWeight: 500 }}>
           km
         </span>
       </div>
@@ -900,7 +921,8 @@ function BatteryCard({ rangeKm, pct, theme }) {
             height: 7,
             background: t.barTrack,
             borderRadius: 4,
-            overflow: "hidden",
+            overflow: "visible",
+            position: "relative",
           }}
         >
           <div
@@ -910,6 +932,7 @@ function BatteryCard({ rangeKm, pct, theme }) {
               background: color,
               borderRadius: 4,
               transition: "width .5s",
+              boxShadow: glow,
             }}
           />
         </div>
@@ -952,7 +975,7 @@ function Compass({ bearing, locked, onClick, theme }) {
         background: t.cardBg,
         border: locked ? `2px solid #3B82F6` : t.cardBorder,
         boxShadow: locked
-          ? `0 0 0 3px rgba(59,130,246,.2), ${t.cardShadow}`
+          ? `0 0 0 3px rgba(59,130,246,.2),${t.cardShadow}`
           : t.cardShadow,
         cursor: "pointer",
         outline: "none",
@@ -979,7 +1002,7 @@ function Compass({ bearing, locked, onClick, theme }) {
   );
 }
 
-/* ── LOCATE ME ───────────────────────────────────────────────────── */
+/* ── LOCATE BTN ──────────────────────────────────────────────────── */
 function LocateBtn({ loading, onClick, theme }) {
   const t = tk(theme);
   return (
@@ -1264,7 +1287,6 @@ function FavModal({ onNavigate, onClose, theme }) {
           transition: "background 0.3s",
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: "16px 18px 12px",
@@ -1319,8 +1341,6 @@ function FavModal({ onNavigate, onClose, theme }) {
             </svg>
           </button>
         </div>
-
-        {/* Station rows */}
         {FAV_STATIONS.map((s, i) => (
           <div
             key={s.id}
@@ -1381,34 +1401,32 @@ function FavModal({ onNavigate, onClose, theme }) {
   );
 }
 
-/* ── BOTTOM TAB BAR ──────────────────────────────────────────────── */
-const TABS = [
-  { Icon: IcoDash, label: "Dashboard" },
-  { Icon: IcoCharge, label: "Charge" },
-  { Icon: IcoNavTab, label: "Navigate" },
-  { Icon: IcoWeather, label: "Weather" },
-  { Icon: IcoEmg, label: "Emergency" },
-  { Icon: IcoSettings, label: "Settings" },
-];
-
 /* ── PAGE ROOT ───────────────────────────────────────────────────── */
 export default function NavPage({ navActive, setNavActive, theme = "light" }) {
   const t = tk(theme);
-  const [activeTab, setActiveTab] = useState(navActive ?? 2);
   const [speed, setSpeed] = useState(62);
   const [battery] = useState(78);
-  const [searchTarget, setSearchTarget] = useState(null);
+  const [searchTarget, setTarget] = useState(null);
   const [isNav, setIsNav] = useState(false);
   const [locating, setLocating] = useState(false);
   const [locErr, setLocErr] = useState("");
   const [showFavs, setShowFavs] = useState(false);
   const [bearing, setBearing] = useState(0);
-  const [northLocked, setNorthLocked] = useState(false);
+  const [northLocked, setNLocked] = useState(false);
   const [turnInst, setTurnInst] = useState(null);
   const [voiceOn, setVoiceOn] = useState(true);
   const mapRef = useRef(null);
 
-  /* speed drift */
+  // ── Refs that give closures access to live values without stale captures ──
+  const voiceOnRef = useRef(voiceOn); // always mirrors voiceOn state
+  const prevInstRef = useRef(null); // last instruction that was spoken
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    voiceOnRef.current = voiceOn;
+  }, [voiceOn]);
+
+  /* Speed drift */
   useEffect(() => {
     const id = setInterval(
       () =>
@@ -1420,15 +1438,21 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
     return () => clearInterval(id);
   }, []);
 
-  /* compass drift while navigating */
+  /* Compass drift while navigating */
   useEffect(() => {
     if (!isNav || northLocked) return;
     const id = setInterval(() => setBearing((b) => (b + 0.5) % 360), 150);
     return () => clearInterval(id);
   }, [isNav, northLocked]);
 
-  const speak = useCallback((inst, on = true) => {
-    if (!on || !inst || !window.speechSynthesis) return;
+  /* ── speak: only fires if voiceOn AND instruction is new ──────── */
+  const speak = useCallback((inst) => {
+    if (!inst) return;
+    if (!voiceOnRef.current) return; // muted — skip
+    if (prevInstRef.current === inst.text) return; // same instruction — skip
+    prevInstRef.current = inst.text;
+
+    if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(`In ${inst.dist}, ${inst.text}`);
     u.lang = "en-MY";
@@ -1436,31 +1460,38 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
     window.speechSynthesis.speak(u);
   }, []);
 
+  /* ── startNav ─────────────────────────────────────────────────── */
   const startNav = useCallback(
     (target) => {
-      setSearchTarget(target);
+      setTarget(target);
       setIsNav(true);
       setShowFavs(false);
-      const first = { dist: "750m", text: "Turn Right" };
-      setTurnInst(first);
-      speak(first, voiceOn);
+      prevInstRef.current = null; // reset so first instruction always speaks
+
+      const i1 = { dist: "750m", text: "Turn Right" };
+      const i2 = { dist: "1.2 km", text: "Keep Left" };
+      const i3 = { dist: "300m", text: "Turn Left" };
+
+      setTurnInst(i1);
+      speak(i1);
       setTimeout(() => {
-        const i = { dist: "1.2 km", text: "Keep Left" };
-        setTurnInst(i);
-        speak(i, voiceOn);
+        setTurnInst(i2);
+        speak(i2);
       }, 8000);
       setTimeout(() => {
-        const i = { dist: "300m", text: "Turn Left" };
-        setTurnInst(i);
-        speak(i, voiceOn);
+        setTurnInst(i3);
+        speak(i3);
       }, 16000);
     },
-    [voiceOn, speak],
+    [speak],
   );
 
+  /* ── cancelNav ─────────────────────────────────────────────────── */
   const cancelNav = () => {
     setIsNav(false);
     setTurnInst(null);
+    prevInstRef.current = null;
+    window.speechSynthesis?.cancel();
     if (mapRef.current) {
       navigator.geolocation?.getCurrentPosition(
         ({ coords: { latitude: lat, longitude: lng } }) =>
@@ -1470,11 +1501,19 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
     }
   };
 
+  /* ── toggle voice: immediately cancel any ongoing speech ─────── */
   const handleToggleVoice = () => {
-    const n = !voiceOn;
-    setVoiceOn(n);
-    if (!n) window.speechSynthesis?.cancel();
-    else if (turnInst) speak(turnInst, true);
+    const next = !voiceOn;
+    setVoiceOn(next);
+    voiceOnRef.current = next; // update ref synchronously
+    if (!next) {
+      window.speechSynthesis?.cancel(); // kill speech right away
+    }
+    // If turning back on, re-announce the current instruction
+    if (next && turnInst) {
+      prevInstRef.current = null; // allow re-speak
+      speak(turnInst);
+    }
   };
 
   const handleLocate = () => {
@@ -1519,7 +1558,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         transition: "background 0.3s",
       }}
     >
-      {/* MAP */}
       <LiveMap
         searchTarget={searchTarget}
         mapRef={mapRef}
@@ -1552,7 +1590,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
               flexShrink: 0,
             }}
           >
-            {/* Heart / favourites */}
             <button
               onClick={() => setShowFavs((v) => !v)}
               style={{
@@ -1562,7 +1599,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
                 background: t.cardBg,
                 border: showFavs ? `2px solid #EF4444` : t.cardBorder,
                 boxShadow: showFavs
-                  ? `0 0 0 3px rgba(239,68,68,.15), ${t.cardShadow}`
+                  ? `0 0 0 3px rgba(239,68,68,.15),${t.cardShadow}`
                   : t.cardShadow,
                 cursor: "pointer",
                 outline: "none",
@@ -1581,8 +1618,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
             >
               <IcoHeart f={showFavs} />
             </button>
-
-            {/* Navigate button */}
             <button
               onClick={() =>
                 searchTarget
@@ -1630,7 +1665,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         )}
       </div>
 
-      {/* TURN BANNER (navigation mode) */}
+      {/* TURN BANNER */}
       {isNav && (
         <TurnBanner
           inst={turnInst}
@@ -1640,7 +1675,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         />
       )}
 
-      {/* SIDE CONTROLS: compass + locate */}
+      {/* SIDE CONTROLS */}
       <div
         style={{
           position: "absolute",
@@ -1656,7 +1691,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
           bearing={bearing}
           locked={northLocked}
           onClick={() => {
-            setNorthLocked((l) => !l);
+            setNLocked((l) => !l);
             setBearing(0);
           }}
           theme={theme}
@@ -1664,7 +1699,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         <LocateBtn loading={locating} onClick={handleLocate} theme={theme} />
       </div>
 
-      {/* LOCATE ERROR TOAST */}
       {locErr && (
         <div
           style={{
@@ -1685,7 +1719,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         </div>
       )}
 
-      {/* NAV BOTTOM BAR */}
       {isNav && (
         <NavBar
           dest={
@@ -1699,7 +1732,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         />
       )}
 
-      {/* FAVOURITES MODAL */}
       {showFavs && (
         <FavModal
           onNavigate={(s) => startNav({ lat: s.lat, lng: s.lng, name: s.name })}
@@ -1708,7 +1740,6 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         />
       )}
 
-      {/* BOTTOM TAB BAR */}
       <BottomNav active={navActive} setActive={setNavActive} />
 
       <style>{`
@@ -1720,7 +1751,7 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         .leaflet-control-attribution{font-size:9px!important;}
         .leaflet-control-zoom{margin-right:78px!important;margin-bottom:160px!important;}
         .leaflet-control-zoom a{width:30px!important;height:30px!important;line-height:30px!important;font-size:15px!important;}
-         .dark-map .leaflet-tile-pane{filter:brightness(0.72) saturate(0.8);}
+        .dark-map .leaflet-tile-pane{filter:brightness(0.72) saturate(0.8);}
       `}</style>
     </div>
   );
