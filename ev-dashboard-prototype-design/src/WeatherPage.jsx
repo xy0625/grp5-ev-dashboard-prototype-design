@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar";
 
 /* ── Theme tokens ──────────────────────────────────────────────── */
 function tk(theme) {
@@ -14,52 +15,43 @@ function tk(theme) {
     textMain:      dark ? "#E8EAF0" : "#444",
     textMuted:     dark ? "#9CA3AF" : "#9AA1B1",
     labelColor:    dark ? "#6B7280" : "#9AA1B1",
-    // temp circle
     circleBg:      dark ? "linear-gradient(145deg,#1E2235,#252836)" : "linear-gradient(145deg,#EBEEF3,#FFFFFF)",
     circleShadow:  dark ? "8px 8px 16px #0a0c12,-8px -8px 16px #2a2f42" : "8px 8px 16px #D1D9E6,-8px -8px 16px #FFFFFF",
-    // adjust buttons
     adjustBg:      dark ? "#3A3F52" : "#333",
     adjustColor:   "#fff",
-    // AUTO button handled inline with isAuto state
     autoOffBg:     dark ? "#2A1F4A" : "#F3E8FF",
     autoOffColor:  dark ? "#A78BFA" : "#7371FC",
     autoOffBorder: dark ? "#4C3D8A" : "#DCD1FF",
-    // fan buttons
     fanActiveBg:   dark ? "#252836" : "#FFFFFF",
     fanActiveBorder: "#D4AF37",
     fanActiveColor:"#D4AF37",
     fanInactiveBg: dark ? "rgba(40,38,20,0.4)" : "rgba(253,248,225,0.6)",
     fanInactiveBorder: dark ? "#3A3820" : "#FDF8E1",
     fanInactiveColor: dark ? "#6B6040" : "#A8A082",
-    // defrost
     defrostOffBg:  dark ? "#2A1A0A" : "#FFF4E6",
     defrostOffBorder: dark ? "#4A3020" : "#FFE4CC",
-    // weather mini card
     weatherBg:     dark ? "linear-gradient(135deg,#1a2a3a,#1E2E42)" : "linear-gradient(135deg,#F0F9FF,#E0F2FE)",
     weatherColor:  dark ? "#60A5FA" : "#2F80ED",
     weatherBorder: dark ? "1px solid #2C3E50" : "1px solid rgba(47,128,237,0.1)",
-    // schedule button
     schedOffBg:    dark ? "#1a2a3a" : "#E8F2FE",
     schedOffColor: dark ? "#60A5FA" : "#1a73e8",
-    // schedule panel
     dayItemBg:     dark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.5)",
     dayItemColor:  dark ? "#E8EAF0" : "#444",
     schedCardBg:   dark ? "#1E2235" : "#fff",
     schedInnerBg:  dark ? "#252836" : "#F4F7FA",
-    inputBg:       dark ? "#252836" : "#fff",
     shadow:        dark ? "0 8px 20px rgba(0,0,0,0.4)" : "0 8px 20px rgba(0,0,0,0.02)",
   };
 }
 
-export default function WeatherPage({ navActive, setNavActive, theme = "light" }) {
-  const [temp, setTemp]               = useState(24);
-  const [fanSpeed, setFanSpeed]       = useState('MEDIUM');
+export default function WeatherPage({ navActive, setNavActive, theme = "light", onGoToAccount }) {
+  const [temp, setTemp]                 = useState(24);
+  const [fanSpeed, setFanSpeed]         = useState('MEDIUM');
   const [showSchedule, setShowSchedule] = useState(false);
-  const [isAuto, setIsAuto]           = useState(false);
-  const [isDefrost, setIsDefrost]     = useState(false);
-  const [checkedDays, setCheckedDays] = useState([]);
-  const [s1Active, setS1Active]       = useState(true);
-  const [s2Active, setS2Active]       = useState(false);
+  const [isAuto, setIsAuto]             = useState(false);
+  const [isDefrost, setIsDefrost]       = useState(false);
+  const [checkedDays, setCheckedDays]   = useState([]);
+  const [s1Active, setS1Active]         = useState(true);
+  const [s2Active, setS2Active]         = useState(false);
 
   const t = tk(theme);
 
@@ -125,6 +117,7 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
       background: t.pageBg, overflow: "hidden",
       fontFamily: "Inter, sans-serif", transition: "background 0.3s",
     }}>
+
       {/* blob */}
       <div style={{
         position: "absolute", width: "600px", height: "600px",
@@ -132,27 +125,8 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
         top: "-100px", right: "-100px", filter: "blur(80px)", pointerEvents: "none",
       }} />
 
-      {/* top status */}
-      <div style={{ position: 'absolute', top: 25, left: 60, display: 'flex', alignItems: 'center', gap: '25px' }}>
-        <svg width="28" height="22" viewBox="0 0 26 20" fill="none">
-          <circle cx="13" cy="17" r="2.3" fill={t.textMuted}/>
-          <path d="M7 11.5a8.5 8.5 0 0112 0" stroke={t.textMuted} strokeWidth="2" strokeLinecap="round"/>
-          <path d="M3 7.5A13.5 13.5 0 0123 7.5" stroke={t.textMuted} strokeWidth="2" strokeLinecap="round"/>
-          <path d="M0 3.5A18 18 0 0126 3.5" stroke={t.textMuted} strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-        <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
-          <path d="M3 6l10 12-5 5V1l5 5L3 18" stroke={t.textMuted} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-
-      {/* user icon */}
-      <div style={{ position: 'absolute', top: 25, right: 60, cursor: 'pointer', zIndex: 10 }} onClick={() => setNavActive(6)}>
-        <div style={{
-          width: 50, height: 50, borderRadius: '50%',
-          background: theme === 'dark' ? '#252836' : '#ddd',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
-        }}>👤</div>
-      </div>
+      {/* ── SHARED TOP BAR ── replaces old wifi/bt/avatar divs */}
+      <TopBar theme={theme} onGoToAccount={onGoToAccount} />
 
       {/* ── MAIN GLASS CARD ── */}
       <div style={{
@@ -200,7 +174,6 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
             <div style={{ ...colStyle }}>
               <span style={{ fontSize: '20px', fontWeight: 'bold', color: t.labelColor, letterSpacing: '1.5px' }}>SAFETY / RAIN</span>
 
-              {/* Defrost */}
               <div onClick={() => setIsDefrost(!isDefrost)} style={{
                 background: isDefrost ? 'linear-gradient(135deg,#F2994A,#F2C94C)' : t.defrostOffBg,
                 borderRadius: '28px', textAlign: 'center', width: '250px', height: '150px',
@@ -217,12 +190,11 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
                 <p style={{ fontSize: '18px', fontWeight: '900', color: isDefrost ? '#FFF' : '#F2994A', margin: 0 }}>MAX DEFROST</p>
               </div>
 
-              {/* Weather mini */}
               <div style={{
                 width: '250px', height: '150px', padding: '0 25px', borderRadius: '28px',
                 background: t.weatherBg, color: t.weatherColor,
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: `0 12px 25px rgba(47,128,237,0.1)`, border: t.weatherBorder, boxSizing: 'border-box',
+                boxShadow: '0 12px 25px rgba(47,128,237,0.1)', border: t.weatherBorder, boxSizing: 'border-box',
               }}>
                 <div>
                   <p style={{ margin: 0, fontSize: '13px', opacity: 0.7, fontWeight: 'bold' }}>Kuching</p>
@@ -234,7 +206,6 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
                 </div>
               </div>
 
-              {/* Schedule btn */}
               <button onClick={() => setShowSchedule(true)} style={{
                 backgroundColor: showSchedule ? '#1a73e8' : t.schedOffBg,
                 border: '2px solid #1a73e8',
@@ -252,7 +223,9 @@ export default function WeatherPage({ navActive, setNavActive, theme = "light" }
                 <button onClick={() => setShowSchedule(false)} style={{ background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#1a73e8' }}>←</button>
                 <span style={{ fontSize: '22px', fontWeight: 'bold', color: t.textMain }}>Weekly Schedule</span>
               </div>
-              {[{ day:'Sun',date:'18' },{ day:'Mon',date:'19' },{ day:'Tue',date:'20' },{ day:'Wed',date:'21' },{ day:'Thu',date:'22' },{ day:'Fri',date:'23' },{ day:'Sat',date:'24' }].map(item => (
+              {[{ day:'Sun',date:'18' },{ day:'Mon',date:'19' },{ day:'Tue',date:'20' },
+                { day:'Wed',date:'21' },{ day:'Thu',date:'22' },{ day:'Fri',date:'23' },{ day:'Sat',date:'24' }
+              ].map(item => (
                 <div key={item.day} onClick={() => toggleCheck(item.day)} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '14px 25px', background: t.dayItemBg, borderRadius: '15px',
