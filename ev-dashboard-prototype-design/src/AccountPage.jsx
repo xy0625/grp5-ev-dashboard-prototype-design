@@ -1,237 +1,216 @@
 import React, { useState } from 'react';
 import BottomNav from "./BottomNav";
 
-export default function AccountPage({ navActive, setNavActive }) {
-  const [isEditing, setIsEditing] = useState(false);
+export default function AccountPage({ navActive, setNavActive, onLogout }) {
+  // Manage whether the UI is in 'none', 'profile' editing, or 'vehicle' editing mode
+  const [editMode, setEditMode] = useState("none"); 
+  const [biometricEnabled, setBiometricEnabled] = useState(true);
+  
+  // User Profile Data
+  const [userData, setUserData] = useState({
+    name: "USER NAME",
+    email: "user@example.com",
+    licenseId: "ABC-12345",
+    phone: "+60 12-345 6789"
+  });
 
+  // Vehicle Profile Data
+  const [vehicleData, setVehicleData] = useState({
+    model: "Borneo X1",
+    plate: "QA 1234 B",
+    battery: "82 kWh"
+  });
+
+  // Temporary states to hold changes before saving
+  const [tempProfile, setTempProfile] = useState({ ...userData });
+  const [tempVehicle, setTempVehicle] = useState({ ...vehicleData });
+
+  // Theme Colors
   const gold      = "#C9A84C";
   const goldDark  = "#8a6010";
   const goldLight = "rgba(201,168,76,0.12)";
   const cardBg    = "rgba(255,255,255,0.82)";
   const border    = `1px solid rgba(201,168,76,0.28)`;
   const textMain  = "#1a1a1a";
-  const textMuted = "#888";
+  const textMuted = "#666";
 
-  // ── 样式定义 ──────────────────
-  const lbl = {
-    display: "block", 
-    fontSize: 13,
-    fontWeight: 800, 
-    letterSpacing: "2px", 
-    color: textMuted, 
-    marginBottom: 10,
-    textAlign: "center"
-  };
-  
-  const fieldBox = {
-    background: "rgba(0,0,0,0.05)", 
-    borderRadius: 14,
-    padding: "18px 20px", 
-    fontSize: 18,
-    fontWeight: 700, 
-    color: textMain, 
-    border: "1px solid rgba(0,0,0,0.04)",
-    textAlign: "center",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "30px"
+  // Handlers for switching modes
+  const handleEditProfile = () => {
+    setTempProfile({ ...userData });
+    setEditMode("profile");
   };
 
-  const inputStyle = {
-    width: "100%", 
-    boxSizing: "border-box",
-    background: "#fff", 
-    borderRadius: 14,
-    padding: "18px 20px", 
-    fontSize: 18, 
-    fontWeight: 600,
-    color: textMain, 
-    border: `2.5px solid ${gold}`,
-    outline: "none", 
-    fontFamily: "inherit",
-    textAlign: "center"
+  const handleEditVehicle = () => {
+    setTempVehicle({ ...vehicleData });
+    setEditMode("vehicle");
   };
 
-  const outlineBtn = {
-    padding: "12px 28px", 
-    borderRadius: 30, 
-    background: "#fff", 
-    border: `1.8px solid ${gold}`,
-    color: goldDark, 
-    fontWeight: 800, 
-    fontSize: 15,
-    cursor: "pointer", 
-    letterSpacing: "0.5px",
+  const handleSave = () => {
+    if (editMode === "profile") setUserData({ ...tempProfile });
+    if (editMode === "vehicle") setVehicleData({ ...tempVehicle });
+    setEditMode("none");
   };
 
-  const goldBtn = {
-    ...outlineBtn,
-    background: `linear-gradient(135deg, ${gold}, ${goldDark})`,
-    color: "#fff", 
-    border: "none",
-  };
+  const handleDiscard = () => setEditMode("none");
+
+  // --- Styles with enlarged fonts for readability ---
+  const lbl = { display: "block", fontSize: 13, fontWeight: 800, letterSpacing: "1.5px", color: textMuted, marginBottom: 8, textAlign: "center" };
+  const fieldBox = { background: "rgba(0,0,0,0.05)", borderRadius: 12, padding: "14px 15px", fontSize: 18, fontWeight: 700, color: textMain, border: "1px solid rgba(0,0,0,0.04)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "28px" };
+  const inputStyle = { width: "100%", boxSizing: "border-box", background: "#fff", borderRadius: 12, padding: "14px 15px", fontSize: 18, fontWeight: 600, color: textMain, border: `2.5px solid ${gold}`, outline: "none", textAlign: "center" };
+  const outlineBtn = { padding: "12px 24px", borderRadius: 30, background: "#fff", border: `2px solid ${gold}`, color: goldDark, fontWeight: 800, fontSize: 15, cursor: "pointer", transition: "0.2s" };
+  const goldBtn = { ...outlineBtn, background: `linear-gradient(135deg, ${gold}, ${goldDark})`, color: "#fff", border: "none" };
 
   return (
     <div style={{
-      position: "relative",
-      width: 1280, height: 800,
+      position: "relative", width: 1280, height: 800,
       background: "linear-gradient(150deg, #f5edd8 0%, #ede5d0 60%, #c9a84c44 100%)",
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
-      overflow: "hidden",
+      fontFamily: "'Segoe UI', system-ui, sans-serif", overflow: "hidden",
     }}>
 
-      {/* 背景纹理 */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 0,
-        background: `repeating-linear-gradient(118deg, transparent, transparent 80px, rgba(255,255,255,0.16) 80px, rgba(255,255,255,0.16) 81px)`,
-      }} />
+      {/* Decorative Background Patterns */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, background: `repeating-linear-gradient(118deg, transparent, transparent 80px, rgba(255,255,255,0.1) 80px, rgba(255,255,255,0.1) 81px)` }} />
 
-      {/* TOP BAR */}
+      {/* Top Status Bar */}
       <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: 60,
-        background: "rgba(255,255,255,0.6)", backdropFilter: "blur(12px)",
+        position: "absolute", top: 0, left: 0, right: 0, height: 55,
+        background: "rgba(255,255,255,0.6)", backdropFilter: "blur(10px)",
         borderBottom: border, display: "flex", alignItems: "center",
-        justifyContent: "space-between", padding: "0 40px", zIndex: 20,
+        justifyContent: "space-between", padding: "0 30px", zIndex: 20,
       }}>
-        {/* 左侧区域：已移除 EVSA 文字，仅保留图标 */}
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" />
-          </svg>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5" />
-          </svg>
+          <span style={{ fontSize: 20 }}>📡</span>
+          <span style={{ fontSize: 18 }}>📶</span>
         </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "1.5px", color: textMuted }}>DRIVER PROFILE</span>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: goldLight, border: `2px solid ${gold}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>👤</div>
-        </div>
+        <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: "1.2px", color: textMuted }}>DRIVER PROFILE</span>
       </div>
 
-      {/* MAIN GRID */}
       <div style={{
-        position: "absolute",
-        width: 1120,
-        height: 580,
-        top: "45%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        display: "grid",
-        gridTemplateColumns: "320px 1fr", 
-        gap: 30,
-        zIndex: 5,
+        position: "absolute", width: 1100, height: 560, top: "43%", left: "50%", transform: "translate(-50%, -50%)",
+        display: "grid", gridTemplateColumns: "280px 1fr", gap: 20, zIndex: 5,
       }}>
 
-        {/* ═══ 左边栏 ═══ */}
+        {/* Sidebar Profile Summary */}
         <div style={{
-          background: cardBg, backdropFilter: "blur(24px)", borderRadius: 32, border,
-          boxShadow: "0 15px 45px rgba(140,100,20,0.15)",
+          background: cardBg, backdropFilter: "blur(24px)", borderRadius: 24, border,
           display: "flex", flexDirection: "column", alignItems: "center",
-          padding: "35px 24px", gap: 15, overflow: "hidden",
+          padding: "30px 20px", gap: 15,
         }}>
           <div style={{
-            width: 120, height: 120, borderRadius: "50%", border: `5px solid ${gold}`,
+            width: 110, height: 110, borderRadius: "50%", border: `5px solid ${gold}`,
             background: "#dcd0b8", display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: `0 0 0 10px ${goldLight}`, flexShrink: 0, overflow: "hidden"
+            boxShadow: `0 0 0 8px ${goldLight}`, flexShrink: 0, overflow: "hidden"
           }}>
-            <svg viewBox="0 0 100 100" width="100%" height="100%" style={{ marginTop: 12 }}>
-              <circle cx="50" cy="35" r="23" fill="#9e8e66"/>
-              <path d="M15 90 Q50 60 85 90" fill="#9e8e66" />
+            <svg viewBox="0 0 100 100" width="100%" height="100%" style={{ marginTop: 10 }}>
+              <circle cx="50" cy="35" r="23" fill="#9e8e66"/><path d="M15 90 Q50 60 85 90" fill="#9e8e66" />
             </svg>
           </div>
 
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 24, fontWeight: 900, color: textMain }}>USER NAME</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: textMain }}>{userData.name}</div>
             <div style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              marginTop: 10, padding: "8px 22px", borderRadius: 20,
-              background: `linear-gradient(135deg, ${gold}, ${goldDark})`,
-              fontSize: 14, fontWeight: 900, color: "#fff", letterSpacing: "1.5px",
+              display: "inline-flex", alignItems: "center", gap: 6, marginTop: 8, padding: "6px 18px",
+              borderRadius: 15, background: `linear-gradient(135deg, ${gold}, ${goldDark})`,
+              fontSize: 13, fontWeight: 900, color: "#fff",
             }}>
-              <span>⭐</span> PREMIUM
+              ⭐ PREMIUM
             </div>
           </div>
 
-          <div style={{ width: "100%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 5 }}>
-            {[{ L: "Trips", V: "128" }, { L: "km", V: "4,820" }, { L: "Score", V: "94" }, { L: "Active", V: "231" }].map(s => (
-              <div key={s.L} style={{ background: "#fff", borderRadius: 16, padding: "15px 10px", textAlign: "center", border: `1px solid rgba(201,168,76,0.2)` }}>
-                <div style={{ fontSize: 22, fontWeight: 900, color: goldDark }}>{s.V}</div>
-                <div style={{ fontSize: 10, color: textMuted, fontWeight: 800 }}>{s.L}</div>
+          {/* Quick Stats Grid */}
+          <div style={{ width: "100%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {[{ L: "Trips", V: "128" }, { L: "km", V: "4.8k" }, { L: "Score", V: "94" }, { L: "Active", V: "231" }].map(s => (
+              <div key={s.L} style={{ background: "#fff", borderRadius: 12, padding: "12px 5px", textAlign: "center", border: `1px solid rgba(201,168,76,0.15)` }}>
+                <div style={{ fontSize: 20, fontWeight: 900, color: goldDark }}>{s.V}</div>
+                <div style={{ fontSize: 11, color: textMuted, fontWeight: 800 }}>{s.L}</div>
               </div>
             ))}
           </div>
 
           <div style={{ flex: 1 }} />
-          
-          {!isEditing && (
-            <button style={{
-              width: "100%", height: 52, borderRadius: 26, background: "#fff", border: "2.5px solid #eee",
-              fontSize: 15, fontWeight: 900, color: "#333", cursor: "pointer", letterSpacing: "2px"
-            }}>LOG OUT</button>
-          )}
+          {editMode === "none" && <button onClick={onLogout} style={{ width: "100%", height: 48, borderRadius: 24, background: "#fff", border: "2px solid #eee", fontSize: 14, fontWeight: 900, cursor: "pointer" }}>LOG OUT</button>}
         </div>
 
-        {/* ═══ 右边内容 ═══ */}
+        {/* Main Interaction Area */}
         <div style={{
-          background: cardBg, backdropFilter: "blur(24px)", borderRadius: 32, border,
-          boxShadow: "0 15px 45px rgba(140,100,20,0.15)",
-          display: "flex", flexDirection: "column", padding: "35px 40px", gap: 20,
+          background: cardBg, backdropFilter: "blur(24px)", borderRadius: 24, border,
+          display: "flex", flexDirection: "column", padding: "30px 40px", gap: 20,
         }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div style={{ fontSize: 30, fontWeight: 900, color: textMain }}>Account Details</div>
-              <div style={{ fontSize: 14, color: textMuted, marginTop: 4 }}>Manage your personal EV information</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: textMain }}>
+                {editMode === "vehicle" ? "Vehicle Settings" : "Account Details"}
+              </div>
+              <div style={{ fontSize: 15, color: textMuted }}>
+                {editMode === "vehicle" ? "Update your EV specifications" : "Manage security and profile settings"}
+              </div>
             </div>
-            {!isEditing && (
-              <div style={{ display: "flex", gap: 15 }}>
-                <button style={outlineBtn} onClick={() => setIsEditing(true)}>Edit Profile</button>
-                <button style={outlineBtn}>Vehicle Info</button>
+            
+            {editMode === "none" && (
+              <div style={{ display: "flex", gap: 12 }}>
+                <button style={outlineBtn} onClick={handleEditVehicle}>Edit Vehicle</button>
+                <button style={goldBtn} onClick={handleEditProfile}>Edit Profile</button>
               </div>
             )}
           </div>
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 25 }}>
-              <div><span style={lbl}>DRIVER NAME</span>{isEditing ? <input defaultValue="USER NAME" style={inputStyle}/> : <div style={fieldBox}>USER NAME</div>}</div>
-              <div><span style={lbl}>EMAIL ADDRESS</span>{isEditing ? <input defaultValue="user@example.com" style={inputStyle}/> : <div style={fieldBox}>user@example.com</div>}</div>
-              <div><span style={lbl}>LICENSE ID</span>{isEditing ? <input defaultValue="ABC-12345" style={inputStyle}/> : <div style={fieldBox}>ABC-12345</div>}</div>
-              <div><span style={lbl}>EMERGENCY CONTACT</span>{isEditing ? <input defaultValue="+60 12-345 6789" style={inputStyle}/> : <div style={fieldBox}>+60 12-345 6789</div>}</div>
-            </div>
+          {/* Dynamic Content Grid based on Edit Mode */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            {editMode === "vehicle" ? (
+              <>
+                <div><span style={lbl}>CAR MODEL</span><input value={tempVehicle.model} onChange={(e) => setTempVehicle({...tempVehicle, model: e.target.value})} style={inputStyle}/></div>
+                <div><span style={lbl}>PLATE NUMBER</span><input value={tempVehicle.plate} onChange={(e) => setTempVehicle({...tempVehicle, plate: e.target.value})} style={inputStyle}/></div>
+                <div><span style={lbl}>BATTERY CAPACITY</span><input value={tempVehicle.battery} onChange={(e) => setTempVehicle({...tempVehicle, battery: e.target.value})} style={inputStyle}/></div>
+                <div style={{ opacity: 0.5 }}><span style={lbl}>REGISTRATION</span><div style={fieldBox}>Active</div></div>
+              </>
+            ) : (
+              <>
+                <div><span style={lbl}>DRIVER NAME</span>{editMode === "profile" ? <input value={tempProfile.name} onChange={(e) => setTempProfile({...tempProfile, name: e.target.value})} style={inputStyle}/> : <div style={fieldBox}>{userData.name}</div>}</div>
+                <div><span style={lbl}>EMAIL ADDRESS</span>{editMode === "profile" ? <input value={tempProfile.email} onChange={(e) => setTempProfile({...tempProfile, email: e.target.value})} style={inputStyle}/> : <div style={fieldBox}>{userData.email}</div>}</div>
+                <div><span style={lbl}>LICENSE ID</span>{editMode === "profile" ? <input value={tempProfile.licenseId} onChange={(e) => setTempProfile({...tempProfile, licenseId: e.target.value})} style={inputStyle}/> : <div style={fieldBox}>{userData.licenseId}</div>}</div>
+                <div><span style={lbl}>EMERGENCY CONTACT</span>{editMode === "profile" ? <input value={tempProfile.phone} onChange={(e) => setTempProfile({...tempProfile, phone: e.target.value})} style={inputStyle}/> : <div style={fieldBox}>{userData.phone}</div>}</div>
+              </>
+            )}
+          </div>
 
-            {!isEditing && (
-              <div style={{ 
-                background: "rgba(201,168,76,0.08)", 
-                borderRadius: 20, 
-                border: `1.5px solid rgba(201,168,76,0.3)`, 
-                padding: "20px 30px", 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 30,
-                marginTop: 5
-              }}>
-                <span style={{ fontSize: 40 }}>🚗</span>
-                <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
-                  {[{ L: "CAR MODEL", V: "Borneo X1" }, { L: "PLATE NO.", V: "QA 1234 B" }, { L: "BATTERY", V: "82 kWh" }].map(v => (
+          {/* Security Management Section */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 900, color: goldDark, letterSpacing: "1.5px", marginBottom: 12, borderBottom: `1px solid ${goldLight}`, paddingBottom: 6 }}>SECURITY</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.3fr", gap: 15 }}>
+              <button style={{ ...fieldBox, padding: "12px", fontSize: 15, background: "#fff", cursor: "pointer" }}>🔑 Change PIN</button>
+              <button style={{ ...fieldBox, padding: "12px", fontSize: 15, background: "#fff", cursor: "pointer" }}>🔒 Password</button>
+              
+              <div style={{ ...fieldBox, padding: "0 20px", background: biometricEnabled ? "rgba(201,168,76,0.1)" : "rgba(0,0,0,0.05)" }}>
+                <span style={{ fontSize: 20, marginRight: 10 }}>🧬</span>
+                <span style={{ fontSize: 14, fontWeight: 800, flex: 1, textAlign: 'left' }}>Biometrics</span>
+                <div onClick={() => setBiometricEnabled(!biometricEnabled)} style={{ width: 40, height: 20, borderRadius: 10, background: biometricEnabled ? gold : "#ccc", position: "relative", cursor: "pointer" }}>
+                  <div style={{ position: "absolute", top: 2, left: biometricEnabled ? 22 : 2, width: 16, height: 16, borderRadius: "50%", background: "#fff", transition: "0.2s" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          {/* Footer: Action Buttons or Vehicle Display */}
+          {editMode !== "none" ? (
+            <div style={{ display: "flex", gap: 20, justifyContent: "flex-end" }}>
+              <button onClick={handleDiscard} style={{ ...outlineBtn, border: "none" }}>Discard</button>
+              <button onClick={handleSave} style={{ ...goldBtn, padding: "14px 45px", fontSize: 16 }}>Save Changes</button>
+            </div>
+          ) : (
+             <div style={{ background: "rgba(201,168,76,0.06)", borderRadius: 20, border: `1px solid rgba(201,168,76,0.25)`, padding: "15px 30px", display: "flex", alignItems: "center", gap: 25 }}>
+                <span style={{ fontSize: 32 }}>🚗</span>
+                <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 15 }}>
+                  {[{ L: "MODEL", V: vehicleData.model }, { L: "PLATE", V: vehicleData.plate }, { L: "BATT", V: vehicleData.battery }].map(v => (
                     <div key={v.L}>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: goldDark, marginBottom: 4 }}>{v.L}</div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: goldDark }}>{v.L}</div>
                       <div style={{ fontSize: 18, fontWeight: 700 }}>{v.V}</div>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
-
-            <div style={{ flex: 1 }} />
-
-            {isEditing && (
-              <div style={{ display: "flex", gap: 20, justifyContent: "flex-end" }}>
-                <button onClick={() => setIsEditing(false)} style={{ ...outlineBtn, border: "none", color: "#666" }}>Discard</button>
-                <button onClick={() => setIsEditing(false)} style={{ ...goldBtn, padding: "14px 45px", fontSize: 16 }}>Save Changes</button>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 

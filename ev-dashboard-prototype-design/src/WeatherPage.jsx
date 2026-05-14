@@ -66,7 +66,7 @@ export default function WeatherPage({ navActive, setNavActive }) {
       top: 25,
       right: 60,
       cursor: 'pointer',
-      zIndex: 10 // 确保图标在顶层可点击
+      zIndex: 10 
     },
     glassCard: {
       position: "absolute",
@@ -225,7 +225,7 @@ export default function WeatherPage({ navActive, setNavActive }) {
         <img src="/bluetooth.png" alt="BT" style={{ width: '25px' }} />
       </div>
 
-      {/* 修改点：给用户头像加上点击事件跳转到索引 6 (AccountPage) */}
+      {/* Fix: Profile Icon */}
       <div style={s.userIcon} onClick={() => setNavActive(6)}>
         <img src="/profile.png" alt="User" style={{ width: '50px', height: '50px', borderRadius: '50%' }} />
       </div>

@@ -28,7 +28,7 @@ export default function LoginPage({ theme = "dark", onLoginSuccess }) {
 
   // Helper function to render different steps based on user choice
   const renderContent = () => {
-    // --- SIGN UP VIEW (Newly Added) ---
+    // --- SIGN UP VIEW ---
     if (loginStep === 'signup') {
       return (
         <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
