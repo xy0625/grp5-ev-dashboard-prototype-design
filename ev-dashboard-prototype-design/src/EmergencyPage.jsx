@@ -1,9 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
 
-// EmergencyPage.jsx — with dark mode support
+/* ── Leaflet CSS injected once ────────────────────────────────────── */
+const LEAFLET_CSS =
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+const LEAFLET_JS =
+  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
 
-/* ── Theme tokens ────────────────────────────────────────────────── */
+function injectLeaflet(cb) {
+  if (window._leafletReady) {
+    cb();
+    return;
+  }
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = LEAFLET_CSS;
+  document.head.appendChild(link);
+  const script = document.createElement("script");
+  script.src = LEAFLET_JS;
+  script.onload = () => {
+    window._leafletReady = true;
+    cb();
+  };
+  document.head.appendChild(script);
+}
+
+/* ── Theme tokens ─────────────────────────────────────────────────── */
 function tk(theme) {
   const dark = theme === "dark";
   return {
@@ -70,7 +92,7 @@ function tk(theme) {
   };
 }
 
-/* ─── Press Effect Hook ──────────────────────────────────────────────────── */
+/* ── Press Effect Hook ───────────────────────────────────────────── */
 function usePressEffect() {
   return {
     onMouseDown: (e) => {
@@ -96,7 +118,7 @@ function usePressEffect() {
   };
 }
 
-/* ─── SVG Icons ──────────────────────────────────────────────────────────── */
+/* ── SVG Icons ───────────────────────────────────────────────────── */
 const WifiIcon = ({ theme }) => {
   const c = tk(theme).iconStroke;
   return (
@@ -119,7 +141,6 @@ const WifiIcon = ({ theme }) => {
     </svg>
   );
 };
-
 const BluetoothIcon = ({ theme }) => {
   const c = tk(theme).iconStroke;
   return (
@@ -141,7 +162,6 @@ const BluetoothIcon = ({ theme }) => {
     </svg>
   );
 };
-
 const UserIcon = ({ theme }) => {
   const c = tk(theme).iconStroke;
   return (
@@ -156,7 +176,6 @@ const UserIcon = ({ theme }) => {
     </svg>
   );
 };
-
 const PhoneIcon = ({ color = "#fff", size = 24 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <path
@@ -165,7 +184,6 @@ const PhoneIcon = ({ color = "#fff", size = 24 }) => (
     />
   </svg>
 );
-
 const LocationPinIcon = ({ color = "#2F80ED", size = 32 }) => (
   <svg width={size} height={size} viewBox="0 0 28 32" fill="none">
     <path
@@ -175,7 +193,6 @@ const LocationPinIcon = ({ color = "#2F80ED", size = 32 }) => (
     <circle cx="14" cy="12.5" r="4" fill="#fff" />
   </svg>
 );
-
 const CarEmergencyIcon = () => (
   <svg width="48" height="48" viewBox="0 0 72 72" fill="none">
     <path d="M12 38l5-14h38l5 14v12H12V38z" fill="#970000" />
@@ -202,7 +219,6 @@ const CarEmergencyIcon = () => (
     />
   </svg>
 );
-
 const ContactsIcon = ({ theme }) => {
   const c = tk(theme).iconStroke;
   return (
@@ -232,7 +248,6 @@ const ContactsIcon = ({ theme }) => {
     </svg>
   );
 };
-
 const SendIcon = ({ color = "#fff", size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <path
@@ -251,7 +266,6 @@ const SendIcon = ({ color = "#fff", size = 20 }) => (
     />
   </svg>
 );
-
 const WarningIcon = () => (
   <svg width="100" height="100" viewBox="0 0 117 117" fill="none">
     <path d="M58.5 10L108 100H9L58.5 10z" fill="#970000" />
@@ -260,7 +274,7 @@ const WarningIcon = () => (
   </svg>
 );
 
-/* ─── Small Toggle ───────────────────────────────────────────────────────── */
+/* ── Small Toggle ────────────────────────────────────────────────── */
 function SmallToggle({ checked, onChange, theme }) {
   const t = tk(theme);
   return (
@@ -270,7 +284,7 @@ function SmallToggle({ checked, onChange, theme }) {
         width: "56px",
         height: "30px",
         background: checked
-          ? "linear-gradient(270deg, #FF0E00 11%, #EC756E 76%)"
+          ? "linear-gradient(270deg,#FF0E00 11%,#EC756E 76%)"
           : t.toggleOff,
         borderRadius: "100px",
         position: "relative",
@@ -297,10 +311,10 @@ function SmallToggle({ checked, onChange, theme }) {
   );
 }
 
-/* ─── Turn Off Confirm Modal ─────────────────────────────────────────────── */
+/* ── TurnOff Confirm Modal ───────────────────────────────────────── */
 function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
-  const pressTurnOff = usePressEffect();
-  const pressKeepOn = usePressEffect();
+  const p1 = usePressEffect();
+  const p2 = usePressEffect();
   return (
     <div
       style={{
@@ -370,7 +384,7 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
         >
           <button
             onClick={onTurnOff}
-            {...pressTurnOff}
+            {...p1}
             style={{
               width: "422px",
               height: "130px",
@@ -381,16 +395,16 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               fontWeight: 500,
               color: "#FFFFFF",
               cursor: "pointer",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter',sans-serif",
               outline: "none",
-              transition: "transform 0.1s, opacity 0.1s",
+              transition: "transform 0.1s,opacity 0.1s",
             }}
           >
             Turn Off
           </button>
           <button
             onClick={onKeepOn}
-            {...pressKeepOn}
+            {...p2}
             style={{
               width: "422px",
               height: "130px",
@@ -402,9 +416,9 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               fontWeight: 500,
               color: "#009951",
               cursor: "pointer",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter',sans-serif",
               outline: "none",
-              transition: "transform 0.1s, opacity 0.1s",
+              transition: "transform 0.1s,opacity 0.1s",
             }}
           >
             Keep On
@@ -415,10 +429,10 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
   );
 }
 
-/* ─── SOS Modal ──────────────────────────────────────────────────────────── */
+/* ── SOS Modal ───────────────────────────────────────────────────── */
 function SOSModal({ onClose }) {
-  const pressCall = usePressEffect();
-  const pressCancel = usePressEffect();
+  const p1 = usePressEffect();
+  const p2 = usePressEffect();
   return (
     <div
       style={{
@@ -505,7 +519,7 @@ function SOSModal({ onClose }) {
               onClose();
               alert("SOS call initiated — emergency services notified.");
             }}
-            {...pressCall}
+            {...p1}
             style={{
               width: "422px",
               height: "130px",
@@ -516,17 +530,17 @@ function SOSModal({ onClose }) {
               fontWeight: 600,
               color: "#FFFFFF",
               cursor: "pointer",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter',sans-serif",
               boxShadow: "0px 15px 50px rgba(255,21,0,0.4)",
               outline: "none",
-              transition: "transform 0.1s, opacity 0.1s",
+              transition: "transform 0.1s,opacity 0.1s",
             }}
           >
             Call Now
           </button>
           <button
             onClick={onClose}
-            {...pressCancel}
+            {...p2}
             style={{
               width: "422px",
               height: "130px",
@@ -537,9 +551,9 @@ function SOSModal({ onClose }) {
               fontWeight: 500,
               color: "#949494",
               cursor: "pointer",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter',sans-serif",
               outline: "none",
-              transition: "transform 0.1s, opacity 0.1s",
+              transition: "transform 0.1s,opacity 0.1s",
             }}
           >
             Cancel
@@ -550,7 +564,7 @@ function SOSModal({ onClose }) {
   );
 }
 
-/* ─── Add Contact Modal ──────────────────────────────────────────────────── */
+/* ── Add Contact Modal ───────────────────────────────────────────── */
 function AddContactModal({ onClose, onAdd, theme }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -586,7 +600,7 @@ function AddContactModal({ onClose, onAdd, theme }) {
           border: t.modalBorder,
           borderRadius: "24px",
           padding: "36px 40px",
-          width: "380px",
+          width: "360px",
           boxShadow: t.modalShadow,
         }}
       >
@@ -665,7 +679,7 @@ function AddContactModal({ onClose, onAdd, theme }) {
   );
 }
 
-/* ─── Call Modal ─────────────────────────────────────────────────────────── */
+/* ── Call Modal ──────────────────────────────────────────────────── */
 function CallModal({ contact, onClose, theme }) {
   const t = tk(theme);
   return (
@@ -765,7 +779,149 @@ function CallModal({ contact, onClose, theme }) {
   );
 }
 
-/* ─── EmergencyPage ──────────────────────────────────────────────────────── */
+/* ── Live Map Component ──────────────────────────────────────────── */
+function LiveMap({ theme, onLocationUpdate }) {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markerRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    injectLeaflet(() => {
+      if (!mapRef.current || mapInstanceRef.current) return;
+      const L = window.L;
+
+      // default center: Kuching
+      const defaultCoords = [1.5533, 110.3592];
+
+      const tileUrl =
+        theme === "dark"
+          ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
+      const map = L.map(mapRef.current, {
+        center: defaultCoords,
+        zoom: 15,
+        zoomControl: false,
+        attributionControl: false,
+        dragging: true,
+        scrollWheelZoom: false,
+      });
+
+      L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+
+      // Custom blue marker
+      const blueIcon = L.divIcon({
+        className: "",
+        html: `<div style="width:16px;height:16px;background:#2F80ED;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 4px rgba(47,128,237,0.3),0 2px 8px rgba(0,0,0,0.4);"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+      });
+
+      const marker = L.marker(defaultCoords, { icon: blueIcon }).addTo(map);
+      mapInstanceRef.current = map;
+      markerRef.current = marker;
+
+      // Geolocation
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude: lat, longitude: lng } = pos.coords;
+            map.setView([lat, lng], 16);
+            marker.setLatLng([lat, lng]);
+            onLocationUpdate(lat, lng);
+            setLoading(false);
+          },
+          () => {
+            // fallback to default Kuching
+            onLocationUpdate(defaultCoords[0], defaultCoords[1]);
+            setLoading(false);
+          },
+          { enableHighAccuracy: true, timeout: 8000 },
+        );
+      } else {
+        onLocationUpdate(defaultCoords[0], defaultCoords[1]);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update tile layer on theme change
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !window.L) return;
+    const L = window.L;
+    map.eachLayer((layer) => {
+      if (layer._url) map.removeLayer(layer);
+    });
+    const tileUrl =
+      theme === "dark"
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+    L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+  }, [theme]);
+
+  return (
+    <div
+      style={{
+        flex: 1,
+        borderRadius: "18px",
+        overflow: "hidden",
+        position: "relative",
+        minHeight: 0,
+      }}
+    >
+      <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.35)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "18px",
+            zIndex: 10,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <div
+              style={{
+                width: "28px",
+                height: "28px",
+                border: "3px solid rgba(255,255,255,0.3)",
+                borderTopColor: "#fff",
+                borderRadius: "50%",
+                animation: "spin 0.8s linear infinite",
+              }}
+            />
+            <span style={{ color: "#fff", fontSize: "12px", fontWeight: 600 }}>
+              Locating…
+            </span>
+          </div>
+        </div>
+      )}
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+/* ── EmergencyPage ───────────────────────────────────────────────── */
 export default function EmergencyPage({ navActive, setNavActive, theme }) {
   const [autoEmergency, setAutoEmergency] = useState(true);
   const [confirmTurnOff, setConfirmTurnOff] = useState(false);
@@ -773,15 +929,38 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
   const [addContactModal, setAddContactModal] = useState(false);
   const [callModal, setCallModal] = useState(null);
   const [locationSent, setLocationSent] = useState(false);
+  const [address, setAddress] = useState("Locating…");
   const [contacts, setContacts] = useState([
     { name: "Mom", phone: "+60 12 345 6789" },
     { name: "Alice", phone: "+60 12 345 6789" },
     { name: "John (Brother)", phone: "+60 12 345 6789" },
   ]);
+  // editingIdx: which contact row is in "delete mode"
   const [editingIdx, setEditingIdx] = useState(null);
-  const longPressTimers = {};
+  // longpress timer refs per contact index
+  const longPressTimers = useRef({});
 
   const t = tk(theme);
+
+  /* Reverse geocode lat/lng → address string */
+  const handleLocationUpdate = async (lat, lng) => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+        { headers: { "Accept-Language": "en" } },
+      );
+      const data = await res.json();
+      const { road, suburb, city, town, state, country } = data.address || {};
+      const parts = [road, suburb || town, city, state].filter(Boolean);
+      setAddress(
+        parts.slice(0, 3).join(", ") ||
+          data.display_name ||
+          `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+      );
+    } catch {
+      setAddress("Jalan Setia Raja, Kuching, Sarawak");
+    }
+  };
 
   const handleAutoEmergencyToggle = (newVal) => {
     if (!newVal) setConfirmTurnOff(true);
@@ -793,19 +972,31 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
     setTimeout(() => setLocationSent(false), 2500);
   };
 
-  const handleContactMouseDown = (idx) => {
-    longPressTimers[idx] = setTimeout(() => setEditingIdx(idx), 600);
+  /* ── Contact long-press to reveal delete badge ── */
+  const handleContactPointerDown = (e, idx) => {
+    // prevent text selection
+    e.currentTarget.style.transform = "scale(0.96)";
+    e.currentTarget.style.opacity = "0.85";
+    longPressTimers.current[idx] = setTimeout(() => {
+      setEditingIdx(idx);
+    }, 550);
   };
-  const handleContactMouseUp = (idx) => {
-    clearTimeout(longPressTimers[idx]);
+  const handleContactPointerUp = (e, idx) => {
+    e.currentTarget.style.transform = "scale(1)";
+    e.currentTarget.style.opacity = "1";
+    clearTimeout(longPressTimers.current[idx]);
   };
+  const handleContactPointerLeave = (e, idx) => {
+    e.currentTarget.style.transform = "scale(1)";
+    e.currentTarget.style.opacity = "1";
+    clearTimeout(longPressTimers.current[idx]);
+  };
+
   const handleContactClick = (idx, contact) => {
-    if (editingIdx !== null) {
-      setEditingIdx(null);
-      return;
-    }
+    if (editingIdx === idx) return; // don't open call while in edit mode
     setCallModal(contact);
   };
+
   const handleRemoveContact = (e, idx) => {
     e.stopPropagation();
     setContacts((prev) => prev.filter((_, i) => i !== idx));
@@ -834,14 +1025,14 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
         position: "relative",
         width: "1280px",
         height: "800px",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Inter',sans-serif",
         overflow: "hidden",
         userSelect: "none",
         background: t.pageBg,
         transition: "background 0.3s",
       }}
     >
-      {/* Background accents */}
+      {/* Blobs */}
       <div
         style={{
           position: "absolute",
@@ -869,7 +1060,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
         }}
       />
 
-      {/* Top Status Bar */}
+      {/* Status bar */}
       <div
         style={{
           position: "absolute",
@@ -906,7 +1097,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
         <UserIcon theme={theme} />
       </div>
 
-      {/* ── 3 Cards Layout ── */}
+      {/* 3-card layout */}
       <div
         style={{
           position: "absolute",
@@ -929,126 +1120,22 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
             height: "420px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <LocationPinIcon color="#2F80ED" size={22} />
-            <span
-              style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: t.textMuted,
-                letterSpacing: "1.5px",
-                textTransform: "uppercase",
-              }}
-            >
-              VEHICLE LOCATION
-            </span>
-          </div>
-
-          {/* Map */}
-          <div
+          {/* Header — centered like "Emergency Controls" */}
+          <span
             style={{
-              flex: 1,
-              borderRadius: "18px",
-              overflow: "hidden",
-              position: "relative",
-              background:
-                theme === "dark"
-                  ? "linear-gradient(160deg, #1a3a4a 0%, #0f2a38 40%, #0a2030 60%, #081c28 80%, #0f2a1a 85%, #0a2015 100%)"
-                  : "linear-gradient(160deg, #a8d8ea 0%, #72bcd4 40%, #5aacca 60%, #4a9ab8 80%, #c8e6c9 85%, #a5d6a7 100%)",
-              minHeight: 0,
+              fontSize: "11px",
+              fontWeight: 700,
+              color: t.textMuted,
+              letterSpacing: "1.5px",
+              textTransform: "uppercase",
+              textAlign: "center",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                width: "60%",
-                height: "100%",
-                background:
-                  theme === "dark"
-                    ? "linear-gradient(180deg, #0f2a38 0%, #0a1e2c 100%)"
-                    : "linear-gradient(180deg, #7ec8e3 0%, #5aacca 100%)",
-                clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "55%",
-                height: "100%",
-                background:
-                  theme === "dark"
-                    ? "linear-gradient(135deg, #0f2a1a 0%, #0a2015 50%, #071a10 100%)"
-                    : "linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 50%, #81c784 100%)",
-                clipPath:
-                  "polygon(0% 0%, 85% 0%, 60% 40%, 80% 70%, 50% 100%, 0% 100%)",
-              }}
-            />
-            <svg
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-              }}
-              viewBox="0 0 313 240"
-            >
-              <path
-                d="M80 40 Q120 80 150 120 Q180 160 160 240"
-                stroke={theme === "dark" ? "rgba(255,255,255,0.25)" : "#fff"}
-                strokeWidth="2"
-                fill="none"
-                opacity="0.7"
-              />
-              <path
-                d="M0 110 Q60 115 100 130 Q150 148 200 143 Q250 138 300 155"
-                stroke={theme === "dark" ? "rgba(255,255,255,0.2)" : "#fff"}
-                strokeWidth="1.5"
-                fill="none"
-                opacity="0.6"
-              />
-              <text
-                x="75"
-                y="125"
-                fontSize="9"
-                fill={theme === "dark" ? "#4a7a5a" : "#555"}
-                fontFamily="sans-serif"
-              >
-                Lundu
-              </text>
-              <text
-                x="130"
-                y="115"
-                fontSize="10"
-                fill={theme === "dark" ? "#6aaa8a" : "#333"}
-                fontWeight="bold"
-                fontFamily="sans-serif"
-              >
-                Kuching
-              </text>
-              <text
-                x="245"
-                y="105"
-                fontSize="8"
-                fill={theme === "dark" ? "#3a6a4a" : "#666"}
-                fontFamily="sans-serif"
-              >
-                Sebuyau
-              </text>
-              <circle cx="155" cy="110" r="7" fill="#EC221F" />
-              <circle cx="155" cy="110" r="3.5" fill="#fff" />
-              <circle
-                cx="155"
-                cy="110"
-                r="13"
-                fill="#EC221F"
-                fillOpacity="0.22"
-              />
-            </svg>
-          </div>
+            VEHICLE LOCATION
+          </span>
+
+          {/* Live Map */}
+          <LiveMap theme={theme} onLocationUpdate={handleLocationUpdate} />
 
           {/* Address */}
           <div
@@ -1062,10 +1149,10 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
             }}
           >
             <LocationPinIcon color={t.textMuted} size={13} />
-            Jalan Setia Raja, Kuching, Sarawak
+            {address}
           </div>
 
-          {/* Send Location button */}
+          {/* Send Location */}
           <button
             onClick={handleSendLocation}
             {...pressSend}
@@ -1073,8 +1160,8 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
               width: "100%",
               height: "48px",
               background: locationSent
-                ? "linear-gradient(135deg, #22C55E, #16A34A)"
-                : "linear-gradient(135deg, #2F80ED, #56CCF2)",
+                ? "linear-gradient(135deg,#22C55E,#16A34A)"
+                : "linear-gradient(135deg,#2F80ED,#56CCF2)",
               border: "none",
               borderRadius: "16px",
               cursor: "pointer",
@@ -1082,7 +1169,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
               alignItems: "center",
               justifyContent: "center",
               gap: "10px",
-              transition: "transform 0.1s, opacity 0.1s, background 0.3s",
+              transition: "transform 0.1s,opacity 0.1s,background 0.3s",
               outline: "none",
               boxShadow: locationSent
                 ? "0 8px 20px rgba(34,197,94,0.3)"
@@ -1146,7 +1233,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
                 lineHeight: 1,
                 flexShrink: 0,
                 outline: "none",
-                transition: "transform 0.1s, opacity 0.1s",
+                transition: "transform 0.1s,opacity 0.1s",
                 boxShadow: "0 4px 12px rgba(170,170,170,0.3)",
               }}
             >
@@ -1164,7 +1251,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
                 marginBottom: "-4px",
               }}
             >
-              Tap the − to remove, or tap elsewhere to cancel
+              Tap − to remove, or tap elsewhere to cancel
             </div>
           )}
 
@@ -1184,10 +1271,9 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
                   e.stopPropagation();
                   handleContactClick(idx, contact);
                 }}
-                onMouseDown={() => handleContactMouseDown(idx)}
-                onMouseUp={() => handleContactMouseUp(idx)}
-                onTouchStart={() => handleContactMouseDown(idx)}
-                onTouchEnd={() => handleContactMouseUp(idx)}
+                onPointerDown={(e) => handleContactPointerDown(e, idx)}
+                onPointerUp={(e) => handleContactPointerUp(e, idx)}
+                onPointerLeave={(e) => handleContactPointerLeave(e, idx)}
                 style={{
                   position: "relative",
                   width: "100%",
@@ -1202,17 +1288,20 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
                   boxSizing: "border-box",
                   gap: "12px",
                   cursor: "pointer",
-                  transition: "background 0.2s, border 0.2s, transform 0.1s",
+                  transition:
+                    "background 0.2s,border 0.2s,transform 0.12s,opacity 0.12s",
                   flexShrink: 0,
                 }}
               >
+                {/* Delete badge — shows when this row is in edit mode; stays until tapped */}
                 {editingIdx === idx && (
                   <button
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => handleRemoveContact(e, idx)}
                     style={{
                       position: "absolute",
-                      top: "-8px",
-                      left: "-8px",
+                      top: "-1px",
+                      left: "-1px",
                       width: "24px",
                       height: "24px",
                       background: "#FF3B30",
@@ -1287,7 +1376,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
               </div>
             ))}
           </div>
-          <style>{`@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }`}</style>
+          <style>{`@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}`}</style>
         </div>
 
         {/* ── CARD 3: Emergency Controls ── */}
@@ -1370,7 +1459,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
             />
           </div>
 
-          {/* SOS Emergency button */}
+          {/* SOS Button */}
           <button
             onClick={() => setSosModal(true)}
             {...pressSOS}
@@ -1379,7 +1468,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
               flex: "0 0 auto",
               height: "200px",
               background:
-                "linear-gradient(145deg, #EC221F 0%, #FF5252 60%, #FF7676 100%)",
+                "linear-gradient(145deg,#EC221F 0%,#FF5252 60%,#FF7676 100%)",
               border: "none",
               borderRadius: "28px",
               cursor: "pointer",
@@ -1390,7 +1479,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
               gap: "12px",
               boxShadow: "0 14px 40px rgba(236,34,31,0.38)",
               outline: "none",
-              transition: "transform 0.1s, opacity 0.1s",
+              transition: "transform 0.1s,opacity 0.1s",
             }}
           >
             <div
@@ -1446,7 +1535,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
             >
               Tap to call emergency services
             </span>
-            <style>{`@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.35);opacity:0} }`}</style>
+            <style>{`@keyframes pulse{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.35);opacity:0}}`}</style>
           </button>
         </div>
       </div>
