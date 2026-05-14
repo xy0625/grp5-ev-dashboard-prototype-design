@@ -12,29 +12,25 @@ import AccountPage from "./AccountPage";
 
 export default function App() {
   const [navActive, setNavActive] = useState(0);
-  const [page, setPage] = useState("login"); 
+  const [page, setPage] = useState("login");
   const [theme, setTheme] = useState("light");
 
   const handleNav = (index) => {
     setNavActive(index);
-    if (index === 0)      setPage("home");
-    else if (index === 1) { if (page !== "session") setPage("charging"); }
-    else if (index === 2) setPage("nav");
+    if (index === 0) setPage("home");
+    else if (index === 1) {
+      if (page !== "session") setPage("charging");
+    } else if (index === 2) setPage("nav");
     else if (index === 3) setPage("weather");
     else if (index === 4) setPage("emergency");
     else if (index === 5) setPage("settings");
     else if (index === 6) setPage("account"); 
-    else                  setPage("home");
+    else setPage("home");
   };
 
   const renderPage = () => {
     if (page === "login") {
-      return (
-        <LoginPage 
-          theme={theme} 
-          onLoginSuccess={() => setPage("home")} 
-        />
-      );
+      return <LoginPage theme={theme} onLoginSuccess={() => setPage("home")} />;
     }
 
     if (page === "account") {
@@ -44,7 +40,7 @@ export default function App() {
           setNavActive={handleNav} 
           onLogout={() => {
             setPage("login");
-            setNavActive(0); // Optional: Reset nav to Home for next login
+            setNavActive(0);
           }} 
         />
       );
@@ -56,7 +52,7 @@ export default function App() {
     if (page === "apps")      return <AppsPage navActive={navActive} setNavActive={handleNav} />;
     if (page === "nav")       return <NavPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
     if (page === "weather")   return <WeatherPage navActive={navActive} setNavActive={handleNav} />;
-    if (page === "emergency") return <EmergencyPage navActive={navActive} setNavActive={handleNav} />;
+    if (page === "emergency") return <EmergencyPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
     
     return (
       <HomePage 
@@ -81,7 +77,6 @@ export default function App() {
       alignItems: "center",
       justifyContent: "center",
     }}>
-
       <div style={{
         position: "relative",
         width: 1280,
@@ -99,7 +94,6 @@ export default function App() {
         flexShrink: 0,
         background: "#000",
       }}>
-
         <div style={{
           position: "absolute", top: 0, left: 0,
           width: 3, height: "100%",
@@ -112,7 +106,6 @@ export default function App() {
           background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%)",
           pointerEvents: "none", zIndex: 9999,
         }}/>
-
         {renderPage()}
       </div>
     </div>

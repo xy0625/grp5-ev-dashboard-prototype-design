@@ -1,58 +1,161 @@
 import { useState } from "react";
 import BottomNav from "./BottomNav";
 
+// EmergencyPage.jsx — with dark mode support
+
+/* ── Theme tokens ────────────────────────────────────────────────── */
+function tk(theme) {
+  const dark = theme === "dark";
+  return {
+    pageBg: dark
+      ? "#0F1117"
+      : "linear-gradient(135deg, #E6F3F0 0%, #EBF6F5 50%, #EFF3F8 100%)",
+    cardBg: dark ? "rgba(28,31,42,0.92)" : "rgba(255,255,255,0.65)",
+    cardBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(255,255,255,0.6)",
+    cardBackdrop: "blur(25px)",
+    cardShadow: dark
+      ? "0 25px 60px rgba(0,0,0,0.5)"
+      : "0 25px 60px rgba(0,0,0,0.06)",
+    textPrimary: dark ? "#E8EAF0" : "#303030",
+    textSecond: dark ? "#9CA3AF" : "#9AA1B1",
+    textMuted: dark ? "#6B7280" : "#9AA1B1",
+    iconStroke: dark ? "#9CA3AF" : "#9AA1B1",
+    divider: dark ? "#2C2F3E" : "rgba(154,161,177,0.12)",
+    inputBg: dark ? "#252836" : "#fff",
+    inputBorder: dark ? "1px solid #3A3F52" : "1.5px solid #ddd",
+    inputColor: dark ? "#E8EAF0" : "#1E1E1E",
+    shadow: dark
+      ? "0px 6px 20px rgba(0,0,0,0.5)"
+      : "0px 6px 20px rgba(0,0,0,0.1)",
+    blobA: dark ? "rgba(99,102,241,0.06)" : "rgba(255,255,255,0.35)",
+    blobB: dark ? "rgba(236,34,31,0.06)" : "rgba(236,34,31,0.05)",
+    avatarBg: dark ? "rgba(30,33,48,0.85)" : "rgba(255,255,255,0.7)",
+    avatarBorder: dark
+      ? "1px solid #2C2F3E"
+      : "1px solid rgba(255,255,255,0.6)",
+    avatarShadow: dark
+      ? "0 4px 12px rgba(0,0,0,0.4)"
+      : "0 4px 12px rgba(0,0,0,0.1)",
+    autoEmergBg: dark ? "rgba(35,28,38,0.9)" : "rgba(244,247,250,0.9)",
+    autoEmergBorder: dark
+      ? "1px solid rgba(255,107,107,0.25)"
+      : "1px solid rgba(255,107,107,0.18)",
+    autoEmergIconBg: dark ? "rgba(100,20,20,0.4)" : "rgba(253,211,208,0.55)",
+    contactBg: dark ? "rgba(20,50,30,0.7)" : "rgba(211,255,222,0.9)",
+    contactBorder: dark
+      ? "1px solid rgba(0,153,81,0.25)"
+      : "1px solid rgba(255,255,255,0.7)",
+    contactEditBg: dark ? "rgba(80,20,20,0.5)" : "rgba(255,107,107,0.08)",
+    contactEditBorder: dark
+      ? "1px solid rgba(255,107,107,0.35)"
+      : "1px solid rgba(255,107,107,0.25)",
+    contactName: dark ? "#D1FAE5" : "#303030",
+    contactPhone: dark ? "#6B7280" : "#9AA1B1",
+    avatarGradient: dark
+      ? "linear-gradient(135deg, #064e3b, #065f46)"
+      : "linear-gradient(135deg, #93ffc9, #e3ffbc)",
+    avatarText: dark ? "#ffffff" : "#006a19",
+    modalBg: dark ? "rgba(20,22,32,0.97)" : "#fff",
+    modalBorder: dark ? "1px solid #2C2F3E" : "none",
+    modalShadow: dark
+      ? "0 24px 60px rgba(0,0,0,0.6)"
+      : "0 24px 60px rgba(0,0,0,0.25)",
+    modalTitle: dark ? "#E8EAF0" : "#1E1E1E",
+    modalSubtext: dark ? "#9CA3AF" : "#767676",
+    cancelBtnBg: dark ? "#252836" : "#f5f5f5",
+    cancelBtnBorder: dark ? "2px solid #3A3F52" : "2px solid #ddd",
+    cancelBtnText: dark ? "#9CA3AF" : "#333",
+    addresText: dark ? "#9CA3AF" : "#555",
+    toggleOff: dark ? "#3A3F52" : "#D1D1D6",
+  };
+}
+
+/* ─── Press Effect Hook ──────────────────────────────────────────────────── */
+function usePressEffect() {
+  return {
+    onMouseDown: (e) => {
+      e.currentTarget.style.transform = "scale(0.94)";
+      e.currentTarget.style.opacity = "0.82";
+    },
+    onMouseUp: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+    onMouseLeave: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+    onTouchStart: (e) => {
+      e.currentTarget.style.transform = "scale(0.94)";
+      e.currentTarget.style.opacity = "0.82";
+    },
+    onTouchEnd: (e) => {
+      e.currentTarget.style.transform = "scale(1)";
+      e.currentTarget.style.opacity = "1";
+    },
+  };
+}
+
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
+const WifiIcon = ({ theme }) => {
+  const c = tk(theme).iconStroke;
+  return (
+    <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
+      <path d="M16 20a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" fill={c} />
+      <path
+        d="M8 13.5C10.2 11.2 12.9 10 16 10s5.8 1.2 8 3.5"
+        stroke={c}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M2 7C5.8 3.1 10.6 1 16 1s10.2 2.1 14 6"
+        stroke={c}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+};
 
-const WifiIcon = () => (
-  <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
-    <path d="M16 20a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" fill="#1E1E1E" />
-    <path
-      d="M8 13.5C10.2 11.2 12.9 10 16 10s5.8 1.2 8 3.5"
-      stroke="#1E1E1E"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      fill="none"
-    />
-    <path
-      d="M2 7C5.8 3.1 10.6 1 16 1s10.2 2.1 14 6"
-      stroke="#1E1E1E"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      fill="none"
-    />
-  </svg>
-);
+const BluetoothIcon = ({ theme }) => {
+  const c = tk(theme).iconStroke;
+  return (
+    <svg width="22" height="32" viewBox="0 0 22 32" fill="none">
+      <path
+        d="M3 8L19 16 3 24"
+        stroke={c}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19 8L3 16l16 8"
+        stroke={c}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
 
-const BluetoothIcon = () => (
-  <svg width="22" height="32" viewBox="0 0 22 32" fill="none">
-    <path
-      d="M3 8L19 16 3 24"
-      stroke="#1E1E1E"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M19 8L3 16l16 8"
-      stroke="#1E1E1E"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-    <circle cx="14" cy="10" r="5.5" stroke="#1E1E1E" strokeWidth="2" />
-    <path
-      d="M3 26c0-6.1 4.9-11 11-11s11 4.9 11 11"
-      stroke="#1E1E1E"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);
+const UserIcon = ({ theme }) => {
+  const c = tk(theme).iconStroke;
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="10" r="5.5" stroke={c} strokeWidth="2" />
+      <path
+        d="M3 26c0-6.1 4.9-11 11-11s11 4.9 11 11"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
 
 const PhoneIcon = ({ color = "#fff", size = 24 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -63,7 +166,7 @@ const PhoneIcon = ({ color = "#fff", size = 24 }) => (
   </svg>
 );
 
-const LocationPinIcon = ({ color = "#5A5A5A", size = 38 }) => (
+const LocationPinIcon = ({ color = "#2F80ED", size = 32 }) => (
   <svg width={size} height={size} viewBox="0 0 28 32" fill="none">
     <path
       d="M14 1C8.5 1 3 6 3 12.5c0 9 11 18.5 11 18.5s11-9.5 11-18.5C25 6 19.5 1 14 1z"
@@ -74,7 +177,7 @@ const LocationPinIcon = ({ color = "#5A5A5A", size = 38 }) => (
 );
 
 const CarEmergencyIcon = () => (
-  <svg width="60" height="60" viewBox="0 0 72 72" fill="none">
+  <svg width="48" height="48" viewBox="0 0 72 72" fill="none">
     <path d="M12 38l5-14h38l5 14v12H12V38z" fill="#970000" />
     <path d="M20 38l3-10h26l3 10H20z" fill="#C84040" opacity="0.6" />
     <circle cx="22" cy="50" r="6" fill="#333" />
@@ -100,41 +203,37 @@ const CarEmergencyIcon = () => (
   </svg>
 );
 
-const ContactsIcon = () => (
-  <svg width="45" height="45" viewBox="0 0 45 45" fill="none">
-    <circle
-      cx="18"
-      cy="17"
-      r="6"
-      stroke="#5A5A5A"
-      strokeWidth="2.5"
-      fill="none"
-    />
-    <path
-      d="M6 38c0-7 5.4-12 12-12s12 5 12 12"
-      stroke="#5A5A5A"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      fill="none"
-    />
-    <path
-      d="M30 20c2.5 0 4.5 2 4.5 4.5S32.5 29 30 29"
-      stroke="#5A5A5A"
-      strokeWidth="2"
-      strokeLinecap="round"
-      fill="none"
-    />
-    <path
-      d="M34 36c2-1.5 3-3.5 3-6"
-      stroke="#5A5A5A"
-      strokeWidth="2"
-      strokeLinecap="round"
-      fill="none"
-    />
-  </svg>
-);
+const ContactsIcon = ({ theme }) => {
+  const c = tk(theme).iconStroke;
+  return (
+    <svg width="36" height="36" viewBox="0 0 45 45" fill="none">
+      <circle cx="18" cy="17" r="6" stroke={c} strokeWidth="2.5" fill="none" />
+      <path
+        d="M6 38c0-7 5.4-12 12-12s12 5 12 12"
+        stroke={c}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M30 20c2.5 0 4.5 2 4.5 4.5S32.5 29 30 29"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M34 36c2-1.5 3-3.5 3-6"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+};
 
-const SendIcon = ({ color = "#fff", size = 22 }) => (
+const SendIcon = ({ color = "#fff", size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <path
       d="M22 2L11 13"
@@ -153,31 +252,68 @@ const SendIcon = ({ color = "#fff", size = 22 }) => (
   </svg>
 );
 
-/* ─── Warning Icon ───────────────────────────────────────────────────────── */
 const WarningIcon = () => (
-  <svg width="117" height="117" viewBox="0 0 117 117" fill="none">
+  <svg width="100" height="100" viewBox="0 0 117 117" fill="none">
     <path d="M58.5 10L108 100H9L58.5 10z" fill="#970000" />
     <rect x="53" y="42" width="11" height="32" rx="5" fill="#fff" />
     <rect x="53" y="82" width="11" height="11" rx="5" fill="#fff" />
   </svg>
 );
 
-/* ─── Turn Off Confirmation Modal ────────────────────────────────────────── */
+/* ─── Small Toggle ───────────────────────────────────────────────────────── */
+function SmallToggle({ checked, onChange, theme }) {
+  const t = tk(theme);
+  return (
+    <div
+      onClick={() => onChange(!checked)}
+      style={{
+        width: "56px",
+        height: "30px",
+        background: checked
+          ? "linear-gradient(270deg, #FF0E00 11%, #EC756E 76%)"
+          : t.toggleOff,
+        borderRadius: "100px",
+        position: "relative",
+        cursor: "pointer",
+        transition: "background 0.3s",
+        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.12)",
+        flexShrink: 0,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: "2px",
+          left: checked ? "calc(100% - 28px)" : "2px",
+          width: "26px",
+          height: "26px",
+          background: "#fff",
+          borderRadius: "50%",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+          transition: "left 0.3s cubic-bezier(.4,0,.2,1)",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ─── Turn Off Confirm Modal ─────────────────────────────────────────────── */
 function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
+  const pressTurnOff = usePressEffect();
+  const pressKeepOn = usePressEffect();
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
         zIndex: 30,
-        background: "rgba(0,0,0,0.45)",
+        background: "rgba(0,0,0,0.55)",
         backdropFilter: "blur(12px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      {/* Inner content row: icon+text LEFT, buttons RIGHT */}
       <div
         style={{
           display: "flex",
@@ -190,7 +326,6 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
           boxSizing: "border-box",
         }}
       >
-        {/* Left: warning icon + question */}
         <div
           style={{
             display: "flex",
@@ -199,7 +334,6 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
             gap: "24px",
           }}
         >
-          {/* Warning circle */}
           <div
             style={{
               width: "160px",
@@ -209,13 +343,10 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              flexShrink: 0,
             }}
           >
             <WarningIcon />
           </div>
-
-          {/* Question text */}
           <div
             style={{
               width: "480px",
@@ -229,8 +360,6 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
             Turn Off Auto Emergency Assistance?
           </div>
         </div>
-
-        {/* Right: buttons stacked */}
         <div
           style={{
             display: "flex",
@@ -239,9 +368,9 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
             alignItems: "center",
           }}
         >
-          {/* Turn Off button */}
           <button
             onClick={onTurnOff}
+            {...pressTurnOff}
             style={{
               width: "422px",
               height: "130px",
@@ -252,45 +381,30 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
               fontWeight: 500,
               color: "#FFFFFF",
               cursor: "pointer",
-              transition: "transform 0.14s, box-shadow 0.14s",
               fontFamily: "'Inter', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
+              outline: "none",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Turn Off
           </button>
-
-          {/* Keep On button */}
           <button
             onClick={onKeepOn}
+            {...pressKeepOn}
             style={{
               width: "422px",
               height: "130px",
               background: "#FFFFFF",
               border: "5px solid #14AE5C",
-              boxShadow: "0px 15px 50px rgba(0, 255, 140, 0.5)",
+              boxShadow: "0px 15px 50px rgba(0,255,140,0.5)",
               borderRadius: "50px",
               fontSize: "40px",
               fontWeight: 500,
               color: "#009951",
               cursor: "pointer",
-              transition: "transform 0.14s, box-shadow 0.14s",
               fontFamily: "'Inter', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-              e.currentTarget.style.boxShadow =
-                "0px 20px 60px rgba(0,157,86,0.65)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow =
-                "0px 15px 50px rgba(0,157,86,0.5)";
+              outline: "none",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Keep On
@@ -301,159 +415,23 @@ function TurnOffConfirmModal({ onKeepOn, onTurnOff }) {
   );
 }
 
-/* ─── Small Toggle (for the Assist card) ─────────────────────────────────── */
-function SmallToggle({ checked, onChange }) {
-  return (
-    <div
-      onClick={() => onChange(!checked)}
-      style={{
-        width: "63px",
-        height: "33px",
-        background: checked
-          ? "linear-gradient(270deg, #FF0E00 11%, #EC756E 76%)"
-          : "#E5E5EA",
-        borderRadius: "100px",
-        position: "relative",
-        cursor: "pointer",
-        transition: "background 0.3s",
-        boxShadow: "inset 0px 2px 4px rgba(0,0,0,0.15)",
-        flexShrink: 0,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "2.5px",
-          left: checked ? "calc(100% - 30px)" : "2.5px",
-          width: "28px",
-          height: "28px",
-          background: "#fff",
-          borderRadius: "50%",
-          boxShadow: "0px 4px 6px rgba(0,0,0,0.22)",
-          transition: "left 0.3s cubic-bezier(.4,0,.2,1)",
-        }}
-      />
-    </div>
-  );
-}
-
-/* ─── Map Placeholder (Kuching, Sarawak) ─────────────────────────────────── */
-function MapPlaceholder() {
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "177px",
-        borderRadius: "10px",
-        overflow: "hidden",
-        position: "relative",
-        background:
-          "linear-gradient(160deg, #a8d8ea 0%, #72bcd4 40%, #5aacca 60%, #4a9ab8 80%, #c8e6c9 85%, #a5d6a7 100%)",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: "60%",
-          height: "100%",
-          background: "linear-gradient(180deg, #7ec8e3 0%, #5aacca 100%)",
-          clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "55%",
-          height: "100%",
-          background:
-            "linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 50%, #81c784 100%)",
-          clipPath:
-            "polygon(0% 0%, 85% 0%, 60% 40%, 80% 70%, 50% 100%, 0% 100%)",
-        }}
-      />
-      <svg
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-        }}
-        viewBox="0 0 313 177"
-      >
-        <path
-          d="M80 30 Q120 60 150 90 Q180 120 160 177"
-          stroke="#fff"
-          strokeWidth="2"
-          fill="none"
-          opacity="0.7"
-        />
-        <path
-          d="M0 80 Q60 85 100 100 Q150 115 200 110 Q250 105 300 120"
-          stroke="#fff"
-          strokeWidth="1.5"
-          fill="none"
-          opacity="0.6"
-        />
-        <path
-          d="M120 0 Q130 40 140 80 Q150 120 170 177"
-          stroke="#e8f5e9"
-          strokeWidth="1.5"
-          fill="none"
-          opacity="0.5"
-        />
-        <text x="20" y="55" fontSize="9" fill="#555" fontFamily="sans-serif">
-          Sematan
-        </text>
-        <text x="40" y="80" fontSize="9" fill="#555" fontFamily="sans-serif">
-          Riam
-        </text>
-        <text x="75" y="95" fontSize="9" fill="#555" fontFamily="sans-serif">
-          Lundu
-        </text>
-        <text
-          x="130"
-          y="88"
-          fontSize="10"
-          fill="#333"
-          fontWeight="bold"
-          fontFamily="sans-serif"
-        >
-          Kuching
-        </text>
-        <text x="230" y="40" fontSize="9" fill="#555" fontFamily="sans-serif">
-          Kabong
-        </text>
-        <text x="245" y="80" fontSize="8" fill="#666" fontFamily="sans-serif">
-          Sebuyau
-        </text>
-        <circle cx="155" cy="83" r="6" fill="#EC221F" />
-        <circle cx="155" cy="83" r="3" fill="#fff" />
-        <circle cx="155" cy="83" r="10" fill="#EC221F" fillOpacity="0.25" />
-      </svg>
-    </div>
-  );
-}
-
 /* ─── SOS Modal ──────────────────────────────────────────────────────────── */
 function SOSModal({ onClose }) {
+  const pressCall = usePressEffect();
+  const pressCancel = usePressEffect();
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
         zIndex: 30,
-        background: "rgba(0,0,0,0.5)",
+        background: "rgba(0,0,0,0.6)",
         backdropFilter: "blur(12px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      {/* Inner content row: icon+text LEFT, buttons RIGHT */}
       <div
         style={{
           display: "flex",
@@ -466,7 +444,6 @@ function SOSModal({ onClose }) {
           boxSizing: "border-box",
         }}
       >
-        {/* Left: warning icon + question */}
         <div
           style={{
             display: "flex",
@@ -475,7 +452,6 @@ function SOSModal({ onClose }) {
             gap: "36px",
           }}
         >
-          {/* Warning circle */}
           <div
             style={{
               width: "160px",
@@ -485,13 +461,10 @@ function SOSModal({ onClose }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              flexShrink: 0,
             }}
           >
             <PhoneIcon color="#EC221F" size={100} />
           </div>
-
-          {/* Question text */}
           <div
             style={{
               width: "480px",
@@ -502,15 +475,16 @@ function SOSModal({ onClose }) {
               lineHeight: 1.2,
             }}
           >
-            SOS Emergency ?
+            SOS Emergency?
           </div>
           <p
             style={{
               fontSize: "18px",
               fontWeight: 700,
               color: "#ffe7e7",
-              margin: "0 0 28px",
+              margin: "0",
               lineHeight: 1.5,
+              textAlign: "center",
             }}
           >
             This will immediately call emergency services
@@ -518,7 +492,6 @@ function SOSModal({ onClose }) {
             and share your current location.
           </p>
         </div>
-
         <div
           style={{
             display: "flex",
@@ -527,12 +500,12 @@ function SOSModal({ onClose }) {
             alignItems: "center",
           }}
         >
-          {/* Call Now button */}
           <button
             onClick={() => {
               onClose();
               alert("SOS call initiated — emergency services notified.");
             }}
+            {...pressCall}
             style={{
               width: "422px",
               height: "130px",
@@ -543,27 +516,17 @@ function SOSModal({ onClose }) {
               fontWeight: 600,
               color: "#FFFFFF",
               cursor: "pointer",
-              transition: "transform 0.14s, box-shadow 0.14s",
               fontFamily: "'Inter', sans-serif",
-              boxShadow: "0px 15px 50px rgba(255, 21, 0, 0.4)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-              e.currentTarget.style.boxShadow =
-                "0px 16px 48px rgba(255, 21, 0, 0.55)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow =
-                "0px 8px 30px rgba(213,32,17,0.4)";
+              boxShadow: "0px 15px 50px rgba(255,21,0,0.4)",
+              outline: "none",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Call Now
           </button>
-
-          {/* Cancel button */}
           <button
             onClick={onClose}
+            {...pressCancel}
             style={{
               width: "422px",
               height: "130px",
@@ -574,14 +537,9 @@ function SOSModal({ onClose }) {
               fontWeight: 500,
               color: "#949494",
               cursor: "pointer",
-              transition: "transform 0.14s",
               fontFamily: "'Inter', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
+              outline: "none",
+              transition: "transform 0.1s, opacity 0.1s",
             }}
           >
             Cancel
@@ -593,28 +551,29 @@ function SOSModal({ onClose }) {
 }
 
 /* ─── Add Contact Modal ──────────────────────────────────────────────────── */
-function AddContactModal({ onClose, onAdd }) {
+function AddContactModal({ onClose, onAdd, theme }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-
+  const t = tk(theme);
   const inputStyle = {
     width: "100%",
     padding: "10px 14px",
     borderRadius: "10px",
-    border: "1.5px solid #ddd",
+    border: t.inputBorder,
     fontSize: "15px",
     outline: "none",
     boxSizing: "border-box",
     fontFamily: "inherit",
+    background: t.inputBg,
+    color: t.inputColor,
   };
-
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
         zIndex: 30,
-        background: "rgba(0,0,0,0.45)",
+        background: "rgba(0,0,0,0.55)",
         backdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
@@ -623,18 +582,19 @@ function AddContactModal({ onClose, onAdd }) {
     >
       <div
         style={{
-          background: "#fff",
+          background: t.modalBg,
+          border: t.modalBorder,
           borderRadius: "24px",
           padding: "36px 40px",
           width: "380px",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
+          boxShadow: t.modalShadow,
         }}
       >
         <h2
           style={{
             fontSize: "20px",
             fontWeight: 800,
-            color: "#1E1E1E",
+            color: t.modalTitle,
             margin: "0 0 20px",
           }}
         >
@@ -668,12 +628,12 @@ function AddContactModal({ onClose, onAdd }) {
               flex: 1,
               padding: "12px",
               borderRadius: "12px",
-              border: "2px solid #ddd",
-              background: "#f5f5f5",
+              border: t.cancelBtnBorder,
+              background: t.cancelBtnBg,
               fontSize: "15px",
               fontWeight: 600,
               cursor: "pointer",
-              color: "#333",
+              color: t.cancelBtnText,
             }}
           >
             Cancel
@@ -705,15 +665,16 @@ function AddContactModal({ onClose, onAdd }) {
   );
 }
 
-/* ─── Call Contact Modal ─────────────────────────────────────────────────── */
-function CallModal({ contact, onClose }) {
+/* ─── Call Modal ─────────────────────────────────────────────────────────── */
+function CallModal({ contact, onClose, theme }) {
+  const t = tk(theme);
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
         zIndex: 30,
-        background: "rgba(0,0,0,0.45)",
+        background: "rgba(0,0,0,0.55)",
         backdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
@@ -722,12 +683,13 @@ function CallModal({ contact, onClose }) {
     >
       <div
         style={{
-          background: "#fff",
+          background: t.modalBg,
+          border: t.modalBorder,
           borderRadius: "24px",
           padding: "40px 48px",
           width: "380px",
           textAlign: "center",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
+          boxShadow: t.modalShadow,
         }}
       >
         <div
@@ -735,7 +697,7 @@ function CallModal({ contact, onClose }) {
             width: "72px",
             height: "72px",
             borderRadius: "50%",
-            background: "#CFF7D3",
+            background: theme === "dark" ? "rgba(0,153,81,0.2)" : "#CFF7D3",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -748,27 +710,33 @@ function CallModal({ contact, onClose }) {
           style={{
             fontSize: "22px",
             fontWeight: 800,
-            color: "#1E1E1E",
+            color: t.modalTitle,
             margin: "0 0 6px",
           }}
         >
           {contact.name}
         </h2>
-        <p style={{ fontSize: "15px", color: "#767676", margin: "0 0 24px" }}>
+        <p
+          style={{
+            fontSize: "15px",
+            color: t.modalSubtext,
+            margin: "0 0 24px",
+          }}
+        >
           {contact.phone}
         </p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
           <button
             onClick={onClose}
             style={{
-              padding: "24px 56px",
+              padding: "14px 32px",
               borderRadius: "12px",
-              border: "2px solid #ddd",
-              background: "#f5f5f5",
-              fontSize: "24px",
+              border: t.cancelBtnBorder,
+              background: t.cancelBtnBg,
+              fontSize: "16px",
               fontWeight: 600,
               cursor: "pointer",
-              color: "#333",
+              color: t.cancelBtnText,
             }}
           >
             Cancel
@@ -779,11 +747,11 @@ function CallModal({ contact, onClose }) {
               alert(`Calling ${contact.name} at ${contact.phone}…`);
             }}
             style={{
-              padding: "24px 56px",
+              padding: "14px 32px",
               borderRadius: "12px",
               border: "none",
               background: "#009951",
-              fontSize: "24px",
+              fontSize: "16px",
               fontWeight: 700,
               cursor: "pointer",
               color: "#fff",
@@ -798,36 +766,66 @@ function CallModal({ contact, onClose }) {
 }
 
 /* ─── EmergencyPage ──────────────────────────────────────────────────────── */
-export default function EmergencyPage({ navActive, setNavActive }) {
+export default function EmergencyPage({ navActive, setNavActive, theme }) {
   const [autoEmergency, setAutoEmergency] = useState(true);
   const [confirmTurnOff, setConfirmTurnOff] = useState(false);
   const [sosModal, setSosModal] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
-  const [callModal, setCallModal] = useState(null); // contact object
+  const [callModal, setCallModal] = useState(null);
   const [locationSent, setLocationSent] = useState(false);
-
-  // When toggle clicked: if currently ON show confirm; if OFF turn on directly
-  const handleAutoEmergencyToggle = (newVal) => {
-    if (!newVal) {
-      setConfirmTurnOff(true);
-    } else {
-      setAutoEmergency(true);
-    }
-  };
-
   const [contacts, setContacts] = useState([
     { name: "Mom", phone: "+60 12 345 6789" },
     { name: "Alice", phone: "+60 12 345 6789" },
     { name: "John (Brother)", phone: "+60 12 345 6789" },
   ]);
+  const [editingIdx, setEditingIdx] = useState(null);
+  const longPressTimers = {};
 
-  const handleAddContact = (contact) => {
-    setContacts((prev) => [...prev, contact]);
+  const t = tk(theme);
+
+  const handleAutoEmergencyToggle = (newVal) => {
+    if (!newVal) setConfirmTurnOff(true);
+    else setAutoEmergency(true);
   };
 
   const handleSendLocation = () => {
     setLocationSent(true);
     setTimeout(() => setLocationSent(false), 2500);
+  };
+
+  const handleContactMouseDown = (idx) => {
+    longPressTimers[idx] = setTimeout(() => setEditingIdx(idx), 600);
+  };
+  const handleContactMouseUp = (idx) => {
+    clearTimeout(longPressTimers[idx]);
+  };
+  const handleContactClick = (idx, contact) => {
+    if (editingIdx !== null) {
+      setEditingIdx(null);
+      return;
+    }
+    setCallModal(contact);
+  };
+  const handleRemoveContact = (e, idx) => {
+    e.stopPropagation();
+    setContacts((prev) => prev.filter((_, i) => i !== idx));
+    setEditingIdx(null);
+  };
+
+  const pressSend = usePressEffect();
+  const pressSOS = usePressEffect();
+  const pressAdd = usePressEffect();
+
+  const glassCard = {
+    background: t.cardBg,
+    backdropFilter: t.cardBackdrop,
+    WebkitBackdropFilter: t.cardBackdrop,
+    borderRadius: "38px",
+    border: t.cardBorder,
+    boxShadow: t.cardShadow,
+    display: "flex",
+    flexDirection: "column",
+    transition: "background 0.3s, border 0.3s",
   };
 
   return (
@@ -839,471 +837,622 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         fontFamily: "'Inter', sans-serif",
         overflow: "hidden",
         userSelect: "none",
-        background: "#F8FAFC",
+        background: t.pageBg,
+        transition: "background 0.3s",
       }}
     >
-      {/* ── Background ── */}
+      {/* Background accents */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          background:
-            "linear-gradient(155deg, #EEF4FA 0%, #DFF0F8 30%, #D0E8F4 55%, #C8E0F0 75%, #D8ECD8 90%, #EEF6EE 100%)",
+          width: "600px",
+          height: "600px",
+          background: t.blobA,
+          borderRadius: "50%",
+          top: "-100px",
+          right: "-100px",
+          filter: "blur(80px)",
+          pointerEvents: "none",
         }}
-      >
-        {[
-          {
-            top: "5%",
-            left: "35%",
-            w: 600,
-            h: 220,
-            rot: -14,
-            c: "rgba(160,200,230,0.40)",
-          },
-          {
-            top: "45%",
-            left: "55%",
-            w: 450,
-            h: 170,
-            rot: 12,
-            c: "rgba(190,220,185,0.35)",
-          },
-          {
-            top: "60%",
-            left: "5%",
-            w: 380,
-            h: 140,
-            rot: -8,
-            c: "rgba(200,230,195,0.30)",
-          },
-          {
-            top: "15%",
-            left: "72%",
-            w: 320,
-            h: 130,
-            rot: 20,
-            c: "rgba(155,195,225,0.28)",
-          },
-        ].map((b, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              top: b.top,
-              left: b.left,
-              width: `${b.w}px`,
-              height: `${b.h}px`,
-              background: b.c,
-              borderRadius: "50%",
-              filter: "blur(35px)",
-              transform: `rotate(${b.rot}deg)`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* ── Top Status Bar ── */}
+      />
       <div
         style={{
           position: "absolute",
-          top: "16px",
-          left: "45px",
+          width: "380px",
+          height: "380px",
+          background: t.blobB,
+          borderRadius: "50%",
+          bottom: "60px",
+          left: "80px",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Top Status Bar */}
+      <div
+        style={{
+          position: "absolute",
+          top: "25px",
+          left: "60px",
           display: "flex",
           alignItems: "center",
-          gap: "20px",
+          gap: "25px",
           zIndex: 5,
         }}
       >
-        <WifiIcon />
-        <BluetoothIcon />
+        <WifiIcon theme={theme} />
+        <BluetoothIcon theme={theme} />
       </div>
       <div
         style={{
           position: "absolute",
-          top: "14px",
-          right: "28px",
+          top: "25px",
+          right: "60px",
           zIndex: 5,
-          width: "46px",
-          height: "46px",
-          background: "#fff",
-          border: "1.5px solid #ddd",
+          width: "50px",
+          height: "50px",
+          background: t.avatarBg,
+          backdropFilter: "blur(10px)",
+          border: t.avatarBorder,
           borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+          boxShadow: t.avatarShadow,
           cursor: "pointer",
         }}
       >
-        <UserIcon />
+        <UserIcon theme={theme} />
       </div>
 
-      {/* ── Page Title ── */}
+      {/* ── 3 Cards Layout ── */}
       <div
         style={{
           position: "absolute",
-          top: "80px",
-          left: "66px",
-          zIndex: 5,
-          fontSize: "28px",
-          fontWeight: 700,
-          color: "#1E1E1E",
-          letterSpacing: "-0.3px",
-        }}
-      >
-        Emergency Assistance
-      </div>
-
-      {/* ══════════════════════════════════════════
-          3-COLUMN LAYOUT  (top: 130px, bottom: 645px → height ≈ 515px)
-          Col 1: left:66  width:356
-          Col 2: left:462 width:356
-          Col 3: left:858 width:356
-      ══════════════════════════════════════════ */}
-
-      {/* ════════════════ COL 1 — Vehicle Location ════════════════ */}
-
-      <div
-        style={{
-          position: "absolute",
-          width: "356px",
-          height: "445px",
-          left: "66px",
-          top: "184px",
-          background: "#FFFFFF",
-          border: "1px solid #80CCFF",
-          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
-          borderRadius: "20px",
-          zIndex: 2,
-          boxSizing: "border-box",
-          padding: "0 16px 16px",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -52%)",
           display: "flex",
-          flexDirection: "column",
+          gap: "20px",
+          alignItems: "stretch",
+          width: "1160px",
         }}
       >
-        {/* Header */}
+        {/* ── CARD 1: Vehicle Location ── */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "16px 4px 12px",
+            ...glassCard,
+            flex: 1,
+            padding: "28px 24px",
+            gap: "14px",
+            height: "420px",
           }}
         >
-          <LocationPinIcon color="#5A5A5A" size={36} />
-          <span style={{ fontSize: "20px", fontWeight: 700, color: "#303030" }}>
-            Vehicle Location
-          </span>
-        </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <LocationPinIcon color="#2F80ED" size={22} />
+            <span
+              style={{
+                fontSize: "11px",
+                fontWeight: 700,
+                color: t.textMuted,
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
+              }}
+            >
+              VEHICLE LOCATION
+            </span>
+          </div>
 
-        {/* Map */}
-        <MapPlaceholder />
-
-        {/* Address */}
-        <div
-          style={{
-            margin: "10px 4px 6px",
-            fontSize: "16px",
-            fontWeight: 500,
-            color: "#303030",
-          }}
-        >
-          Jalan Setia Raja, Kuching, Sarawak
-        </div>
-
-        {/* Spacer */}
-        <div style={{ flex: 1 }} />
-
-        {/* Send Location button */}
-        <button
-          onClick={handleSendLocation}
-          style={{
-            width: "100%",
-            height: "50px",
-            background: locationSent ? "#009951" : "#0078FF",
-            border: "none",
-            borderRadius: "10px",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            transition: "background 0.3s, transform 0.14s",
-            outline: "none",
-          }}
-          onMouseEnter={(e) => {
-            if (!locationSent) e.currentTarget.style.background = "#005FCC";
-          }}
-          onMouseLeave={(e) => {
-            if (!locationSent) e.currentTarget.style.background = "#0078FF";
-          }}
-        >
-          <SendIcon color="#fff" size={20} />
-          <span style={{ fontSize: "16px", fontWeight: 600, color: "#fff" }}>
-            {locationSent ? "Location Sent!" : "Send Location"}
-          </span>
-        </button>
-      </div>
-
-      {/* ════════════════ COL 2 — Trusted Contacts ════════════════ */}
-      <div
-        style={{
-          position: "absolute",
-          width: "356px",
-          height: "445px",
-          left: "462px",
-          top: "184px",
-          background: "#FFFFFF",
-          border: "1px solid #A9FF82",
-          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
-          borderRadius: "20px",
-          zIndex: 2,
-          boxSizing: "border-box",
-          overflow: "hidden",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "16px 20px 12px",
-            gap: "10px",
-          }}
-        >
-          <ContactsIcon />
-          <span
+          {/* Map */}
+          <div
             style={{
               flex: 1,
-              fontSize: "20px",
-              fontWeight: 700,
-              color: "#303030",
+              borderRadius: "18px",
+              overflow: "hidden",
+              position: "relative",
+              background:
+                theme === "dark"
+                  ? "linear-gradient(160deg, #1a3a4a 0%, #0f2a38 40%, #0a2030 60%, #081c28 80%, #0f2a1a 85%, #0a2015 100%)"
+                  : "linear-gradient(160deg, #a8d8ea 0%, #72bcd4 40%, #5aacca 60%, #4a9ab8 80%, #c8e6c9 85%, #a5d6a7 100%)",
+              minHeight: 0,
             }}
           >
-            Trusted Contacts
-          </span>
-          {/* Add button */}
-          <button
-            onClick={() => setAddContactModal(true)}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: "60%",
+                height: "100%",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(180deg, #0f2a38 0%, #0a1e2c 100%)"
+                    : "linear-gradient(180deg, #7ec8e3 0%, #5aacca 100%)",
+                clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "55%",
+                height: "100%",
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(135deg, #0f2a1a 0%, #0a2015 50%, #071a10 100%)"
+                    : "linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 50%, #81c784 100%)",
+                clipPath:
+                  "polygon(0% 0%, 85% 0%, 60% 40%, 80% 70%, 50% 100%, 0% 100%)",
+              }}
+            />
+            <svg
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+              }}
+              viewBox="0 0 313 240"
+            >
+              <path
+                d="M80 40 Q120 80 150 120 Q180 160 160 240"
+                stroke={theme === "dark" ? "rgba(255,255,255,0.25)" : "#fff"}
+                strokeWidth="2"
+                fill="none"
+                opacity="0.7"
+              />
+              <path
+                d="M0 110 Q60 115 100 130 Q150 148 200 143 Q250 138 300 155"
+                stroke={theme === "dark" ? "rgba(255,255,255,0.2)" : "#fff"}
+                strokeWidth="1.5"
+                fill="none"
+                opacity="0.6"
+              />
+              <text
+                x="75"
+                y="125"
+                fontSize="9"
+                fill={theme === "dark" ? "#4a7a5a" : "#555"}
+                fontFamily="sans-serif"
+              >
+                Lundu
+              </text>
+              <text
+                x="130"
+                y="115"
+                fontSize="10"
+                fill={theme === "dark" ? "#6aaa8a" : "#333"}
+                fontWeight="bold"
+                fontFamily="sans-serif"
+              >
+                Kuching
+              </text>
+              <text
+                x="245"
+                y="105"
+                fontSize="8"
+                fill={theme === "dark" ? "#3a6a4a" : "#666"}
+                fontFamily="sans-serif"
+              >
+                Sebuyau
+              </text>
+              <circle cx="155" cy="110" r="7" fill="#EC221F" />
+              <circle cx="155" cy="110" r="3.5" fill="#fff" />
+              <circle
+                cx="155"
+                cy="110"
+                r="13"
+                fill="#EC221F"
+                fillOpacity="0.22"
+              />
+            </svg>
+          </div>
+
+          {/* Address */}
+          <div
             style={{
-              width: "40px",
-              height: "35px",
-              background: "#808080",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: t.addresText,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            <LocationPinIcon color={t.textMuted} size={13} />
+            Jalan Setia Raja, Kuching, Sarawak
+          </div>
+
+          {/* Send Location button */}
+          <button
+            onClick={handleSendLocation}
+            {...pressSend}
+            style={{
+              width: "100%",
+              height: "48px",
+              background: locationSent
+                ? "linear-gradient(135deg, #22C55E, #16A34A)"
+                : "linear-gradient(135deg, #2F80ED, #56CCF2)",
               border: "none",
-              borderRadius: "10px",
+              borderRadius: "16px",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "26px",
-              fontWeight: 600,
-              color: "#fff",
-              lineHeight: 1,
+              gap: "10px",
+              transition: "transform 0.1s, opacity 0.1s, background 0.3s",
+              outline: "none",
+              boxShadow: locationSent
+                ? "0 8px 20px rgba(34,197,94,0.3)"
+                : "0 8px 20px rgba(47,128,237,0.3)",
               flexShrink: 0,
-              transition: "background 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#555")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#808080")}
-            title="Add contact"
           >
-            +
+            <SendIcon color="#fff" size={17} />
+            <span style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>
+              {locationSent ? "Location Sent!" : "Send Location"}
+            </span>
           </button>
         </div>
 
-        {/* Contact list */}
+        {/* ── CARD 2: Trusted Contacts ── */}
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            padding: "0 16px",
+            ...glassCard,
+            flex: 1,
+            padding: "28px 22px",
             gap: "14px",
-            maxHeight: "340px",
-            overflowY: "auto",
+            height: "420px",
+          }}
+          onClick={() => {
+            if (editingIdx !== null) setEditingIdx(null);
           }}
         >
-          {contacts.map((contact, idx) => (
-            <div
-              key={idx}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ContactsIcon theme={theme} />
+            <span
               style={{
-                width: "100%",
-                height: "72px",
-                background: "#E2FFE1",
-                borderRadius: "20px",
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                paddingLeft: "20px",
-                paddingRight: "56px",
-                boxSizing: "border-box",
-                flexShrink: 0,
+                flex: 1,
+                fontSize: "11px",
+                fontWeight: 700,
+                color: t.textMuted,
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
               }}
             >
-              <div>
-                <div
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: 500,
-                    color: "#303030",
-                  }}
-                >
-                  {contact.name}
-                </div>
-                <div
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    color: "#757575",
-                  }}
-                >
-                  {contact.phone}
-                </div>
-              </div>
+              TRUSTED CONTACTS
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setAddContactModal(true);
+              }}
+              {...pressAdd}
+              style={{
+                width: "32px",
+                height: "32px",
+                background: "#aeaeae",
+                border: "none",
+                borderRadius: "10px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "20px",
+                fontWeight: 700,
+                color: "#fff",
+                lineHeight: 1,
+                flexShrink: 0,
+                outline: "none",
+                transition: "transform 0.1s, opacity 0.1s",
+                boxShadow: "0 4px 12px rgba(170,170,170,0.3)",
+              }}
+            >
+              +
+            </button>
+          </div>
 
-              {/* Call button */}
-              <button
-                onClick={() => setCallModal(contact)}
+          {editingIdx !== null && (
+            <div
+              style={{
+                fontSize: "11px",
+                color: t.textMuted,
+                fontWeight: 600,
+                textAlign: "center",
+                marginBottom: "-4px",
+              }}
+            >
+              Tap the − to remove, or tap elsewhere to cancel
+            </div>
+          )}
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              flex: 1,
+              overflowY: "auto",
+            }}
+          >
+            {contacts.map((contact, idx) => (
+              <div
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleContactClick(idx, contact);
+                }}
+                onMouseDown={() => handleContactMouseDown(idx)}
+                onMouseUp={() => handleContactMouseUp(idx)}
+                onTouchStart={() => handleContactMouseDown(idx)}
+                onTouchEnd={() => handleContactMouseUp(idx)}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  background:
+                    editingIdx === idx ? t.contactEditBg : t.contactBg,
+                  border:
+                    editingIdx === idx ? t.contactEditBorder : t.contactBorder,
+                  borderRadius: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "14px 16px",
+                  boxSizing: "border-box",
+                  gap: "12px",
+                  cursor: "pointer",
+                  transition: "background 0.2s, border 0.2s, transform 0.1s",
+                  flexShrink: 0,
+                }}
+              >
+                {editingIdx === idx && (
+                  <button
+                    onClick={(e) => handleRemoveContact(e, idx)}
+                    style={{
+                      position: "absolute",
+                      top: "-8px",
+                      left: "-8px",
+                      width: "24px",
+                      height: "24px",
+                      background: "#FF3B30",
+                      border: "2px solid #fff",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      zIndex: 10,
+                      boxShadow: "0 2px 8px rgba(255,59,48,0.4)",
+                      outline: "none",
+                      animation: "popIn 0.18s ease",
+                    }}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                      <path
+                        d="M2 2l6 6M8 2l-6 6"
+                        stroke="#fff"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                )}
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "14px",
+                    background: t.avatarGradient,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "17px",
+                      fontWeight: 800,
+                      color: t.avatarText,
+                    }}
+                  >
+                    {contact.name[0]}
+                  </span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: "15px",
+                      fontWeight: 700,
+                      color: t.contactName,
+                    }}
+                  >
+                    {contact.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      color: t.contactPhone,
+                    }}
+                  >
+                    {contact.phone}
+                  </div>
+                </div>
+                <PhoneIcon
+                  color={editingIdx === idx ? "#FF3B30" : "#009951"}
+                  size={18}
+                />
+              </div>
+            ))}
+          </div>
+          <style>{`@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }`}</style>
+        </div>
+
+        {/* ── CARD 3: Emergency Controls ── */}
+        <div
+          style={{
+            ...glassCard,
+            flex: 1,
+            padding: "28px 24px",
+            gap: "16px",
+            height: "420px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: t.textMuted,
+              letterSpacing: "1.5px",
+              textTransform: "uppercase",
+            }}
+          >
+            EMERGENCY CONTROLS
+          </span>
+
+          {/* Auto Emergency Assistance */}
+          <div
+            style={{
+              background: t.autoEmergBg,
+              borderRadius: "22px",
+              border: t.autoEmergBorder,
+              padding: "18px 18px",
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                width: "54px",
+                height: "54px",
+                flexShrink: 0,
+                background: t.autoEmergIconBg,
+                borderRadius: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CarEmergencyIcon />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  color: t.textPrimary,
+                  lineHeight: 1.35,
+                  marginBottom: "3px",
+                }}
+              >
+                Auto Emergency
+                <br />
+                Assistance
+              </div>
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 500,
+                  color: t.textMuted,
+                }}
+              >
+                Activates on severe crash detection.
+              </div>
+            </div>
+            <SmallToggle
+              checked={autoEmergency}
+              onChange={handleAutoEmergencyToggle}
+              theme={theme}
+            />
+          </div>
+
+          {/* SOS Emergency button */}
+          <button
+            onClick={() => setSosModal(true)}
+            {...pressSOS}
+            style={{
+              width: "100%",
+              flex: "0 0 auto",
+              height: "200px",
+              background:
+                "linear-gradient(145deg, #EC221F 0%, #FF5252 60%, #FF7676 100%)",
+              border: "none",
+              borderRadius: "28px",
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              boxShadow: "0 14px 40px rgba(236,34,31,0.38)",
+              outline: "none",
+              transition: "transform 0.1s, opacity 0.1s",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                width: "72px",
+                height: "72px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
                 style={{
                   position: "absolute",
-                  right: "14px",
-                  width: "36px",
-                  height: "36px",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
+                  inset: 0,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.15)",
+                  animation: "pulse 2s ease-in-out infinite",
+                }}
+              />
+              <div
+                style={{
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.22)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  borderRadius: "50%",
-                  transition: "background 0.2s",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,153,81,0.12)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "none")
-                }
               >
-                <PhoneIcon color="#009951" size={24} />
-              </button>
+                <PhoneIcon color="#fff" size={34} />
+              </div>
             </div>
-          ))}
+            <span
+              style={{
+                fontSize: "24px",
+                fontWeight: 900,
+                color: "#fff",
+                letterSpacing: "3px",
+              }}
+            >
+              SOS EMERGENCY
+            </span>
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 500,
+                color: "rgba(255,255,255,0.72)",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Tap to call emergency services
+            </span>
+            <style>{`@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.35);opacity:0} }`}</style>
+          </button>
         </div>
       </div>
 
-      {/* ════════════════ COL 3 — Emergency call ════════════════ */}
-
-      {/* Auto Emergency Assistance card */}
-      <div
-        style={{
-          position: "absolute",
-          width: "356px",
-          height: "140px",
-          left: "858px",
-          top: "184px",
-          background: "#FFFFFF",
-          border: "1px solid #FDD3D0",
-          boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
-          borderRadius: "20px",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          padding: "0 20px",
-          gap: "14px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Car icon circle */}
-        <div
-          style={{
-            width: "62px",
-            height: "62px",
-            flexShrink: 0,
-            background: "#FDD3D0",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CarEmergencyIcon />
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: 700,
-              color: "#1E1E1E",
-              lineHeight: 1.2,
-              marginBottom: "4px",
-            }}
-          >
-            Auto Emergency
-            <br />
-            Assistance
-          </div>
-          <div style={{ fontSize: "13px", fontWeight: 500, color: "#767676" }}>
-            When a severe crash is detected.
-          </div>
-        </div>
-
-        {/* Toggle */}
-        <SmallToggle
-          checked={autoEmergency}
-          onChange={handleAutoEmergencyToggle}
-        />
-      </div>
-
-      {/* SOS Emergency button */}
-      <button
-        onClick={() => setSosModal(true)}
-        style={{
-          position: "absolute",
-          width: "356px",
-          height: "140px",
-          left: "858px",
-          top: "344px",
-          background: "#EC221F",
-          border: "none",
-          borderRadius: "20px",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "18px",
-          zIndex: 2,
-          boxShadow: "0 6px 24px rgba(236,34,31,0.45)",
-          transition: "transform 0.14s, box-shadow 0.14s",
-          outline: "none",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.02)";
-          e.currentTarget.style.boxShadow = "0 10px 32px rgba(236,34,31,0.55)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.boxShadow = "0 6px 24px rgba(236,34,31,0.45)";
-        }}
-      >
-        <PhoneIcon color="#fff" size={44} />
-        <span
-          style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            color: "#fff",
-            letterSpacing: "1px",
-          }}
-        >
-          SOS EMERGENCY
-        </span>
-      </button>
-
-      {/* ── Bottom Nav ── */}
       <BottomNav active={navActive} setActive={setNavActive} />
 
-      {/* ── Modals ── */}
       {sosModal && <SOSModal onClose={() => setSosModal(false)} />}
       {confirmTurnOff && (
         <TurnOffConfirmModal
@@ -1317,11 +1466,16 @@ export default function EmergencyPage({ navActive, setNavActive }) {
       {addContactModal && (
         <AddContactModal
           onClose={() => setAddContactModal(false)}
-          onAdd={handleAddContact}
+          onAdd={(c) => setContacts((p) => [...p, c])}
+          theme={theme}
         />
       )}
       {callModal && (
-        <CallModal contact={callModal} onClose={() => setCallModal(null)} />
+        <CallModal
+          contact={callModal}
+          onClose={() => setCallModal(null)}
+          theme={theme}
+        />
       )}
     </div>
   );

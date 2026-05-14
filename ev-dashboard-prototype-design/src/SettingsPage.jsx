@@ -1,12 +1,63 @@
 import { useState } from "react";
 import BottomNav from "./BottomNav";
 
+// settingsPage.jsx — with dark mode support
+
+/* ── Theme tokens ────────────────────────────────────────────────── */
+function tk(theme) {
+  const dark = theme === "dark";
+  return {
+    pageBg: dark
+      ? "#0F1117"
+      : "linear-gradient(135deg, #E6F3F0 0%, #EBF6F5 50%, #EFF3F8 100%)",
+    cardBg: dark ? "rgba(28,31,42,0.92)" : "rgba(255,255,255,0.65)",
+    cardBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(255,255,255,0.6)",
+    cardBackdrop: "blur(25px)",
+    textPrimary: dark ? "#E8EAF0" : "#444",
+    textSecond: dark ? "#9CA3AF" : "#9AA1B1",
+    textMuted: dark ? "#6B7280" : "#9AA1B1",
+    iconStroke: dark ? "#9CA3AF" : "#9AA1B1",
+    divider: dark ? "#2C2F3E" : "rgba(154,161,177,0.12)",
+    inputBg: dark ? "#252836" : "rgba(244,247,250,0.85)",
+    shadow: dark
+      ? "0px 25px 60px rgba(0,0,0,0.5)"
+      : "0px 25px 60px rgba(0,0,0,0.06)",
+    menuBg: dark ? "rgba(30,33,48,0.85)" : "rgba(255,255,255,0.65)",
+    menuBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(255,255,255,0.6)",
+    menuShadow: dark
+      ? "0 4px 12px rgba(0,0,0,0.4)"
+      : "0 4px 12px rgba(0,0,0,0.04)",
+    toggleOff: dark ? "rgba(45,50,65,0.9)" : "rgba(244,247,250,0.85)",
+    toggleBorder: dark
+      ? "1px solid #3A3F52"
+      : "1px solid rgba(154,161,177,0.25)",
+    sliderTrack: dark ? "rgba(255,255,255,0.1)" : "rgba(154,161,177,0.2)",
+    blobA: dark ? "rgba(99,102,241,0.08)" : "rgba(255,255,255,0.35)",
+    blobB: dark ? "rgba(47,128,237,0.05)" : "rgba(47,128,237,0.07)",
+    avatarBg: dark ? "rgba(30,33,48,0.85)" : "rgba(255,255,255,0.7)",
+    avatarBorder: dark
+      ? "1px solid #2C2F3E"
+      : "1px solid rgba(255,255,255,0.6)",
+    resetBg: dark ? "rgba(255,107,107,0.12)" : "rgba(255,107,107,0.08)",
+    resetBorder: dark
+      ? "1px solid rgba(255,107,107,0.3)"
+      : "1px solid rgba(255,107,107,0.25)",
+    modalBg: dark ? "rgba(20,22,32,0.95)" : "rgba(255,255,255,0.92)",
+    modalBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(255,255,255,0.7)",
+    cancelBg: dark ? "rgba(45,50,65,0.9)" : "rgba(244,247,250,0.8)",
+    cancelBorder: dark
+      ? "1px solid #3A3F52"
+      : "1px solid rgba(154,161,177,0.3)",
+    cancelText: dark ? "#9CA3AF" : "#666",
+  };
+}
+
 /* ─── Press Effect Hook ──────────────────────────────────────────────────── */
 function usePressEffect() {
   return {
     onMouseDown: (e) => {
       e.currentTarget.style.transform = "scale(0.94)";
-      e.currentTarget.style.opacity = "0.85";
+      e.currentTarget.style.opacity = "0.82";
     },
     onMouseUp: (e) => {
       e.currentTarget.style.transform = "scale(1)";
@@ -18,7 +69,7 @@ function usePressEffect() {
     },
     onTouchStart: (e) => {
       e.currentTarget.style.transform = "scale(0.94)";
-      e.currentTarget.style.opacity = "0.85";
+      e.currentTarget.style.opacity = "0.82";
     },
     onTouchEnd: (e) => {
       e.currentTarget.style.transform = "scale(1)";
@@ -28,11 +79,10 @@ function usePressEffect() {
 }
 
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
-
-function WifiIcon({ active }) {
-  const c = active ? "#fff" : "#434343";
+function WifiIcon({ active, theme }) {
+  const c = active ? "#fff" : tk(theme).iconStroke;
   return (
-    <svg width="54" height="54" viewBox="0 0 54 54" fill="none">
+    <svg width="44" height="44" viewBox="0 0 54 54" fill="none">
       <path d="M27 38a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z" fill={c} />
       <path
         d="M14 26.5C17.8 22.6 22.6 20 27 20s9.2 2.6 13 6.5"
@@ -52,14 +102,12 @@ function WifiIcon({ active }) {
   );
 }
 
-/* Fix 3: Bluetooth icon visible when active — use white stroke on blue bg */
-function BluetoothIcon({ active }) {
-  const c = active ? "#fff" : "#434343";
-
+function BluetoothIcon({ active, theme }) {
+  const c = active ? "#fff" : tk(theme).iconStroke;
   return (
     <svg
-      width="50"
-      height="56"
+      width="40"
+      height="46"
       viewBox="0 0 24 24"
       fill="none"
       stroke={c}
@@ -71,10 +119,10 @@ function BluetoothIcon({ active }) {
   );
 }
 
-function GpsIcon({ active }) {
-  const c = active ? "#fff" : "#434343";
+function GpsIcon({ active, theme }) {
+  const c = active ? "#fff" : tk(theme).iconStroke;
   return (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+    <svg width="44" height="44" viewBox="0 0 56 56" fill="none">
       <circle cx="28" cy="28" r="18" stroke={c} strokeWidth="4.5" />
       <circle cx="28" cy="28" r="5" fill={c} />
       <line
@@ -117,18 +165,18 @@ function GpsIcon({ active }) {
   );
 }
 
-/* Fix 4: Sound icon changes based on muted/sound level */
-function SoundIcon({ muted }) {
+function SoundIcon({ muted, theme }) {
+  const c = tk(theme).iconStroke;
   if (muted) {
     return (
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-        <path d="M7 14H17L28 7v28L17 28H7V14z" fill="#434343" />
+      <svg width="32" height="32" viewBox="0 0 42 42" fill="none">
+        <path d="M7 14H17L28 7v28L17 28H7V14z" fill={c} />
         <line
           x1="32"
           y1="14"
           x2="42"
           y2="28"
-          stroke="#434343"
+          stroke={c}
           strokeWidth="2.5"
           strokeLinecap="round"
         />
@@ -137,7 +185,7 @@ function SoundIcon({ muted }) {
           y1="14"
           x2="32"
           y2="28"
-          stroke="#434343"
+          stroke={c}
           strokeWidth="2.5"
           strokeLinecap="round"
         />
@@ -145,18 +193,18 @@ function SoundIcon({ muted }) {
     );
   }
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-      <path d="M7 14H17L28 7v28L17 28H7V14z" fill="#434343" />
+    <svg width="32" height="32" viewBox="0 0 42 42" fill="none">
+      <path d="M7 14H17L28 7v28L17 28H7V14z" fill={c} />
       <path
         d="M32 14c2.5 2 4 4.8 4 7s-1.5 5-4 7"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M35 9c4 3 6.5 7.5 6.5 12s-2.5 9-6.5 12"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
@@ -165,12 +213,10 @@ function SoundIcon({ muted }) {
   );
 }
 
-/* Fix 4: Auto brightness icon - clean square button with sun + A */
-function AutoBrightnessIcon({ active }) {
-  const c = active ? "#fff" : "#434343";
-
+function AutoBrightnessIcon({ active, theme }) {
+  const c = active ? "#fff" : tk(theme).iconStroke;
   return (
-    <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+    <svg width="26" height="26" viewBox="0 0 36 36" fill="none">
       <circle cx="14" cy="13" r="5" fill={c} />
       <path
         d="M14 2v3M14 21v3M3 13h3M22 13h3M5.9 5.9l2.1 2.1M19.9 19.9l2.1 2.1M5.9 20.1l2.1-2.1M19.9 6.1l2.1-2.1"
@@ -194,7 +240,7 @@ function AutoBrightnessIcon({ active }) {
 
 function SunIcon() {
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+    <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
       <circle
         cx="24"
         cy="24"
@@ -213,10 +259,9 @@ function SunIcon() {
   );
 }
 
-/* Fix 2: MoonIcon — fixed missing return statement */
 function MoonIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+    <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
       <path
         d="M18 4C10.3 4 4 10.3 4 18s6.3 14 14 14c7.7 0 14-6.3 14-14 0-.6 0-1.2-.1-1.8-1.5 3.2-4.8 5.4-8.6 5.4-5.2 0-9.5-4.3-9.5-9.5 0-3.8 2.2-7.1 5.4-8.6-.6-.1-1.2-.1-1.8-.1z"
         fill="#FFCC3D"
@@ -225,12 +270,12 @@ function MoonIcon() {
   );
 }
 
-function ChevronRight() {
+function ChevronRight({ theme }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <path
         d="M7 4l6 6-6 6"
-        stroke="#888"
+        stroke={tk(theme).textMuted}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -239,231 +284,16 @@ function ChevronRight() {
   );
 }
 
-/* Fix 6: No hover effects, press effect only */
-function QuickToggleCard({ label, active, toggle, Icon }) {
-  const press = usePressEffect();
+function LanguageIcon({ theme }) {
+  const c = tk(theme).iconStroke;
   return (
-    <button
-      onClick={toggle}
-      {...press}
-      style={{
-        width: "175px",
-        height: "160px",
-        border: "1px solid rgba(255,255,255,0.8)",
-        borderRadius: "28px",
-        background: active ? "#268BE5" : "#F0F0F0",
-        boxShadow: "0px 2px 8px rgba(0,0,0,0.12)",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "10px",
-        outline: "none",
-        transition: "transform 0.1s, opacity 0.1s, background 0.22s",
-      }}
-    >
-      <Icon active={active} />
-      <span
-        style={{
-          fontSize: "14px",
-          fontWeight: 600,
-          color: active ? "#fff" : "#434343",
-          letterSpacing: "0.3px",
-        }}
-      >
-        {label}
-      </span>
-    </button>
-  );
-}
-
-/* Fix 6: MenuButton — no hover, only press */
-function MenuButton({
-  label,
-  icon,
-  hasArrow,
-  hasBadge,
-  onClick,
-  rightContent,
-}) {
-  const press = usePressEffect();
-  return (
-    <button
-      onClick={onClick}
-      {...press}
-      style={{
-        width: "100%",
-        height: "78px",
-        background: "#fff",
-        border: "none",
-        boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
-        borderRadius: "22px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 18px 0 20px",
-        gap: "14px",
-        position: "relative",
-        outline: "none",
-        transition: "transform 0.1s, opacity 0.1s",
-      }}
-    >
-      <div
-        style={{
-          flexShrink: 0,
-          width: "44px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        {icon}
-      </div>
-      <span
-        style={{
-          flex: 1,
-          fontSize: "19px",
-          fontWeight: 400,
-          color: "#303030",
-          textAlign: "left",
-          lineHeight: "1.25",
-          whiteSpace: "pre-line",
-        }}
-      >
-        {label}
-      </span>
-      {hasBadge && (
-        <div
-          style={{
-            position: "absolute",
-            right: "12px",
-            top: "12px",
-            width: "11px",
-            height: "11px",
-            background: "#FF6868",
-            borderRadius: "50%",
-          }}
-        />
-      )}
-      {rightContent || (hasArrow ? <ChevronRight /> : null)}
-    </button>
-  );
-}
-
-function ResetModal({ onCancel, onReset }) {
-  const pressCancel = usePressEffect();
-  const pressReset = usePressEffect();
-  return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex: 20,
-        background: "rgba(0,0,0,0.35)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "28px",
-          padding: "40px 44px",
-          width: "420px",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.28)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "12px",
-          }}
-        >
-          <ResetIcon />
-        </div>
-        <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: 700,
-            color: "#1E1E1E",
-            margin: "0 0 10px",
-          }}
-        >
-          Factory Reset
-        </h2>
-        <p
-          style={{
-            fontSize: "15px",
-            color: "#666",
-            margin: "0 0 28px",
-            lineHeight: 1.5,
-          }}
-        >
-          This will erase all your settings and data.
-          <br />
-          This action cannot be undone.
-        </p>
-        <div style={{ display: "flex", gap: "14px", justifyContent: "center" }}>
-          <button
-            onClick={onCancel}
-            {...pressCancel}
-            style={{
-              padding: "12px 28px",
-              borderRadius: "16px",
-              border: "2px solid #ccc",
-              background: "#f5f5f5",
-              fontSize: "16px",
-              fontWeight: 600,
-              cursor: "pointer",
-              color: "#333",
-              transition: "transform 0.1s, opacity 0.1s",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onReset}
-            {...pressReset}
-            style={{
-              padding: "12px 28px",
-              borderRadius: "16px",
-              border: "2px solid #FF9999",
-              background: "rgba(255,205,205,0.6)",
-              fontSize: "16px",
-              fontWeight: 600,
-              cursor: "pointer",
-              color: "#FF0000",
-              transition: "transform 0.1s, opacity 0.1s",
-            }}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LanguageIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <circle cx="20" cy="20" r="15" stroke="#434343" strokeWidth="2.5" />
-      <ellipse
-        cx="20"
-        cy="20"
-        rx="7"
-        ry="15"
-        stroke="#434343"
-        strokeWidth="2.5"
-      />
-      <line x1="5" y1="20" x2="35" y2="20" stroke="#434343" strokeWidth="2.5" />
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="15" stroke={c} strokeWidth="2.5" />
+      <ellipse cx="20" cy="20" rx="7" ry="15" stroke={c} strokeWidth="2.5" />
+      <line x1="5" y1="20" x2="35" y2="20" stroke={c} strokeWidth="2.5" />
       <path
         d="M7 13h26M7 27h26"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
       />
@@ -471,25 +301,26 @@ function LanguageIcon() {
   );
 }
 
-function DateTimeIcon() {
+function DateTimeIcon({ theme }) {
+  const c = tk(theme).iconStroke;
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
       <rect
         x="5"
         y="9"
         width="30"
         height="26"
         rx="3"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
       />
-      <line x1="5" y1="17" x2="35" y2="17" stroke="#434343" strokeWidth="2.5" />
+      <line x1="5" y1="17" x2="35" y2="17" stroke={c} strokeWidth="2.5" />
       <line
         x1="13"
         y1="5"
         x2="13"
         y2="13"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
       />
@@ -498,51 +329,43 @@ function DateTimeIcon() {
         y1="5"
         x2="27"
         y2="13"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
       />
-      <rect x="10" y="21" width="6" height="5" rx="1" fill="#434343" />
-      <rect x="19" y="21" width="6" height="5" rx="1" fill="#434343" />
-      <rect x="24" y="28" width="6" height="5" rx="1" fill="#434343" />
+      <rect x="10" y="21" width="6" height="5" rx="1" fill={c} />
+      <rect x="19" y="21" width="6" height="5" rx="1" fill={c} />
+      <rect x="24" y="28" width="6" height="5" rx="1" fill={c} />
     </svg>
   );
 }
 
-function SystemIcon() {
+function SystemIcon({ theme }) {
+  const c = tk(theme).iconStroke;
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-      {/* outer circle */}
-      <circle cx="21" cy="21" r="16" stroke="#434343" strokeWidth="2.5" />
-
-      {/* dot of "i" */}
-      <circle cx="21" cy="14" r="1.8" fill="#434343" />
-
-      {/* stem of "i" */}
-      <path
-        d="M21 18v12"
-        stroke="#434343"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
+    <svg width="36" height="36" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="16" stroke={c} strokeWidth="2.5" />
+      <circle cx="21" cy="14" r="1.8" fill={c} />
+      <path d="M21 18v12" stroke={c} strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }
 
-function OfflineMapsIcon() {
+function OfflineMapsIcon({ theme }) {
+  const c = tk(theme).iconStroke;
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+    <svg width="36" height="36" viewBox="0 0 42 42" fill="none">
       <path
         d="M5 9l11-4 10 4 11-4v28l-11 4-10-4-11 4V9z"
-        stroke="#434343"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
-      <line x1="16" y1="5" x2="16" y2="33" stroke="#434343" strokeWidth="2" />
-      <line x1="26" y1="9" x2="26" y2="37" stroke="#434343" strokeWidth="2" />
+      <line x1="16" y1="5" x2="16" y2="33" stroke={c} strokeWidth="2" />
+      <line x1="26" y1="9" x2="26" y2="37" stroke={c} strokeWidth="2" />
       <path
         d="M30 24l-4 5-4-5M26 29V18"
-        stroke="#FF7B00"
+        stroke="#2F80ED"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -553,18 +376,17 @@ function OfflineMapsIcon() {
 
 function ResetIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path
         d="M4 12a8 8 0 1 0 2.3-5.7"
-        stroke="#FF0000"
+        stroke="#FF6B6B"
         strokeWidth="1.8"
         strokeLinecap="round"
         fill="none"
       />
-
       <path
         d="M4 3v6h6"
-        stroke="#FF0000"
+        stroke="#FF6B6B"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -573,13 +395,12 @@ function ResetIcon() {
   );
 }
 
-/* Fix 5: Download icon with loading/done states */
 function DownloadStateIcon({ state }) {
   if (state === "loading") {
     return (
       <svg
-        width="28"
-        height="28"
+        width="26"
+        height="26"
         viewBox="0 0 28 28"
         fill="none"
         style={{ animation: "spin 1s linear infinite" }}
@@ -589,7 +410,7 @@ function DownloadStateIcon({ state }) {
           cx="14"
           cy="14"
           r="10"
-          stroke="#268BE5"
+          stroke="#2F80ED"
           strokeWidth="3"
           strokeDasharray="40 20"
           strokeLinecap="round"
@@ -599,7 +420,7 @@ function DownloadStateIcon({ state }) {
   }
   if (state === "done") {
     return (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
         <circle cx="14" cy="14" r="12" fill="#22C55E" />
         <path
           d="M8 14l4 4 8-8"
@@ -611,12 +432,11 @@ function DownloadStateIcon({ state }) {
       </svg>
     );
   }
-  // default download icon
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
       <path
         d="M14 4v15M8 13l6 6 6-6"
-        stroke="#FF7B00"
+        stroke="#2F80ED"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -626,7 +446,7 @@ function DownloadStateIcon({ state }) {
         y1="24"
         x2="23"
         y2="24"
-        stroke="#FF7B00"
+        stroke="#2F80ED"
         strokeWidth="2.5"
         strokeLinecap="round"
       />
@@ -635,9 +455,10 @@ function DownloadStateIcon({ state }) {
 }
 
 /* ─── Slider ─────────────────────────────────────────────────────────────── */
-function Slider({ value, onChange }) {
+function Slider({ value, onChange, accentColor = "#2F80ED", theme }) {
+  const t = tk(theme);
   const trackW = 300;
-  const thumbSize = 32;
+  const thumbSize = 26;
   const fillW = (value / 100) * trackW;
   const thumbLeft = Math.max(
     0,
@@ -649,12 +470,11 @@ function Slider({ value, onChange }) {
       style={{
         position: "relative",
         width: `${trackW}px`,
-        height: "40px",
+        height: "36px",
         display: "flex",
         alignItems: "center",
       }}
     >
-      {/* Track bg */}
       <div
         style={{
           position: "absolute",
@@ -662,13 +482,11 @@ function Slider({ value, onChange }) {
           top: "50%",
           transform: "translateY(-50%)",
           width: `${trackW}px`,
-          height: "18px",
-          background: "rgba(255,255,255,0.7)",
-          borderRadius: "9px",
-          boxShadow: "inset 0 2px 4px rgba(0,0,0,0.08)",
+          height: "10px",
+          background: t.sliderTrack,
+          borderRadius: "5px",
         }}
       />
-      {/* Fill */}
       <div
         style={{
           position: "absolute",
@@ -676,13 +494,13 @@ function Slider({ value, onChange }) {
           top: "50%",
           transform: "translateY(-50%)",
           width: `${Math.max(fillW, 0)}px`,
-          height: "18px",
-          background: "#80CCFF",
-          borderRadius: "9px",
+          height: "10px",
+          background: accentColor,
+          borderRadius: "5px",
           pointerEvents: "none",
+          opacity: 0.7,
         }}
       />
-      {/* Thumb */}
       <div
         style={{
           position: "absolute",
@@ -691,10 +509,10 @@ function Slider({ value, onChange }) {
           transform: "translateY(-50%)",
           width: `${thumbSize}px`,
           height: `${thumbSize}px`,
-          background: "#80CCFF",
-          border: "3px solid #fff",
+          background: theme === "dark" ? "#E8EAF0" : "#fff",
+          border: `3px solid ${accentColor}`,
           borderRadius: "50%",
-          boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
+          boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
           pointerEvents: "none",
         }}
       />
@@ -719,6 +537,243 @@ function Slider({ value, onChange }) {
   );
 }
 
+/* ─── Quick Toggle Card ─────────────────────────────────────────────────── */
+function QuickToggleCard({ label, active, toggle, Icon, theme }) {
+  const t = tk(theme);
+  const press = usePressEffect();
+  return (
+    <button
+      onClick={toggle}
+      {...press}
+      style={{
+        flex: 1,
+        height: "110px",
+        border: active ? "none" : t.toggleBorder,
+        borderRadius: "24px",
+        background: active
+          ? "linear-gradient(135deg, #2F80ED, #56CCF2)"
+          : t.toggleOff,
+        boxShadow: active
+          ? "0 10px 25px rgba(47,128,237,0.3)"
+          : "0 4px 12px rgba(0,0,0,0.04)",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        outline: "none",
+        transition:
+          "transform 0.1s, opacity 0.1s, background 0.3s, box-shadow 0.3s",
+      }}
+    >
+      <Icon active={active} theme={theme} />
+      <span
+        style={{
+          fontSize: "12px",
+          fontWeight: 700,
+          color: active ? "#fff" : t.textSecond,
+          letterSpacing: "1.2px",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+/* ─── Menu Row Button ───────────────────────────────────────────────────── */
+function MenuButton({
+  label,
+  icon,
+  hasArrow,
+  hasBadge,
+  onClick,
+  rightContent,
+  theme,
+}) {
+  const t = tk(theme);
+  const press = usePressEffect();
+  return (
+    <button
+      onClick={onClick}
+      {...press}
+      style={{
+        width: "100%",
+        height: "68px",
+        background: t.menuBg,
+        backdropFilter: "blur(10px)",
+        border: t.menuBorder,
+        borderRadius: "20px",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        padding: "0 18px",
+        gap: "14px",
+        position: "relative",
+        outline: "none",
+        transition: "transform 0.1s, opacity 0.1s",
+        boxShadow: t.menuShadow,
+      }}
+    >
+      <div
+        style={{
+          flexShrink: 0,
+          width: "38px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        {icon}
+      </div>
+      <span
+        style={{
+          flex: 1,
+          fontSize: "17px",
+          fontWeight: 600,
+          color: t.textPrimary,
+          textAlign: "left",
+        }}
+      >
+        {label}
+      </span>
+      {hasBadge && (
+        <div
+          style={{
+            position: "absolute",
+            right: "14px",
+            top: "12px",
+            width: "10px",
+            height: "10px",
+            background: "#FF6B6B",
+            borderRadius: "50%",
+          }}
+        />
+      )}
+      {rightContent || (hasArrow ? <ChevronRight theme={theme} /> : null)}
+    </button>
+  );
+}
+
+/* ─── Reset Modal ───────────────────────────────────────────────────────── */
+function ResetModal({ onCancel, onReset, theme }) {
+  const t = tk(theme);
+  const pressCancel = usePressEffect();
+  const pressReset = usePressEffect();
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 20,
+        background: "rgba(0,0,0,0.4)",
+        backdropFilter: "blur(6px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          background: t.modalBg,
+          backdropFilter: "blur(20px)",
+          borderRadius: "32px",
+          padding: "44px 48px",
+          width: "400px",
+          boxShadow: t.shadow,
+          textAlign: "center",
+          border: t.modalBorder,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "14px",
+          }}
+        >
+          <div
+            style={{
+              width: "52px",
+              height: "52px",
+              borderRadius: "16px",
+              background: "rgba(255,107,107,0.12)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ResetIcon />
+          </div>
+        </div>
+        <h2
+          style={{
+            fontSize: "21px",
+            fontWeight: 800,
+            color: t.textPrimary,
+            margin: "0 0 8px",
+            letterSpacing: "-0.3px",
+          }}
+        >
+          Factory Reset
+        </h2>
+        <p
+          style={{
+            fontSize: "14px",
+            color: t.textSecond,
+            margin: "0 0 30px",
+            lineHeight: 1.6,
+          }}
+        >
+          This will erase all your settings and data.
+          <br />
+          This action cannot be undone.
+        </p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+          <button
+            onClick={onCancel}
+            {...pressCancel}
+            style={{
+              padding: "12px 28px",
+              borderRadius: "14px",
+              border: t.cancelBorder,
+              background: t.cancelBg,
+              fontSize: "15px",
+              fontWeight: 700,
+              cursor: "pointer",
+              color: t.cancelText,
+              transition: "transform 0.1s, opacity 0.1s",
+              outline: "none",
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onReset}
+            {...pressReset}
+            style={{
+              padding: "12px 28px",
+              borderRadius: "14px",
+              border: "none",
+              background: "linear-gradient(135deg, #FF6B6B, #FF8E8E)",
+              fontSize: "15px",
+              fontWeight: 700,
+              cursor: "pointer",
+              color: "#fff",
+              boxShadow: "0 8px 20px rgba(255,107,107,0.35)",
+              transition: "transform 0.1s, opacity 0.1s",
+              outline: "none",
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── SettingsPage ───────────────────────────────────────────────────────── */
 export default function SettingsPage({
   navActive,
@@ -733,9 +788,9 @@ export default function SettingsPage({
   const [bright, setBright] = useState(75);
   const [autoBright, setAuto] = useState(false);
   const [resetModal, setResetModal] = useState(false);
-  /* Fix 5: download state */
-  const [mapState, setMapState] = useState("idle"); // idle | loading | done
+  const [mapState, setMapState] = useState("idle");
 
+  const t = tk(theme);
   const pressReset = usePressEffect();
 
   function handleDownloadMap() {
@@ -774,376 +829,359 @@ export default function SettingsPage({
         fontFamily: "'Inter', sans-serif",
         overflow: "hidden",
         userSelect: "none",
-        background: "#fff",
+        background: t.pageBg,
+        transition: "background 0.3s",
       }}
     >
-      {/* ── Background (Fix 7: preserved) ── */}
+      {/* Background accent blobs */}
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          background:
-            "linear-gradient(160deg,#e8f2f8 0%,#d4e8f0 25%,#c2dce8 45%,#b8d4e2 65%,#dfe8d0 85%,#f0ead8 100%)",
+          width: "500px",
+          height: "500px",
+          background: t.blobA,
+          borderRadius: "50%",
+          top: "-80px",
+          right: "-80px",
+          filter: "blur(80px)",
+          pointerEvents: "none",
         }}
-      >
-        {[
-          {
-            top: "8%",
-            left: "28%",
-            w: 520,
-            h: 200,
-            rot: -18,
-            c: "rgba(170,205,228,0.45)",
-          },
-          {
-            top: "38%",
-            left: "48%",
-            w: 420,
-            h: 160,
-            rot: 14,
-            c: "rgba(195,218,185,0.38)",
-          },
-          {
-            top: "62%",
-            left: "8%",
-            w: 360,
-            h: 130,
-            rot: -8,
-            c: "rgba(205,228,195,0.33)",
-          },
-          {
-            top: "18%",
-            left: "68%",
-            w: 310,
-            h: 120,
-            rot: 22,
-            c: "rgba(160,198,220,0.32)",
-          },
-        ].map((b, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              top: b.top,
-              left: b.left,
-              width: `${b.w}px`,
-              height: `${b.h}px`,
-              background: b.c,
-              borderRadius: "50%",
-              filter: "blur(32px)",
-              transform: `rotate(${b.rot}deg)`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* ── Top-right avatar ── */}
+      />
       <div
         style={{
           position: "absolute",
-          top: "18px",
-          right: "28px",
+          width: "350px",
+          height: "350px",
+          background: t.blobB,
+          borderRadius: "50%",
+          bottom: "60px",
+          left: "60px",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Top-right avatar */}
+      <div
+        style={{
+          position: "absolute",
+          top: "25px",
+          right: "60px",
           zIndex: 10,
-          width: "44px",
-          height: "44px",
-          background: "#fff",
-          border: "1.5px solid #ccc",
+          width: "50px",
+          height: "50px",
+          background: t.avatarBg,
+          backdropFilter: "blur(10px)",
+          border: t.avatarBorder,
           borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          boxShadow: t.menuShadow,
           cursor: "pointer",
         }}
       >
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="9" r="5" stroke="#4B4E53" strokeWidth="2" />
+        <svg width="28" height="28" viewBox="0 0 26 26" fill="none">
+          <circle cx="13" cy="9" r="5" stroke={t.iconStroke} strokeWidth="2" />
           <path
             d="M3 24c0-5.5 4.5-10 10-10s10 4.5 10 10"
-            stroke="#4B4E53"
+            stroke={t.iconStroke}
             strokeWidth="2"
             strokeLinecap="round"
           />
         </svg>
       </div>
 
-      {/* ── Fix 1: Left Panel — proper layout matching Image 2 ── */}
+      {/* ── Two Cards Layout ── */}
       <div
         style={{
           position: "absolute",
-          left: "36px",
-          top: "68px",
-          width: "700px",
-          height: "560px",
-          background: "rgba(225,228,232,0.82)",
-          border: "1.5px solid rgba(255,255,255,0.6)",
-          borderRadius: "32px",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          zIndex: 1,
+          left: "50%",
+          top: "48%",
+          transform: "translate(-50%, -55%)",
+          display: "flex",
+          gap: "24px",
+          alignItems: "flex-start",
         }}
       >
-        {/* Quick-toggle buttons — centered row */}
+        {/* ── LEFT CARD ── */}
         <div
           style={{
-            position: "absolute",
-            left: "0",
-            right: "0",
-            top: "40px",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: "36px",
-          }}
-        >
-          {quickToggleItems.map((item) => (
-            <QuickToggleCard key={item.label} {...item} />
-          ))}
-        </div>
-
-        {/* Sliders + Theme — bottom section */}
-        <div
-          style={{
-            position: "absolute",
-            left: "52px",
-            right: "52px",
-            top: "280px",
+            background: t.cardBg,
+            backdropFilter: t.cardBackdrop,
+            borderRadius: "38px",
+            border: t.cardBorder,
+            width: "600px",
+            height: "530px",
+            boxShadow: t.shadow,
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            padding: "32px 36px",
+            gap: "24px",
+            transition: "background 0.3s, border 0.3s",
           }}
         >
-          {/* Sound row */}
+          {/* Connectivity toggles */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              height: "52px",
-            }}
+            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
           >
             <span
               style={{
-                width: "110px",
-                textAlign: "right",
-                fontSize: "20px",
-                color: "#1E1E1E",
-                fontWeight: 500,
+                fontSize: "11px",
+                fontWeight: 700,
+                color: t.textMuted,
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
               }}
             >
-              Sound
+              CONNECTIVITY
             </span>
-            <Slider value={sound} onChange={setSound} />
-            {/* Fix 4: sound icon changes when muted */}
-            <div
-              style={{
-                marginLeft: "8px",
-                width: "42px",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <SoundIcon muted={sound === 0} />
+            <div style={{ display: "flex", flexDirection: "row", gap: "16px" }}>
+              {quickToggleItems.map((item) => (
+                <QuickToggleCard key={item.label} {...item} theme={theme} />
+              ))}
             </div>
           </div>
 
-          {/* Brightness row */}
+          {/* Divider */}
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              height: "52px",
-            }}
-          >
-            <span
-              style={{
-                width: "110px",
-                textAlign: "right",
-                fontSize: "20px",
-                color: "#1E1E1E",
-                fontWeight: 500,
-              }}
-            >
-              Brightness
-            </span>
-            <Slider value={bright} onChange={setBright} />
-            {/* Fix 4: auto brightness button — cleaner look */}
-            <button
-              onClick={() => setAuto((v) => !v)}
-              {...usePressEffect()}
-              style={{
-                marginLeft: "8px",
-                width: "52px",
-                height: "52px",
-                border: "none",
-                borderRadius: "12px",
-                background: autoBright ? "#268BE5" : "#ffffff",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                outline: "none",
-                transition: "transform 0.1s, opacity 0.1s, background 0.2s",
-                flexShrink: 0,
-              }}
-            >
-              <AutoBrightnessIcon active={autoBright} />
-            </button>
-          </div>
+            style={{ height: "1px", background: t.divider, flexShrink: 0 }}
+          />
 
-          {/* Theme row */}
+          {/* Audio & Display */}
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
+              gap: "18px",
+              flex: 1,
+              justifyContent: "center",
               alignItems: "center",
-              gap: "16px",
-              height: "80px",
             }}
           >
             <span
               style={{
-                width: "110px",
-                textAlign: "right",
-                fontSize: "20px",
-                color: "#1E1E1E",
-                fontWeight: 500,
+                fontSize: "11px",
+                fontWeight: 700,
+                color: t.textMuted,
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
               }}
             >
-              Theme
+              AUDIO & DISPLAY
             </span>
-            <div
-              onClick={() =>
-                setTheme((t) => (t === "light" ? "dark" : "light"))
-              }
-              style={{
-                marginLeft: "8px",
-                position: "relative",
-                width: "180px",
-                height: "70px",
-                borderRadius: "100px",
-                /* Fix 2: Dark mode toggle looks correct */
-                background:
-                  theme === "light"
-                    ? "linear-gradient(180deg,#FFD739 0%,#FFEA97 100%)"
-                    : "linear-gradient(180deg,#2E29AF 0%,#9170FF 100%)",
-                boxShadow: "inset 0px 3px 6px rgba(0,0,0,0.25)",
-                cursor: "pointer",
-                transition: "background 0.4s",
-              }}
-            >
+
+            {/* Sound row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
               <span
                 style={{
-                  position: "absolute",
-                  right: theme === "light" ? "35px" : "100px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  fontSize: "18px",
-                  fontWeight: 800,
-                  color: theme === "light" ? "#fff" : "#ffffff",
-                  transition: "color 0.3s",
+                  width: "90px",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: t.textPrimary,
+                  textAlign: "right",
                 }}
               >
-                {theme === "light" ? "Light" : "Dark"}
+                Sound
               </span>
-              {/* Fix 2: Knob sizing correct */}
-              <div
+              <Slider
+                value={sound}
+                onChange={setSound}
+                accentColor="#2F80ED"
+                theme={theme}
+              />
+              <SoundIcon muted={sound === 0} theme={theme} />
+            </div>
+
+            {/* Brightness row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+              <span
                 style={{
-                  position: "absolute",
-                  left: theme === "light" ? "4px" : "calc(100% - 70px)",
-                  top: "50%",
-                  transform: "translateY(-50%) translateX(-10%)",
-                  width: "80px",
-                  height: "80px",
-                  background: "#fff",
-                  borderRadius: "100px",
-                  boxShadow: "0px 3px 6px rgba(0,0,0,0.22)",
+                  width: "90px",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: t.textPrimary,
+                  textAlign: "right",
+                }}
+              >
+                Brightness
+              </span>
+              <Slider
+                value={bright}
+                onChange={setBright}
+                accentColor="#2F80ED"
+                theme={theme}
+              />
+              <button
+                onClick={() => setAuto((v) => !v)}
+                {...usePressEffect()}
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  border: "none",
+                  borderRadius: "12px",
+                  background: autoBright
+                    ? "linear-gradient(135deg,#2F80ED,#56CCF2)"
+                    : t.toggleOff,
+                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "left 0.35s cubic-bezier(.4,0,.2,1)",
+                  outline: "none",
+                  transition: "transform 0.1s, opacity 0.1s, background 0.2s",
+                  boxShadow: autoBright
+                    ? "0 6px 16px rgba(47,128,237,0.3)"
+                    : "0 2px 6px rgba(0,0,0,0.06)",
+                  flexShrink: 0,
                 }}
               >
-                {theme === "light" ? <SunIcon /> : <MoonIcon />}
+                <AutoBrightnessIcon active={autoBright} theme={theme} />
+              </button>
+            </div>
+
+            {/* Theme row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+              <span
+                style={{
+                  width: "90px",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: t.textPrimary,
+                  textAlign: "right",
+                }}
+              >
+                Theme
+              </span>
+              <div
+                onClick={() =>
+                  setTheme((th) => (th === "light" ? "dark" : "light"))
+                }
+                style={{
+                  position: "relative",
+                  width: "150px",
+                  height: "62px",
+                  borderRadius: "100px",
+                  background:
+                    theme === "light"
+                      ? "linear-gradient(180deg,#FFD739 0%,#FFEA97 100%)"
+                      : "linear-gradient(180deg,#2E29AF 0%,#9170FF 100%)",
+                  boxShadow: "inset 0 3px 6px rgba(0,0,0,0.2)",
+                  cursor: "pointer",
+                  transition: "background 0.4s",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    right: theme === "light" ? "24px" : "88px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    fontSize: "15px",
+                    fontWeight: 800,
+                    color: "#fff",
+                    transition: "right 0.35s",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {theme === "light" ? "Light" : "Dark"}
+                </span>
+                <div
+                  style={{
+                    position: "absolute",
+                    left: theme === "light" ? "2px" : "calc(100% - 64px)",
+                    top: "50%",
+                    transform: "translateY(-50%) translateX(-10%)",
+                    width: "72px",
+                    height: "72px",
+                    background: "#fff",
+                    borderRadius: "50%",
+                    boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "left 0.35s cubic-bezier(.4,0,.2,1)",
+                  }}
+                >
+                  {theme === "light" ? <SunIcon /> : <MoonIcon />}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Fix 1: Right Panel ── */}
-      <div
-        style={{
-          position: "absolute",
-          left: "820px",
-          top: "68px",
-          width: "424px",
-          height: "560px",
-          background: "rgba(225,228,232,0.82)",
-          border: "1.5px solid rgba(255,255,255,0.6)",
-          borderRadius: "32px",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          zIndex: 1,
-        }}
-      >
+        {/* ── RIGHT CARD ── */}
         <div
           style={{
-            position: "absolute",
-            left: "20px",
-            right: "20px",
-            top: "24px",
+            background: t.cardBg,
+            backdropFilter: t.cardBackdrop,
+            borderRadius: "38px",
+            border: t.cardBorder,
+            width: "420px",
+            height: "530px",
+            boxShadow: t.shadow,
             display: "flex",
             flexDirection: "column",
+            padding: "32px 28px",
             gap: "12px",
+            transition: "background 0.3s, border 0.3s",
           }}
         >
-          {/* Language */}
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: t.textMuted,
+              letterSpacing: "1.5px",
+              textTransform: "uppercase",
+              marginBottom: "4px",
+            }}
+          >
+            SYSTEM
+          </span>
+
           <MenuButton
             label="Language"
-            icon={<LanguageIcon />}
+            icon={<LanguageIcon theme={theme} />}
             hasArrow
             onClick={() => alert("Language settings")}
+            theme={theme}
           />
-
-          {/* Date & Time */}
           <MenuButton
             label="Date & Time"
-            icon={<DateTimeIcon />}
+            icon={<DateTimeIcon theme={theme} />}
             hasArrow
             onClick={() => alert("Date & Time settings")}
+            theme={theme}
           />
-
-          {/* Fix 5: Offline Maps with download state */}
           <MenuButton
             label="Offline Maps"
-            icon={<OfflineMapsIcon />}
+            icon={<OfflineMapsIcon theme={theme} />}
             hasBadge={mapState === "idle"}
             onClick={handleDownloadMap}
             rightContent={<DownloadStateIcon state={mapState} />}
+            theme={theme}
           />
-
-          {/* System */}
           <MenuButton
-            label={"System"}
-            icon={<SystemIcon />}
+            label="System"
+            icon={<SystemIcon theme={theme} />}
             hasArrow
             onClick={() => alert("System info and updates")}
+            theme={theme}
           />
+
+          <div style={{ flex: 1 }} />
 
           {/* Factory Reset */}
           <button
             onClick={() => setResetModal(true)}
             {...pressReset}
             style={{
-              alignSelf: "center",
-              marginTop: "8px",
-              width: "240px",
-              height: "58px",
-              background: "rgba(255,205,205,0.5)",
-              border: "1.5px solid #FF9999",
-              borderRadius: "22px",
+              width: "100%",
+              height: "56px",
+              background: t.resetBg,
+              border: t.resetBorder,
+              borderRadius: "18px",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
@@ -1155,7 +1193,7 @@ export default function SettingsPage({
           >
             <ResetIcon />
             <span
-              style={{ fontSize: "19px", fontWeight: 500, color: "#FF0000" }}
+              style={{ fontSize: "15px", fontWeight: 700, color: "#FF6B6B" }}
             >
               Factory Reset
             </span>
@@ -1163,7 +1201,6 @@ export default function SettingsPage({
         </div>
       </div>
 
-      {/* Fix 7: BottomNav preserved */}
       <BottomNav active={navActive} setActive={setNavActive} />
 
       {resetModal && (
@@ -1173,6 +1210,7 @@ export default function SettingsPage({
             setResetModal(false);
             alert("Factory reset triggered.");
           }}
+          theme={theme}
         />
       )}
     </div>
