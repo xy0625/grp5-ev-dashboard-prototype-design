@@ -939,22 +939,6 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         <UserIcon />
       </div>
 
-      {/* ── Page Title ── */}
-      <div
-        style={{
-          position: "absolute",
-          top: "80px",
-          left: "66px",
-          zIndex: 5,
-          fontSize: "28px",
-          fontWeight: 700,
-          color: "#1E1E1E",
-          letterSpacing: "-0.3px",
-        }}
-      >
-        Emergency Assistance
-      </div>
-
       {/* ══════════════════════════════════════════
           3-COLUMN LAYOUT  (top: 130px, bottom: 645px → height ≈ 515px)
           Col 1: left:66  width:356
@@ -968,11 +952,11 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         style={{
           position: "absolute",
           width: "356px",
-          height: "445px",
+          height: "550px",
           left: "66px",
-          top: "184px",
+          top: "100px",
           background: "#FFFFFF",
-          border: "1px solid #80CCFF",
+          // border: "1px solid #80CCFF",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
           borderRadius: "20px",
           zIndex: 2,
@@ -1051,11 +1035,11 @@ export default function EmergencyPage({ navActive, setNavActive }) {
         style={{
           position: "absolute",
           width: "356px",
-          height: "445px",
+          height: "550px",
           left: "462px",
-          top: "184px",
+          top: "100px",
           background: "#FFFFFF",
-          border: "1px solid #A9FF82",
+          //border: "1px solid #A9FF82",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
           borderRadius: "20px",
           zIndex: 2,
@@ -1200,7 +1184,7 @@ export default function EmergencyPage({ navActive, setNavActive }) {
           width: "356px",
           height: "140px",
           left: "858px",
-          top: "184px",
+          top: "100px",
           background: "#FFFFFF",
           border: "1px solid #FDD3D0",
           boxShadow: "0px 6px 20px rgba(0,0,0,0.10)",
@@ -1264,7 +1248,7 @@ export default function EmergencyPage({ navActive, setNavActive }) {
           width: "356px",
           height: "140px",
           left: "858px",
-          top: "344px",
+          top: "260px",
           background: "#EC221F",
           border: "none",
           borderRadius: "20px",
