@@ -38,6 +38,7 @@ export default function App() {
         <AccountPage 
           navActive={navActive} 
           setNavActive={handleNav} 
+          theme={theme}
           onLogout={() => {
             setPage("login");
             setNavActive(0);
@@ -51,7 +52,7 @@ export default function App() {
     if (page === "settings")  return <SettingsPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
     if (page === "apps")      return <AppsPage navActive={navActive} setNavActive={handleNav} />;
     if (page === "nav")       return <NavPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
-    if (page === "weather")   return <WeatherPage navActive={navActive} setNavActive={handleNav} />;
+    if (page === "weather")   return <WeatherPage navActive={navActive} setNavActive={handleNav} theme={theme} />;
     if (page === "emergency") return <EmergencyPage navActive={navActive} setNavActive={handleNav} theme={theme} setTheme={setTheme} />;
     
     return (
