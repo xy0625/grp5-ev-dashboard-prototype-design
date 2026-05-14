@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar"; 
 
 /* ── Theme tokens ──────────────────────────────────────────────── */
 function tk(theme) {
@@ -16,8 +17,6 @@ function tk(theme) {
     fieldBorder: dark ? "1px solid #2C2F3E" : "1px solid rgba(0,0,0,0.04)",
     statBg:      dark ? "#1E2235" : "#fff",
     statBorder:  dark ? "1px solid #2C2F3E" : "1px solid rgba(201,168,76,0.15)",
-    topBarBg:    dark ? "rgba(15,17,23,0.9)" : "rgba(255,255,255,0.6)",
-    topBarBorder:dark ? "1px solid #2C2F3E" : "1px solid rgba(201,168,76,0.28)",
     vehicleBg:   dark ? "rgba(201,168,76,0.08)" : "rgba(201,168,76,0.06)",
     vehicleBorder:dark? "1px solid #2C2F3E" : "1px solid rgba(201,168,76,0.25)",
     securityBg:  dark ? "#252836" : "#fff",
@@ -57,7 +56,7 @@ export default function AccountPage({ navActive, setNavActive, onLogout, theme =
   const handleSave        = () => { if (editMode === "profile") setUserData({ ...tempProfile }); if (editMode === "vehicle") setVehicleData({ ...tempVehicle }); setEditMode("none"); };
   const handleDiscard     = () => setEditMode("none");
 
-  /* ── Shared style objects (use t.* tokens) ─────────────────── */
+  /* ── Shared style objects ── */
   const lbl = {
     display: "block", fontSize: 13, fontWeight: 800,
     letterSpacing: "1.5px", color: t.textSecond,
@@ -101,35 +100,17 @@ export default function AccountPage({ navActive, setNavActive, onLogout, theme =
       {/* Stripe texture */}
       <div style={{ position: "absolute", inset: 0, zIndex: 0, background: t.stripeBg }} />
 
-      {/* ── TOP BAR ── */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: 55,
-        background: t.topBarBg, backdropFilter: "blur(10px)",
-        borderBottom: t.topBarBorder,
-        display: "flex", alignItems: "center",
-        justifyContent: "space-between", padding: "0 30px", zIndex: 20,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <svg width="22" height="17" viewBox="0 0 26 20" fill="none">
-            <circle cx="13" cy="17" r="2.3" fill={t.textSecond}/>
-            <path d="M7 11.5a8.5 8.5 0 0112 0" stroke={t.textSecond} strokeWidth="2" strokeLinecap="round"/>
-            <path d="M3 7.5A13.5 13.5 0 0123 7.5" stroke={t.textSecond} strokeWidth="2" strokeLinecap="round"/>
-            <path d="M0 3.5A18 18 0 0126 3.5" stroke={t.textSecond} strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-          <svg width="13" height="20" viewBox="0 0 16 24" fill="none">
-            <path d="M3 6l10 12-5 5V1l5 5L3 18" stroke={t.textSecond} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-        <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: "1.2px", color: t.textSecond }}>
-          DRIVER PROFILE
-        </span>
-      </div>
+      {/* */}
+      <TopBar 
+        theme={theme} 
+        onGoToAccount={() => setNavActive("account")} 
+      />
 
       {/* ── MAIN CARD GRID ── */}
       <div style={{
         position: "absolute",
         width: 1100, height: 560,
-        top: "43%", left: "50%", transform: "translate(-50%, -50%)",
+        top: "45%", left: "50%", transform: "translate(-50%, -50%)",
         display: "grid", gridTemplateColumns: "280px 1fr",
         gap: 20, zIndex: 5,
       }}>
