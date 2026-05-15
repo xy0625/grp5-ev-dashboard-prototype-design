@@ -22,7 +22,7 @@ const ALL_STATIONS = [
   { name: "Boulevard Shopping Mall EV",      address: "Jalan Wan Alwi, Kuching",          lat: 1.5100, lng: 110.3700 },
 ];
 
-const FONT = "'DM Sans', 'Inter', sans-serif";
+const FONT = "'Inter',sans-serif";
 const GREEN = "#1DB954";
 const GREEN_DARK = "#15803d";
 const GREEN_BG = "#e8fdf0";
@@ -32,6 +32,24 @@ const INDIGO = "#6366F1";
 const GRAY = "#6B7280";
 const CARD_SHADOW = "0 2px 12px rgba(0,0,0,0.07)";
 const CARD_SHADOW_DARK = "0 2px 16px rgba(0,0,0,0.45)";
+
+/* ─────────────────────────────────────────────────────────────────
+   Typography system — matches Dashboard home page
+   LABEL  : section headers (BATTERY, CLIMATE style)
+   VALUE  : large numeric displays
+   TITLE  : card/section titles
+   BODY   : supporting text
+   CAPTION: small muted text
+───────────────────────────────────────────────────────────────── */
+const TYPE = {
+  label:   { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" },
+  value:   { fontSize: 34, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1 },
+  valueMd: { fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1 },
+  title:   { fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em" },
+  titleSm: { fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em" },
+  body:    { fontSize: 13, fontWeight: 500, letterSpacing: "0" },
+  caption: { fontSize: 11, fontWeight: 400, letterSpacing: "0.01em" },
+};
 
 /* ── Theme tokens ────────────────────────────────────────────────── */
 function tk(theme) {
@@ -103,7 +121,7 @@ function TopBar({ battery, range, theme }) {
         </svg>
       </div>
 
-      {/* Center: battery pill */}
+      {/* Center: battery pill — same heavy numeric style as dashboard */}
       <div style={{
         display: "flex", alignItems: "center", gap: 10,
         background: t.battPillBg, borderRadius: 30, padding: "6px 20px",
@@ -115,13 +133,16 @@ function TopBar({ battery, range, theme }) {
           <rect x="37" y="8" width="4" height="8" rx="2" fill={battColor} />
           <rect x="3" y="5" width={filled} height="14" rx="1" fill={battColor} />
         </svg>
-        <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 17, color: battColor }}>{battery}%</span>
+        {/* Value style matches dashboard "78%" */}
+        <span style={{ fontFamily: FONT, ...TYPE.valueMd, color: battColor }}>{battery}%</span>
         <span style={{ fontFamily: FONT, fontSize: 16, color: t.divider }}>·</span>
-        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 17, color: t.textPrimary }}>{range} km left</span>
+        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 15, color: t.textPrimary, letterSpacing: "-0.01em" }}>{range} km left</span>
         {battery < 20 && (
           <span style={{
-            background: RED, color: "#fff", fontSize: 11, fontWeight: 700,
-            borderRadius: 6, padding: "2px 8px", marginLeft: 4, letterSpacing: "0.03em",
+            background: RED, color: "#fff",
+            ...TYPE.label,
+            fontSize: 10,
+            borderRadius: 6, padding: "2px 8px", marginLeft: 4,
           }}>LOW</span>
         )}
       </div>
@@ -149,7 +170,6 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
   const tileRef      = useRef(null);
   const [ready, setReady] = useState(false);
 
-  // 搜索状态
   const [query, setQuery]           = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [focused, setFocused]       = useState(false);
@@ -272,11 +292,8 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
     }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      {/* ── Search bar overlay ── */}
-      <div style={{
-        position: "absolute", top: 16, left: 16, width: 280, zIndex: 1000,
-      }}>
-        {/* Input pill */}
+      {/* Search bar overlay */}
+      <div style={{ position: "absolute", top: 16, left: 16, width: 280, zIndex: 1000 }}>
         <div style={{
           height: 42, background: t.searchBg, borderRadius: focused ? "14px 14px 0 0" : 21,
           display: "flex", alignItems: "center", gap: 8, padding: "0 12px",
@@ -284,11 +301,9 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
           border: dark ? "1px solid #2C2F3E" : focused ? "1px solid #6366F1" : "1px solid #E5E7EB",
           transition: "all 0.18s",
         }}>
-          {/* bolt icon — 充电站专属 */}
           <svg width="15" height="15" viewBox="0 0 20 20" fill={focused ? "#6366F1" : t.searchText}>
             <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
           </svg>
-
           <input
             ref={inputRef}
             value={query}
@@ -298,12 +313,10 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
             placeholder="Search charging stations…"
             style={{
               flex: 1, border: "none", outline: "none", background: "transparent",
-              fontFamily: FONT, fontSize: 13, fontWeight: 500,
+              fontFamily: FONT, ...TYPE.body,
               color: dark ? "#E8EAF0" : "#111",
             }}
           />
-
-          {/* clear button */}
           {query.length > 0 && (
             <button onClick={handleClear} style={{
               background: "none", border: "none", cursor: "pointer",
@@ -318,8 +331,7 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
           <div style={{
             background: dark ? "#1C1F2A" : "#fff",
             border: dark ? "1px solid #2C2F3E" : "1px solid #E5E7EB",
-            borderTop: "none",
-            borderRadius: "0 0 14px 14px",
+            borderTop: "none", borderRadius: "0 0 14px 14px",
             boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
             overflow: "hidden", maxHeight: 220, overflowY: "auto",
           }}>
@@ -330,15 +342,13 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
                 style={{
                   padding: "10px 14px",
                   borderBottom: i < suggestions.length - 1
-                    ? `1px solid ${dark ? "#2C2F3E" : "#F3F4F6"}`
-                    : "none",
+                    ? `1px solid ${dark ? "#2C2F3E" : "#F3F4F6"}` : "none",
                   cursor: "pointer", display: "flex", alignItems: "center", gap: 10,
                   transition: "background 0.12s",
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = dark ? "#252836" : "#F5F8FF"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
-                {/* coloured bolt */}
                 <div style={{
                   width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
                   background: dark ? "rgba(99,102,241,0.15)" : "#EEF2FF",
@@ -349,102 +359,76 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
                   </svg>
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{
-                    fontFamily: FONT, fontWeight: 600, fontSize: 13,
-                    color: dark ? "#E8EAF0" : "#111",
-                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                  }}>{s.name}</div>
-                  <div style={{
-                    fontFamily: FONT, fontSize: 11, color: dark ? "#6B7280" : "#9CA3AF",
-                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                  }}>{s.address}</div>
+                  <div style={{ fontFamily: FONT, ...TYPE.body, fontWeight: 600, color: dark ? "#E8EAF0" : "#111", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.name}</div>
+                  <div style={{ fontFamily: FONT, ...TYPE.caption, color: dark ? "#6B7280" : "#9CA3AF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.address}</div>
                 </div>
               </div>
             ))}
           </div>
         )}
-        {/* Navigate button — 选中充电站后显示 */}
-{selectedStation && !focused && (
-  <div style={{
-    marginTop: 8,
-    background: dark ? "#1C1F2A" : "#fff",
-    border: dark ? "1.5px solid #2C2F3E" : "1.5px solid #E5E7EB",
-    borderRadius: 14,
-    padding: "10px 14px",
-    boxShadow: "0 4px 16px rgba(0,0,0,0.14)",
-    animation: "fadeInNav 0.2s ease",
-  }}>
-    {/* Station info row */}
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-      <div style={{
-        width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-        background: dark ? "rgba(99,102,241,0.15)" : "#EEF2FF",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <svg width="12" height="12" viewBox="0 0 20 20" fill="#6366F1">
-          <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
-        </svg>
-      </div>
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <div style={{
-          fontFamily: FONT, fontWeight: 600, fontSize: 12,
-          color: dark ? "#E8EAF0" : "#111",
-          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-        }}>{selectedStation.name}</div>
-        <div style={{
-          fontFamily: FONT, fontSize: 10, color: dark ? "#6B7280" : "#9CA3AF",
-          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-        }}>{selectedStation.address}</div>
-      </div>
-      {/* Clear selection */}
-      <button
-        onClick={() => { setSelectedStation(null); setQuery(""); }}
-        style={{
-          background: "none", border: "none", cursor: "pointer",
-          color: dark ? "#6B7280" : "#9CA3AF", fontSize: 14,
-          padding: "2px 4px", flexShrink: 0,
-        }}
-      >✕</button>
-    </div>
 
-        {/* Navigate button */}
-        <button
-          onClick={() => onNavigate?.(selectedStation)}
-          style={{
-            width: "100%", height: 38,
-            background: "linear-gradient(135deg,#1DB954,#16A34A)",
-            border: "none", borderRadius: 10,
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(29,185,84,0.35)",
-            transition: "opacity 0.15s",
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
-          onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
-          </svg>
-          <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13, color: "#fff" }}>
-            Navigate to {selectedStation.name.split(" ").slice(0, 2).join(" ")}
-          </span>
-        </button>
-      </div>
-    )}
-        {/* No results */}
+        {/* Navigate panel after station select */}
+        {selectedStation && !focused && (
+          <div style={{
+            marginTop: 8,
+            background: dark ? "#1C1F2A" : "#fff",
+            border: dark ? "1.5px solid #2C2F3E" : "1.5px solid #E5E7EB",
+            borderRadius: 14, padding: "10px 14px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.14)",
+            animation: "fadeInNav 0.2s ease",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+                background: dark ? "rgba(99,102,241,0.15)" : "#EEF2FF",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#6366F1">
+                  <path d="M12 2L4 12H10L8 18L16 8H10L12 2Z"/>
+                </svg>
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontFamily: FONT, ...TYPE.body, fontWeight: 600, color: dark ? "#E8EAF0" : "#111", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{selectedStation.name}</div>
+                <div style={{ fontFamily: FONT, ...TYPE.caption, color: dark ? "#6B7280" : "#9CA3AF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{selectedStation.address}</div>
+              </div>
+              <button
+                onClick={() => { setSelectedStation(null); setQuery(""); }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: dark ? "#6B7280" : "#9CA3AF", fontSize: 14, padding: "2px 4px", flexShrink: 0 }}
+              >✕</button>
+            </div>
+            <button
+              onClick={() => onNavigate?.(selectedStation)}
+              style={{
+                width: "100%", height: 38,
+                background: "linear-gradient(135deg,#1DB954,#16A34A)",
+                border: "none", borderRadius: 10,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                cursor: "pointer", boxShadow: "0 4px 12px rgba(29,185,84,0.35)", transition: "opacity 0.15s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+              </svg>
+              <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 13, color: "#fff" }}>
+                Navigate to {selectedStation.name.split(" ").slice(0, 2).join(" ")}
+              </span>
+            </button>
+          </div>
+        )}
+
         {focused && query.length > 0 && suggestions.length === 0 && (
           <div style={{
             background: dark ? "#1C1F2A" : "#fff",
             border: dark ? "1px solid #2C2F3E" : "1px solid #E5E7EB",
             borderTop: "none", borderRadius: "0 0 14px 14px",
             padding: "14px", textAlign: "center",
-            fontFamily: FONT, fontSize: 13, color: dark ? "#6B7280" : "#9CA3AF",
+            fontFamily: FONT, ...TYPE.body, color: dark ? "#6B7280" : "#9CA3AF",
           }}>
             No charging stations found
           </div>
         )}
-        
       </div>
 
       {/* Weather badge */}
@@ -457,7 +441,8 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="#3b82f6">
           <path d="M18 10a6 6 0 10-11.95.85A4 4 0 006 18h12a4 4 0 000-8z" />
         </svg>
-        <span style={{ fontFamily: FONT, fontSize: 12, fontWeight: 600, color: t.weatherText }}>Rain likely</span>
+        {/* Label style — matches dashboard "NOW PLAYING", "BATTERY" etc */}
+        <span style={{ fontFamily: FONT, ...TYPE.label, fontSize: 10, color: t.weatherText }}>Rain likely</span>
       </div>
 
       {/* Legend */}
@@ -476,8 +461,9 @@ function MapView({ theme, onStationSelect, onNavigate  }) {
           { color: "#EF4444", label: "Full" },
         ].map(({ color, label }) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: color }} />
-            <span style={{ fontFamily: FONT, fontSize: 11, fontWeight: 500, color: dark ? "#9CA3AF" : "#555" }}>{label}</span>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
+            {/* Caption style — same as dashboard small labels */}
+            <span style={{ fontFamily: FONT, ...TYPE.caption, fontWeight: 500, color: dark ? "#9CA3AF" : "#555" }}>{label}</span>
           </div>
         ))}
       </div>
@@ -522,9 +508,11 @@ function QuickToggle({ label, icon, on, onToggle, activeColor, activeBg, theme }
       }}>
         {icon(on)}
       </div>
-      <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: on ? activeColor : t.textPrimary }}>{label}</span>
+      {/* Label: uppercase tracking — matches dashboard section labels */}
+      <span style={{ fontFamily: FONT, ...TYPE.label, color: on ? activeColor : t.textPrimary }}>{label}</span>
+      {/* Status pill: same uppercase style */}
       <span style={{
-        fontFamily: FONT, fontWeight: 500, fontSize: 12,
+        fontFamily: FONT, ...TYPE.label, fontSize: 10,
         color: on ? activeColor : t.textSecond,
         background: on ? `${activeColor}18` : t.inputBg,
         borderRadius: 8, padding: "2px 10px",
@@ -541,12 +529,14 @@ function RangeCard({ range, theme }) {
       background: t.cardBg, borderRadius: 18, padding: "5px 16px",
       boxShadow: t.cardShadow, border: t.cardBorder,
     }}>
-      <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: t.textSecond, marginBottom: 2 }}>Estimated Range</div>
+      {/* Section label — matches "BATTERY", "CLIMATE" in dashboard */}
+      <div style={{ fontFamily: FONT, ...TYPE.label, color: t.textSecond, marginBottom: 2 }}>Estimated Range</div>
+      {/* Large value — matches "78%", "312 km" in dashboard */}
       <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
-        <span style={{ fontFamily: FONT, fontWeight: 800, fontSize: 34, color: t.textPrimary, lineHeight: 1 }}>{range}</span>
-        <span style={{ fontFamily: FONT, fontWeight: 500, fontSize: 15, color: t.textSecond }}>km</span>
+        <span style={{ fontFamily: FONT, ...TYPE.value, color: t.textPrimary }}>{range}</span>
+        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 15, color: t.textSecond, letterSpacing: "-0.01em" }}>km</span>
       </div>
-      <div style={{ fontFamily: FONT, fontSize: 10, color: t.textMuted, marginBottom: 6 }}>Based on current settings</div>
+      <div style={{ fontFamily: FONT, ...TYPE.caption, color: t.textMuted, marginBottom: 6 }}>Based on current settings</div>
       <svg width="100%" height="50" viewBox="0 0 200 50">
         <line x1="18" y1="8"  x2="195" y2="8"  stroke={t.divider} strokeWidth="1" />
         <line x1="18" y1="26" x2="195" y2="26" stroke={t.divider} strokeWidth="1" />
@@ -554,10 +544,10 @@ function RangeCard({ range, theme }) {
         <path d="M18 44 Q70 34 108 22 Q140 14 195 10 L195 44 Z" fill="rgba(29,185,84,0.12)" />
         <path d="M18 44 Q70 34 108 22 Q140 14 195 10" stroke={GREEN} strokeWidth="2.5" fill="none" strokeLinecap="round" />
         {["Now", "+1h", "+2h"].map((label, i) => (
-          <text key={i} x={[18,108,195][i]} y="50" fontSize="9" fill={t.textMuted} fontFamily="Inter,sans-serif" textAnchor="middle">{label}</text>
+          <text key={i} x={[18,108,195][i]} y="50" fontSize="9" fill={t.textMuted} fontFamily="DM Sans,Inter,sans-serif" textAnchor="middle">{label}</text>
         ))}
         {["120","60","0"].map((v, i) => (
-          <text key={i} x="14" y={[9,27,45][i]} fontSize="8" fill={t.textMuted} fontFamily="Inter,sans-serif" textAnchor="end">{v}</text>
+          <text key={i} x="14" y={[9,27,45][i]} fontSize="8" fill={t.textMuted} fontFamily="DM Sans,Inter,sans-serif" textAnchor="end">{v}</text>
         ))}
       </svg>
     </div>
@@ -579,16 +569,19 @@ function PreCondCard({ theme }) {
         <svg width="17" height="17" viewBox="0 0 24 24" fill={INDIGO}>
           <path d="M15 13V5a3 3 0 10-6 0v8a5 5 0 106 0zm-3 5a3 3 0 110-6 3 3 0 010 6z" />
         </svg>
-        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: t.preCondTitle }}>Pre-condition</span>
+        {/* Section label — uppercase tracking */}
+        <span style={{ fontFamily: FONT, ...TYPE.label, color: t.preCondTitle }}>Pre-condition</span>
       </div>
       <div>
-        <div style={{ fontFamily: FONT, fontSize: 11, color: t.preCondSub, marginBottom: 4 }}>Schedule at</div>
+        {/* Sub-label */}
+        <div style={{ fontFamily: FONT, ...TYPE.label, fontSize: 10, color: t.preCondSub, marginBottom: 4 }}>Schedule at</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={INDIGO} strokeWidth="2" strokeLinecap="round">
             <circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 3M9 2h6M12 2v3" />
           </svg>
-          <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 20, color: INDIGO }}>10:00</span>
-          <span style={{ fontFamily: FONT, fontSize: 14, color: t.preCondSub }}>PM</span>
+          {/* Time value — heavy weight matching dashboard clock "09:28" */}
+          <span style={{ fontFamily: FONT, ...TYPE.valueMd, color: INDIGO }}>10:00</span>
+          <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 14, color: t.preCondSub, letterSpacing: "-0.01em" }}>PM</span>
         </div>
       </div>
     </div>
@@ -614,11 +607,13 @@ function StationCard({ name, distance, available, total, power, canReach, isNear
       border: isNearest ? t.nearestBorder : t.cardBorder,
       position: "relative", transition: "box-shadow 0.2s",
     }}>
+      {/* NEAREST tag — uppercase label style */}
       {isNearest && (
         <div style={{
           position: "absolute", top: -1, left: 16,
-          background: GREEN, color: "#fff", fontSize: 10, fontWeight: 700,
-          borderRadius: "0 0 8px 8px", padding: "2px 10px", letterSpacing: "0.04em",
+          background: GREEN, color: "#fff",
+          ...TYPE.label, fontSize: 10,
+          borderRadius: "0 0 8px 8px", padding: "2px 10px",
         }}>NEAREST</div>
       )}
 
@@ -636,28 +631,42 @@ function StationCard({ name, distance, available, total, power, canReach, isNear
         </svg>
       </button>
 
-      <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 17, color: t.textPrimary, marginBottom: 8, paddingRight: 32 }}>{name}</div>
+      {/* Station name — titleSm style matching dashboard card titles */}
+      <div style={{ fontFamily: FONT, ...TYPE.titleSm, color: t.textPrimary, marginBottom: 8, paddingRight: 32 }}>{name}</div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 5, minWidth: 0 }}>
 
-          {/* Badges */}
+          {/* Badges — label style */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-            <span style={{ background: t.greenBg, color: t.greenText, borderRadius: 20, padding: "2px 10px", fontSize: 12, fontWeight: 600 }}>Fast</span>
+            <span style={{
+              background: t.greenBg, color: t.greenText, borderRadius: 20, padding: "2px 10px",
+              fontFamily: FONT, ...TYPE.label, fontSize: 10,
+            }}>Fast</span>
             {canReach
-              ? <span style={{ background: t.greenBg, color: t.greenText, borderRadius: 20, padding: "2px 10px", fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 3 }}>
+              ? <span style={{
+                  background: t.greenBg, color: t.greenText, borderRadius: 20, padding: "2px 10px",
+                  fontFamily: FONT, ...TYPE.label, fontSize: 10,
+                  display: "flex", alignItems: "center", gap: 3,
+                }}>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill={t.greenText}><path d="M20 6L9 17l-5-5" stroke={t.greenText} strokeWidth="3" strokeLinecap="round" fill="none" /></svg>
                   Reachable
                 </span>
-              : <span style={{ background: t.redBg, color: RED, borderRadius: 20, padding: "2px 10px", fontSize: 12, fontWeight: 600 }}>Out of range</span>
+              : <span style={{
+                  background: t.redBg, color: RED, borderRadius: 20, padding: "2px 10px",
+                  fontFamily: FONT, ...TYPE.label, fontSize: 10,
+                }}>Out of range</span>
             }
           </div>
 
           {/* Distance · availability */}
           <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "nowrap" }}>
-            <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: t.textPrimary, whiteSpace: "nowrap" }}>{distance}</span>
+            <span style={{ fontFamily: FONT, ...TYPE.body, fontWeight: 600, color: t.textPrimary, whiteSpace: "nowrap" }}>{distance}</span>
             <span style={{ width: 4, height: 4, borderRadius: "50%", background: t.divider, display: "inline-block", flexShrink: 0 }} />
-            <span style={{ background: availBg, borderRadius: 8, padding: "2px 8px", fontFamily: FONT, fontWeight: 600, fontSize: 13, color: availColor, whiteSpace: "nowrap" }}>
+            <span style={{
+              background: availBg, borderRadius: 8, padding: "2px 8px",
+              fontFamily: FONT, ...TYPE.body, fontWeight: 700, color: availColor, whiteSpace: "nowrap",
+            }}>
               {available}/{total} available
             </span>
           </div>
@@ -665,7 +674,7 @@ function StationCard({ name, distance, available, total, power, canReach, isNear
           {/* Power */}
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill={GREEN}><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 12, color: t.textSecond }}>Up to {power}</span>
+            <span style={{ fontFamily: FONT, ...TYPE.caption, fontWeight: 600, color: t.textSecond }}>Up to {power}</span>
           </div>
         </div>
 
@@ -708,12 +717,12 @@ function NearbyStations({ range, onStartSession, theme }) {
   return (
     <div style={{ position: "absolute", left: 688, top: 70, width: 568, bottom: 35, display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-        <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 20, color: t.textPrimary }}>Nearby Stations</span>
+        <span style={{ fontFamily: FONT, fontWeight:600, fontSize:13, letterSpacing:"1.2px", textTransform:"uppercase", color:t.textSecond }}>Nearby Stations</span>
         <span style={{
-          fontFamily: FONT, fontSize: 13, fontWeight: 600,
+          fontFamily: FONT, ...TYPE.label, fontSize: 10,
           color: reachableCount > 0 ? t.greenText : t.textSecond,
           background: reachableCount > 0 ? t.reachableBg : t.inputBg,
-          borderRadius: 20, padding: "3px 12px",
+          borderRadius: 20, padding: "4px 12px",
         }}>{reachableCount} reachable</span>
       </div>
       <div style={{
@@ -755,7 +764,7 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
       <div style={{ position: "absolute", width: 480, height: 480, right: -70, bottom: -70, borderRadius: "50%", background: `radial-gradient(circle,${t.ambBlob2} 0%,transparent 70%)`, pointerEvents: "none" }} />
 
       <TopBar battery={battery} range={effectiveRange} theme={theme} />
-      <MapView theme={theme} onStationSelect={(s) => console.log("Selected:", s.name)}   onNavigate={(station) => {setNavActive(2);}}/>
+      <MapView theme={theme} onStationSelect={(s) => console.log("Selected:", s.name)} onNavigate={() => { setNavActive(2); }} />
 
       {/* Quick controls row */}
       <div style={{
@@ -786,7 +795,7 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
         <PreCondCard theme={theme} />
       </div>
 
-      <NearbyStations range={effectiveRange} onStartSession={() => setNavActive(2)}  theme={theme} />
+      <NearbyStations range={effectiveRange} onStartSession={() => setNavActive(2)} theme={theme} />
 
       <BottomNav active={navActive} setActive={setNavActive} theme={theme} />
     </div>

@@ -41,6 +41,7 @@ export default function AccountPage({
   navActive,
   setNavActive,
   onLogout,
+  onGoToAccount,
   theme = "light",
 }) {
   const [editMode, setEditMode] = useState("none");
@@ -159,7 +160,7 @@ export default function AccountPage({
       />
 
       {/* */}
-      <TopBar theme={theme} onGoToAccount={() => setNavActive("account")} />
+      <TopBar theme={theme} onGoToAccount={onGoToAccount} />
 
       {/* ── MAIN CARD GRID ── */}
       <div
