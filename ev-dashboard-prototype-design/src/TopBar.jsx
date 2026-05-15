@@ -4,20 +4,20 @@ import React from 'react';
 function tk(theme) {
   const dark = theme === "dark";
   return {
-    iconColor:    dark ? "#9CA3AF" : "#444",
-    avatarBg:     dark ? "#252836" : "#ddd",
-    brandColor:   dark ? "#C9A84C" : "#8a6010",
+    iconColor:  dark ? "#9CA3AF" : "#444",
+    avatarBg:   dark ? "#252836" : "#ddd",
+    brandColor: dark ? "#C9A84C" : "#8a6010",
   };
 }
 
-export default function TopBar({ theme = "light", onGoToAccount }) {
+export default function TopBar({ theme = "light", onGoToAccount, center }) {
   const t = tk(theme);
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, zIndex: 50 }}>
 
       {/* LEFT: WiFi + Bluetooth */}
-      <div style={{ position: 'absolute', top: 32, left: 60, display: 'flex', alignItems: 'center', gap: '25px' }}>
+      <div style={{ position: 'absolute', top: 20, left: 60, display: 'flex', alignItems: 'center', gap: '25px' }}>
         {/* WiFi */}
         <svg width="36" height="28" viewBox="0 0 24 24" fill="none">
           <path d="M5 12.55a11 11 0 0 1 14 0"        stroke={t.iconColor} strokeWidth="2" strokeLinecap="round"/>
@@ -34,9 +34,19 @@ export default function TopBar({ theme = "light", onGoToAccount }) {
         </svg>
       </div>
 
+      {/* CENTER: slot for EVAssistant or any other content */}
+      {center && (
+        <div style={{
+          position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+          height: 80, display: 'flex', alignItems: 'center',
+        }}>
+          {center}
+        </div>
+      )}
+
       {/* RIGHT: Avatar → Account Page */}
       <div
-        style={{ position: 'absolute', top: 27, right: 60, cursor: 'pointer', zIndex: 10 }}
+        style={{ position: 'absolute', top: 8, right: 60, cursor: 'pointer', zIndex: 10 }}
         onClick={onGoToAccount}
       >
         <div style={{
