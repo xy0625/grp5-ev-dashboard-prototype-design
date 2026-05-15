@@ -95,6 +95,10 @@ export default function App() {
           setNavActive={handleNav}
           theme={theme}
           setTheme={setTheme}
+          // onGoToAccount={() => {
+          //   setPage("account");
+          //   setNavActive(6);
+          // }}
         />
       );
     if (page === "weather")
@@ -116,6 +120,10 @@ export default function App() {
           setNavActive={handleNav}
           theme={theme}
           setTheme={setTheme}
+          onGoToAccount={() => {
+            setPage("account");
+            setNavActive(6);
+          }}
         />
       );
 

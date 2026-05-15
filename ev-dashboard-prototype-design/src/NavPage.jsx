@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import BottomNav from "./BottomNav";
+// import TopBar from "./TopBar";
 
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
@@ -1402,6 +1403,7 @@ function FavModal({ onNavigate, onClose, theme }) {
 }
 
 /* ── PAGE ROOT ───────────────────────────────────────────────────── */
+// export default function NavPage({ navActive, setNavActive, theme = "light", onGoToAccount }) {
 export default function NavPage({ navActive, setNavActive, theme = "light" }) {
   const t = tk(theme);
   const [speed, setSpeed] = useState(62);
@@ -1564,6 +1566,8 @@ export default function NavPage({ navActive, setNavActive, theme = "light" }) {
         isNavigating={isNav}
         theme={theme}
       />
+
+      {/* <TopBar theme={theme} onGoToAccount={onGoToAccount} /> */}
 
       {/* TOP ROW */}
       <div

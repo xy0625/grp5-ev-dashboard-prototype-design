@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar";
 
 /* ── Leaflet CSS injected once ────────────────────────────────────── */
 const LEAFLET_CSS =
@@ -922,7 +923,12 @@ function LiveMap({ theme, onLocationUpdate }) {
 }
 
 /* ── EmergencyPage ───────────────────────────────────────────────── */
-export default function EmergencyPage({ navActive, setNavActive, theme }) {
+export default function EmergencyPage({
+  navActive,
+  setNavActive,
+  theme,
+  onGoToAccount,
+}) {
   const [autoEmergency, setAutoEmergency] = useState(true);
   const [confirmTurnOff, setConfirmTurnOff] = useState(false);
   const [sosModal, setSosModal] = useState(false);
@@ -1060,42 +1066,7 @@ export default function EmergencyPage({ navActive, setNavActive, theme }) {
         }}
       />
 
-      {/* Status bar */}
-      <div
-        style={{
-          position: "absolute",
-          top: "25px",
-          left: "60px",
-          display: "flex",
-          alignItems: "center",
-          gap: "25px",
-          zIndex: 5,
-        }}
-      >
-        <WifiIcon theme={theme} />
-        <BluetoothIcon theme={theme} />
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: "25px",
-          right: "60px",
-          zIndex: 5,
-          width: "50px",
-          height: "50px",
-          background: t.avatarBg,
-          backdropFilter: "blur(10px)",
-          border: t.avatarBorder,
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: t.avatarShadow,
-          cursor: "pointer",
-        }}
-      >
-        <UserIcon theme={theme} />
-      </div>
+      <TopBar theme={theme} onGoToAccount={onGoToAccount} />
 
       {/* 3-card layout */}
       <div
