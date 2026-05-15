@@ -18,9 +18,8 @@ export default function App() {
   const handleNav = (index) => {
     setNavActive(index);
     if (index === 0) setPage("home");
-    else if (index === 1) {
-      if (page !== "session") setPage("charging");
-    } else if (index === 2) setPage("nav");
+    else if (index === 1) setPage("charging");
+    else if (index === 2) setPage("nav");
     else if (index === 3) setPage("weather");
     else if (index === 4) setPage("emergency");
     else if (index === 5) setPage("settings");
@@ -75,10 +74,20 @@ export default function App() {
           setNavActive={handleNav}
           theme={theme}
           setTheme={setTheme}
+          onGoToAccount={() => {
+            setPage("account");
+            setNavActive(6);
+          }}
         />
       );
     if (page === "apps")
-      return <AppsPage navActive={navActive} setNavActive={handleNav} />;
+      return (
+        <AppsPage
+          navActive={navActive}
+          setNavActive={handleNav}
+          theme={theme}
+        />
+      );
     if (page === "nav")
       return (
         <NavPage

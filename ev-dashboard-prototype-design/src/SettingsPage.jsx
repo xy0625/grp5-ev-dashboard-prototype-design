@@ -1,5 +1,6 @@
 import { useState } from "react";
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar";
 
 // settingsPage.jsx — with dark mode support
 
@@ -780,6 +781,7 @@ export default function SettingsPage({
   setNavActive,
   theme,
   setTheme,
+  onGoToAccount,
 }) {
   const [wifi, setWifi] = useState(true);
   const [bt, setBt] = useState(false);
@@ -861,36 +863,7 @@ export default function SettingsPage({
         }}
       />
 
-      {/* Top-right avatar */}
-      <div
-        style={{
-          position: "absolute",
-          top: "25px",
-          right: "60px",
-          zIndex: 10,
-          width: "50px",
-          height: "50px",
-          background: t.avatarBg,
-          backdropFilter: "blur(10px)",
-          border: t.avatarBorder,
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: t.menuShadow,
-          cursor: "pointer",
-        }}
-      >
-        <svg width="28" height="28" viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="9" r="5" stroke={t.iconStroke} strokeWidth="2" />
-          <path
-            d="M3 24c0-5.5 4.5-10 10-10s10 4.5 10 10"
-            stroke={t.iconStroke}
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
+      <TopBar theme={theme} onGoToAccount={onGoToAccount} />
 
       {/* ── Two Cards Layout ── */}
       <div
