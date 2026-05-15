@@ -37,6 +37,38 @@ function tk(theme) {
   };
 }
 
+/* ── SVG Icons ─────────────────────────────────────────────────── */
+const IconStar = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff" stroke="#fff" strokeWidth="1">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </svg>
+);
+const IconPin = ({ color }) => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2"/>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+const IconLock = ({ color }) => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+  </svg>
+);
+const IconShield = ({ color }) => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    <path d="M9 12l2 2 4-4"/>
+  </svg>
+);
+const IconCar = ({ color }) => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l3-4h10l3 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/>
+    <circle cx="7.5" cy="17.5" r="2.5"/>
+    <circle cx="16.5" cy="17.5" r="2.5"/>
+  </svg>
+);
+
 export default function AccountPage({
   navActive,
   setNavActive,
@@ -247,7 +279,7 @@ export default function AccountPage({
                 color: "#fff",
               }}
             >
-              ⭐ PREMIUM
+              <IconStar /> PREMIUM
             </div>
           </div>
 
@@ -504,9 +536,10 @@ export default function AccountPage({
                   background: t.securityBg,
                   cursor: "pointer",
                   color: t.textPrimary,
+                  gap: 8,
                 }}
               >
-                🔑 Change PIN
+                <IconPin color={goldDark} /> Change PIN
               </button>
               <button
                 style={{
@@ -516,9 +549,10 @@ export default function AccountPage({
                   background: t.securityBg,
                   cursor: "pointer",
                   color: t.textPrimary,
+                  gap: 8,
                 }}
               >
-                🔒 Password
+                <IconLock color={goldDark} /> Password
               </button>
               <div
                 style={{
@@ -527,7 +561,7 @@ export default function AccountPage({
                   background: biometricEnabled ? goldLight : t.securityBg,
                 }}
               >
-                <span style={{ fontSize: 20, marginRight: 10 }}>🧬</span>
+                <IconShield color={biometricEnabled ? goldDark : t.textSecond} />
                 <span
                   style={{
                     fontSize: 14,
@@ -535,6 +569,7 @@ export default function AccountPage({
                     flex: 1,
                     textAlign: "left",
                     color: t.textPrimary,
+                    marginLeft: 10,
                   }}
                 >
                   Biometrics
@@ -604,7 +639,7 @@ export default function AccountPage({
                 gap: 25,
               }}
             >
-              <span style={{ fontSize: 32 }}>🚗</span>
+              <IconCar color={goldDark} />
               <div
                 style={{
                   flex: 1,
