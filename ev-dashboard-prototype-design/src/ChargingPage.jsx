@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar";
 
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS  = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
@@ -95,46 +96,55 @@ function tk(theme) {
   };
 }
 
-/* ── Top Bar ─────────────────────────────────────────────────────── */
-function TopBar({ battery, range, theme }) {
+/* ── Battery Status ─────────────────────────────────────────────────────── */
+function BatteryStatus({ battery, range, theme }) {
   const t = tk(theme);
   const battColor = battery < 20 ? RED : battery < 40 ? AMBER : GREEN;
   const filled = Math.max(2, Math.round(32 * battery / 100));
 
   return (
-    <div style={{
-      position: "absolute", left: 0, top: 0, width: 1280, height: 58,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 24px", boxSizing: "border-box",
-      background: t.topBarBg, backdropFilter: "blur(10px)",
-      borderBottom: t.topBarBorder, zIndex: 5,
-    }}>
-      {/* Left: connectivity */}
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <svg width="28" height="22" viewBox="0 0 34 28" fill="none">
-          <path d="M17 22a2 2 0 110 4 2 2 0 010-4z" fill={t.iconStroke} />
-          <path d="M10 16.5a9.9 9.9 0 0114 0" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M4 10.5a17.5 17.5 0 0126 0" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-        <svg width="20" height="28" viewBox="0 0 24 36" fill="none" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round">
-          <path d="M6 9l12 9-6 5V3l6 5-12 9" />
-        </svg>
-      </div>
 
-      {/* Center: battery pill — same heavy numeric style as dashboard */}
       <div style={{
         display: "flex", alignItems: "center", gap: 10,
         background: t.battPillBg, borderRadius: 30, padding: "6px 20px",
         boxShadow: t.cardShadow,
         border: t.battPillBorder(battColor),
       }}>
-        <svg width="38" height="20" viewBox="0 0 42 24">
-          <rect x="1" y="3" width="36" height="18" rx="3" stroke={battColor} strokeWidth="2" fill="none" />
-          <rect x="37" y="8" width="4" height="8" rx="2" fill={battColor} />
-          <rect x="3" y="5" width={filled} height="14" rx="1" fill={battColor} />
-        </svg>
-        {/* Value style matches dashboard "78%" */}
-        <span style={{ fontFamily: FONT, ...TYPE.valueMd, color: battColor }}>{battery}%</span>
+<svg width="38" height="20" viewBox="0 0 42 24">
+        <rect
+          x="1"
+          y="3"
+          width="36"
+          height="18"
+          rx="3"
+          stroke={battColor}
+          strokeWidth="2"
+          fill="none"
+        />
+        <rect
+          x="37"
+          y="8"
+          width="4"
+          height="8"
+          rx="2"
+          fill={battColor}
+        />
+        <rect
+          x="3"
+          y="5"
+          width={filled}
+          height="14"
+          rx="1"
+          fill={battColor}
+        />
+      </svg>
+        <span style={{
+          fontWeight: 700,
+          fontSize: 17,
+          color: battColor,
+        }}>
+          {battery}%
+        </span>
         <span style={{ fontFamily: FONT, fontSize: 16, color: t.divider }}>·</span>
         <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 15, color: t.textPrimary, letterSpacing: "-0.01em" }}>{range} km left</span>
         {battery < 20 && (
@@ -146,19 +156,6 @@ function TopBar({ battery, range, theme }) {
           }}>LOW</span>
         )}
       </div>
-
-      {/* Right: profile */}
-      <div style={{
-        width: 44, height: 44,
-        background: theme === "dark" ? "rgba(99,102,241,0.2)" : "#F3EDFF",
-        borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={INDIGO} strokeWidth="2">
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </div>
-    </div>
   );
 }
 
@@ -763,7 +760,13 @@ export default function ChargingPage({ battery = 22, range = 95, navActive, setN
       <div style={{ position: "absolute", width: 580, height: 580, left: -90, top: -90, borderRadius: "50%", background: `radial-gradient(circle,${t.ambBlob1} 0%,transparent 70%)`, pointerEvents: "none" }} />
       <div style={{ position: "absolute", width: 480, height: 480, right: -70, bottom: -70, borderRadius: "50%", background: `radial-gradient(circle,${t.ambBlob2} 0%,transparent 70%)`, pointerEvents: "none" }} />
 
-      <TopBar battery={battery} range={effectiveRange} theme={theme} />
+      <TopBar battery={battery} theme={theme} center={
+            <BatteryStatus
+              battery={battery}
+              range={effectiveRange}
+              theme={theme}
+            />
+          }/>
       <MapView theme={theme} onStationSelect={(s) => console.log("Selected:", s.name)} onNavigate={() => { setNavActive(2); }} />
 
       {/* Quick controls row */}

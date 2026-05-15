@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import BottomNav from "./BottomNav";
+import TopBar from "./TopBar";
 
 const FONT = "'Inter',sans-serif";
 const GREEN = "#1DB954";
@@ -44,55 +45,81 @@ function tk(theme) {
   };
 }
 
-/* ── Top Bar ─────────────────────────────────────────────────────── */
-function TopBar({ battery, range, theme }) {
+function BatteryStatus({ battery, range, theme }) {
   const t = tk(theme);
-  const battColor = battery < 20 ? RED : battery < 40 ? AMBER : GREEN;
-  const filled = Math.max(2, Math.round(32 * battery / 100));
+
+  const battColor =
+    battery < 20 ? RED :
+    battery < 40 ? AMBER :
+    GREEN;
+
+  const filled = Math.max(
+    2,
+    Math.round(32 * battery / 100)
+  );
 
   return (
     <div style={{
-      position: "absolute", left: 0, top: 0, width: 1280, height: 58,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 24px", boxSizing: "border-box",
-      background: t.topBarBg, backdropFilter: "blur(10px)",
-      borderBottom: t.topBarBorder, zIndex: 5,
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      background: t.battPillBg,
+      borderRadius: 30,
+      padding: "6px 20px",
+      boxShadow: t.cardShadow,
+      border: t.battPillBorder(battColor),
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <svg width="28" height="22" viewBox="0 0 34 28" fill="none">
-          <path d="M17 22a2 2 0 110 4 2 2 0 010-4z" fill={t.iconStroke} />
-          <path d="M10 16.5a9.9 9.9 0 0114 0" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M4 10.5a17.5 17.5 0 0126 0" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-        <svg width="20" height="28" viewBox="0 0 24 36" fill="none" stroke={t.iconStroke} strokeWidth="2.5" strokeLinecap="round">
-          <path d="M6 9l12 9-6 5V3l6 5-12 9" />
-        </svg>
-      </div>
+      <svg width="38" height="20" viewBox="0 0 42 24">
+        <rect
+          x="1"
+          y="3"
+          width="36"
+          height="18"
+          rx="3"
+          stroke={battColor}
+          strokeWidth="2"
+          fill="none"
+        />
+        <rect
+          x="37"
+          y="8"
+          width="4"
+          height="8"
+          rx="2"
+          fill={battColor}
+        />
+        <rect
+          x="3"
+          y="5"
+          width={filled}
+          height="14"
+          rx="1"
+          fill={battColor}
+        />
+      </svg>
 
-      <div style={{
-        display: "flex", alignItems: "center", gap: 10,
-        background: t.battPillBg, borderRadius: 30, padding: "6px 20px",
-        boxShadow: t.cardShadow, border: t.battPillBorder(battColor),
+      <span style={{
+        fontWeight: 700,
+        fontSize: 17,
+        color: battColor,
       }}>
-        <svg width="38" height="20" viewBox="0 0 42 24">
-          <rect x="1" y="3" width="36" height="18" rx="3" stroke={battColor} strokeWidth="2" fill="none" />
-          <rect x="37" y="8" width="4" height="8" rx="2" fill={battColor} />
-          <rect x="3" y="5" width={filled} height="14" rx="1" fill={battColor} />
-        </svg>
-        <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 17, color: battColor }}>{battery}%</span>
-        <span style={{ fontFamily: FONT, fontSize: 16, color: t.divider }}>·</span>
-        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 17, color: t.textPrimary }}>{range} km left</span>
-      </div>
+        {battery}%
+      </span>
 
-      <div style={{
-        width: 44, height: 44, background: t.profileBg, borderRadius: "50%",
-        display: "flex", alignItems: "center", justifyContent: "center",
+      <span style={{
+        fontSize: 16,
+        color: t.divider,
       }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={INDIGO} strokeWidth="2">
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </div>
+        ·
+      </span>
+
+      <span style={{
+        fontWeight: 600,
+        fontSize: 17,
+        color: t.textPrimary,
+      }}>
+        {range} km left
+      </span>
     </div>
   );
 }
@@ -301,7 +328,15 @@ export default function ChargingActivePage({ battery = 65, navActive, setNavActi
       <div style={{ position: "absolute", width: 400, height: 400, right: 40, top: -50, borderRadius: "50%", background: `radial-gradient(circle,${t.blob2} 0%,transparent 70%)`, pointerEvents: "none", zIndex: 1 }} />
 
       <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-        <TopBar battery={battery} range={range} theme={theme} />
+        <TopBar   theme={theme}
+          center={
+            <BatteryStatus
+              battery={battery}
+              range={range}
+              theme={theme}
+            />
+          }
+        />
         <BatteryGauge percent={battery} theme={theme} />
         <ChargingSparks />
 
