@@ -1,16 +1,38 @@
-# React + Vite
+# Smart EV Dashboard Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+The Smart EV Dashboard is a TMF2263 Human-Computer Interaction course group project at Universiti Malaysia Sarawak (UNIMAS).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The prototype aims to provide drivers with a centralized interface to access essential vehicle functions while emphasizing usability, accessibility, glanceability, and reduced driver distraction.
 
-## React Compiler
+The design incorporates HCI principles such as Fitts' Law, visibility of system status, mental models, cognitive load reduction, and error prevention.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Key Features
 
-## Expanding the ESLint configuration
+The dashboard consists of seven main modules:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Module                   | Description                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------- |
+| **Homepage**             | Displays key driving information, including speed, battery status, and navigation shortcuts.      |
+| **Energy & Charging**    | Monitors battery level, remaining driving range, nearby charging stations, and charging sessions. |
+| **Navigation**           | Provides destination search, route guidance, and location tracking.                               |
+| **Climate Control**      | Allows drivers to adjust temperature, fan speed, and airflow settings.                            |
+| **Emergency Call (SOS)** | Provides quick access to emergency calling with confirmation to prevent accidental activation.    |
+| **Settings**             | Allows users to manage WiFi, Bluetooth, brightness, sound, and display preferences.               |
+| **Account**              | Provides access to driver profile information and account management.                             |
+
+## Technologies Used
+
+| Category             | Technologies |
+| -------------------- | ------------ |
+| UI/UX Design         | Figma        |
+| Frontend Development | React.js     |
+| Mapping              | Leaflet      |
+| Version Control      | GitHub       |
+| Deployment           | Vercel       |
+
+##
+
+###
+
